@@ -7,13 +7,13 @@ from atoma_sdk import AtomaSDK
 load_dotenv()
 
 BEARER_AUTH = os.getenv("ATOMASDK_BEARER_AUTH")
-BASE_URL = os.getenv("BASE_URL")
+CHAT_COMPLETIONS_URL = os.getenv("CHAT_COMPLETIONS_URL")
 
 @pytest.fixture
 def client():
     return AtomaSDK(
         bearer_auth=BEARER_AUTH,
-        server_url=BASE_URL
+        server_url=CHAT_COMPLETIONS_URL
     )
 
 def test_models_handler(client):

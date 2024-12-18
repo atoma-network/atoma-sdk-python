@@ -8,14 +8,14 @@ from atoma_sdk.models import ChatCompletionMessage
 load_dotenv()
 
 BEARER_AUTH = os.getenv("ATOMASDK_BEARER_AUTH")
-BASE_URL = os.getenv("BASE_URL")
-MODEL = os.getenv("MODEL")
+CHAT_COMPLETIONS_URL = os.getenv("CHAT_COMPLETIONS_URL")
+CHAT_COMPLETIONS_MODEL = os.getenv("CHAT_COMPLETIONS_MODEL")
 
 @pytest.fixture
 def client():
     return AtomaSDK(
         bearer_auth=BEARER_AUTH,
-        server_url=BASE_URL
+        server_url=CHAT_COMPLETIONS_URL
     )
 
 def test_chat_completion_basic(client):
@@ -28,7 +28,7 @@ def test_chat_completion_basic(client):
     
     response = client.chat.create(
         messages=messages,
-        model=MODEL
+        model=CHAT_COMPLETIONS_MODEL
     )
     
     assert response is not None
@@ -50,7 +50,7 @@ def test_chat_completion_with_system_message(client):
     
     response = client.chat.create(
         messages=messages,
-        model=MODEL
+        model=CHAT_COMPLETIONS_MODEL
     )
     
     assert response is not None
@@ -69,7 +69,7 @@ async def test_chat_completion_async(client):
     
     response = await client.chat.create_async(
         messages=messages,
-        model=MODEL
+        model=CHAT_COMPLETIONS_MODEL
     )
     
     assert response is not None
