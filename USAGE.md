@@ -2,8 +2,11 @@
 ```python
 # Synchronous Example
 from atoma_sdk import AtomaSDK
+import os
 
-with AtomaSDK() as atoma_sdk:
+with AtomaSDK(
+    bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
+) as atoma_sdk:
 
     res = atoma_sdk.health.health()
 
@@ -18,9 +21,12 @@ The same SDK client can also be used to make asychronous requests by importing a
 # Asynchronous Example
 import asyncio
 from atoma_sdk import AtomaSDK
+import os
 
 async def main():
-    async with AtomaSDK() as atoma_sdk:
+    async with AtomaSDK(
+        bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
+    ) as atoma_sdk:
 
         res = await atoma_sdk.health.health_async()
 

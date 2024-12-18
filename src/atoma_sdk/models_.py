@@ -4,6 +4,7 @@ from .basesdk import BaseSDK
 from atoma_sdk import models, utils
 from atoma_sdk._hooks import HookContext
 from atoma_sdk.types import OptionalNullable, UNSET
+from atoma_sdk.utils import get_security_from_env
 from typing import Any, Mapping, Optional
 
 
@@ -98,10 +99,11 @@ class Models(BaseSDK):
             request=None,
             request_body_required=False,
             request_has_path_params=False,
-            request_has_query_params=False,
+            request_has_query_params=True,
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
+            security=self.sdk_configuration.security,
             timeout_ms=timeout_ms,
         )
 
@@ -115,7 +117,11 @@ class Models(BaseSDK):
 
         http_res = self.do_request(
             hook_ctx=HookContext(
-                operation_id="models_handler", oauth2_scopes=[], security_source=None
+                operation_id="models_handler",
+                oauth2_scopes=[],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
             ),
             request=req,
             error_status_codes=["4XX", "500", "5XX"],
@@ -227,10 +233,11 @@ class Models(BaseSDK):
             request=None,
             request_body_required=False,
             request_has_path_params=False,
-            request_has_query_params=False,
+            request_has_query_params=True,
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
+            security=self.sdk_configuration.security,
             timeout_ms=timeout_ms,
         )
 
@@ -244,7 +251,11 @@ class Models(BaseSDK):
 
         http_res = await self.do_request_async(
             hook_ctx=HookContext(
-                operation_id="models_handler", oauth2_scopes=[], security_source=None
+                operation_id="models_handler",
+                oauth2_scopes=[],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
             ),
             request=req,
             error_status_codes=["4XX", "500", "5XX"],

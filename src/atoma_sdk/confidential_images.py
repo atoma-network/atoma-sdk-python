@@ -4,6 +4,7 @@ from .basesdk import BaseSDK
 from atoma_sdk import models, utils
 from atoma_sdk._hooks import HookContext
 from atoma_sdk.types import OptionalNullable, UNSET
+from atoma_sdk.utils import get_security_from_env
 from typing import Mapping, Optional
 
 
@@ -89,10 +90,11 @@ class ConfidentialImages(BaseSDK):
             request=request,
             request_body_required=True,
             request_has_path_params=False,
-            request_has_query_params=False,
+            request_has_query_params=True,
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
+            security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
                 request, False, False, "json", models.CreateImageRequest
             ),
@@ -111,7 +113,9 @@ class ConfidentialImages(BaseSDK):
             hook_ctx=HookContext(
                 operation_id="confidential_image_generations_create",
                 oauth2_scopes=[],
-                security_source=None,
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
             ),
             request=req,
             error_status_codes=["400", "401", "4XX", "500", "5XX"],
@@ -214,10 +218,11 @@ class ConfidentialImages(BaseSDK):
             request=request,
             request_body_required=True,
             request_has_path_params=False,
-            request_has_query_params=False,
+            request_has_query_params=True,
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
+            security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
                 request, False, False, "json", models.CreateImageRequest
             ),
@@ -236,7 +241,9 @@ class ConfidentialImages(BaseSDK):
             hook_ctx=HookContext(
                 operation_id="confidential_image_generations_create",
                 oauth2_scopes=[],
-                security_source=None,
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
             ),
             request=req,
             error_status_codes=["400", "401", "4XX", "500", "5XX"],

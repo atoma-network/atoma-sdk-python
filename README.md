@@ -27,6 +27,7 @@ Developer-friendly & type-safe Python SDK specifically catered to leverage *atom
   * [SDK Installation](#sdk-installation)
   * [IDE Support](#ide-support)
   * [SDK Example Usage](#sdk-example-usage)
+  * [Authentication](#authentication)
   * [Available Resources and Operations](#available-resources-and-operations)
   * [Retries](#retries)
   * [Error Handling](#error-handling)
@@ -79,8 +80,11 @@ Generally, the SDK will work well with most IDEs out of the box. However, when u
 ```python
 # Synchronous Example
 from atoma_sdk import AtomaSDK
+import os
 
-with AtomaSDK() as atoma_sdk:
+with AtomaSDK(
+    bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
+) as atoma_sdk:
 
     res = atoma_sdk.health.health()
 
@@ -95,9 +99,12 @@ The same SDK client can also be used to make asychronous requests by importing a
 # Asynchronous Example
 import asyncio
 from atoma_sdk import AtomaSDK
+import os
 
 async def main():
-    async with AtomaSDK() as atoma_sdk:
+    async with AtomaSDK(
+        bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
+    ) as atoma_sdk:
 
         res = await atoma_sdk.health.health_async()
 
@@ -107,6 +114,34 @@ async def main():
 asyncio.run(main())
 ```
 <!-- End SDK Example Usage [usage] -->
+
+<!-- Start Authentication [security] -->
+## Authentication
+
+### Per-Client Security Schemes
+
+This SDK supports the following security scheme globally:
+
+| Name          | Type | Scheme      | Environment Variable   |
+| ------------- | ---- | ----------- | ---------------------- |
+| `bearer_auth` | http | HTTP Bearer | `ATOMASDK_BEARER_AUTH` |
+
+To authenticate with the API the `bearer_auth` parameter must be set when initializing the SDK client instance. For example:
+```python
+from atoma_sdk import AtomaSDK
+import os
+
+with AtomaSDK(
+    bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
+) as atoma_sdk:
+
+    res = atoma_sdk.health.health()
+
+    # Handle response
+    print(res)
+
+```
+<!-- End Authentication [security] -->
 
 <!-- Start Available Resources and Operations [operations] -->
 ## Available Resources and Operations
@@ -163,8 +198,11 @@ To change the default retry strategy for a single API call, simply provide a `Re
 ```python
 from atoma_sdk import AtomaSDK
 from atoma_sdk.utils import BackoffStrategy, RetryConfig
+import os
 
-with AtomaSDK() as atoma_sdk:
+with AtomaSDK(
+    bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
+) as atoma_sdk:
 
     res = atoma_sdk.health.health(,
         RetryConfig("backoff", BackoffStrategy(1, 50, 1.1, 100), False))
@@ -178,9 +216,11 @@ If you'd like to override the default retry strategy for all operations that sup
 ```python
 from atoma_sdk import AtomaSDK
 from atoma_sdk.utils import BackoffStrategy, RetryConfig
+import os
 
 with AtomaSDK(
     retry_config=RetryConfig("backoff", BackoffStrategy(1, 50, 1.1, 100), False),
+    bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
 ) as atoma_sdk:
 
     res = atoma_sdk.health.health()
@@ -215,8 +255,11 @@ When custom error responses are specified for an operation, the SDK may also rai
 
 ```python
 from atoma_sdk import AtomaSDK, models
+import os
 
-with AtomaSDK() as atoma_sdk:
+with AtomaSDK(
+    bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
+) as atoma_sdk:
     res = None
     try:
 
@@ -239,9 +282,11 @@ with AtomaSDK() as atoma_sdk:
 The default server can also be overridden globally by passing a URL to the `server_url: str` optional parameter when initializing the SDK client instance. For example:
 ```python
 from atoma_sdk import AtomaSDK
+import os
 
 with AtomaSDK(
     server_url="http://localhost:8080",
+    bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
 ) as atoma_sdk:
 
     res = atoma_sdk.health.health()

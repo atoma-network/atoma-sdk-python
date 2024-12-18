@@ -30,6 +30,7 @@ from .createimageresponse import CreateImageResponse, CreateImageResponseTypedDi
 from .embeddingobject import EmbeddingObject, EmbeddingObjectTypedDict
 from .embeddingusage import EmbeddingUsage, EmbeddingUsageTypedDict
 from .imagedata import ImageData, ImageDataTypedDict
+from .security import Security, SecurityTypedDict
 
 __all__ = [
     "APIError",
@@ -61,6 +62,8 @@ __all__ = [
     "One2",
     "One2TypedDict",
     "OneTypedDict",
+    "Security",
+    "SecurityTypedDict",
     "Two",
     "Two2",
     "Two2TypedDict",

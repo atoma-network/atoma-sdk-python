@@ -1,7 +1,7 @@
 lockVersion: 2.0.0
 id: abb58176-a92d-43ea-b418-227f4288eed7
 management:
-  docChecksum: c2eb51f271a559131a99e6a65de2a900
+  docChecksum: ad9bed4f457716a5f06e804ad65c09d5
   docVersion: 0.1.0
   speakeasyVersion: 1.455.7
   generationVersion: 2.480.1
@@ -15,7 +15,9 @@ features:
     devContainers: 3.0.0
     envVarSecurityUsage: 0.3.2
     flatRequests: 1.0.1
+    globalSecurity: 3.0.2
     globalSecurityCallbacks: 1.0.0
+    globalSecurityFlattening: 1.0.0
     globalServerURLs: 3.1.0
     methodArguments: 1.0.2
     nameOverrides: 3.0.0
@@ -47,6 +49,7 @@ generatedFiles:
   - docs/models/imagedata.md
   - docs/models/one.md
   - docs/models/one2.md
+  - docs/models/security.md
   - docs/models/two.md
   - docs/models/two2.md
   - docs/models/utils/retryconfig.md
@@ -94,6 +97,7 @@ generatedFiles:
   - src/atoma_sdk/models/embeddingobject.py
   - src/atoma_sdk/models/embeddingusage.py
   - src/atoma_sdk/models/imagedata.py
+  - src/atoma_sdk/models/security.py
   - src/atoma_sdk/models_.py
   - src/atoma_sdk/node_public_address_registration.py
   - src/atoma_sdk/py.typed

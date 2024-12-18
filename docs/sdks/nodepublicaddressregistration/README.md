@@ -44,8 +44,11 @@ Returns `StatusCode::INTERNAL_SERVER_ERROR` if:
 
 ```python
 from atoma_sdk import AtomaSDK
+import os
 
-with AtomaSDK() as atoma_sdk:
+with AtomaSDK(
+    bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
+) as atoma_sdk:
 
     res = atoma_sdk.node_public_address_registration.node_public_address_registration()
 

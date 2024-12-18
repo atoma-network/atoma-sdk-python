@@ -17,7 +17,8 @@ from .metadata import (
 from .queryparams import get_query_params
 from .retries import BackoffStrategy, Retries, retry, retry_async, RetryConfig
 from .requestbodies import serialize_request_body, SerializedRequestBody
-from .security import get_security
+from .security import get_security, get_security_from_env
+
 from .serializers import (
     get_pydantic_model,
     marshal_json,
@@ -60,6 +61,7 @@ __all__ = [
     "get_query_params",
     "get_response_headers",
     "get_security",
+    "get_security_from_env",
     "HeaderMetadata",
     "Logger",
     "marshal_json",

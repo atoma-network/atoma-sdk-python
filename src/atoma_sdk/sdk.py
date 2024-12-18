@@ -5,7 +5,7 @@ from .httpclient import AsyncHttpClient, HttpClient
 from .sdkconfiguration import SDKConfiguration
 from .utils.logger import Logger, get_default_logger
 from .utils.retries import RetryConfig
-from atoma_sdk import utils
+from atoma_sdk import models, utils
 from atoma_sdk._hooks import SDKHooks
 from atoma_sdk.chat import Chat
 from atoma_sdk.confidential_chat import ConfidentialChat
@@ -18,31 +18,32 @@ from atoma_sdk.models_ import Models
 from atoma_sdk.node_public_address_registration import NodePublicAddressRegistration
 from atoma_sdk.types import OptionalNullable, UNSET
 import httpx
-from typing import Dict, Optional
+from typing import Any, Callable, Dict, Optional, Union
 
 
 class AtomaSDK(BaseSDK):
     health: Health
     r"""Health check"""
+    models: Models
+    r"""OpenAI's API models v1 endpoint"""
     node_public_address_registration: NodePublicAddressRegistration
     r"""Node public address registration"""
     chat: Chat
     r"""OpenAI's API chat completions v1 endpoint"""
     confidential_chat: ConfidentialChat
     r"""Atoma's API confidential chat completions v1 endpoint"""
-    confidential_embeddings: ConfidentialEmbeddings
-    r"""Atoma's API confidential embeddings v1 endpoint"""
-    confidential_images: ConfidentialImages
-    r"""Atoma's API confidential images v1 endpoint"""
     embeddings: Embeddings
     r"""OpenAI's API embeddings v1 endpoint"""
+    confidential_embeddings: ConfidentialEmbeddings
+    r"""Atoma's API confidential embeddings v1 endpoint"""
     images: Images
     r"""OpenAI's API images v1 endpoint"""
-    models: Models
-    r"""OpenAI's API models v1 endpoint"""
+    confidential_images: ConfidentialImages
+    r"""Atoma's API confidential images v1 endpoint"""
 
     def __init__(
         self,
+        bearer_auth: Optional[Union[Optional[str], Callable[[], Optional[str]]]] = None,
         server_idx: Optional[int] = None,
         server_url: Optional[str] = None,
         url_params: Optional[Dict[str, str]] = None,
@@ -54,6 +55,7 @@ class AtomaSDK(BaseSDK):
     ) -> None:
         r"""Instantiates the SDK configuring it with the provided parameters.
 
+        :param bearer_auth: The bearer_auth required for authentication
         :param server_idx: The index of the server to use for all methods
         :param server_url: The server URL to use for all methods
         :param url_params: Parameters to optionally template the server URL with
@@ -79,6 +81,12 @@ class AtomaSDK(BaseSDK):
             type(async_client), AsyncHttpClient
         ), "The provided async_client must implement the AsyncHttpClient protocol."
 
+        security: Any = None
+        if callable(bearer_auth):
+            security = lambda: models.Security(bearer_auth=bearer_auth())  # pylint: disable=unnecessary-lambda-assignment
+        else:
+            security = models.Security(bearer_auth=bearer_auth)
+
         if server_url is not None:
             if url_params is not None:
                 server_url = utils.template_url(server_url, url_params)
@@ -88,6 +96,7 @@ class AtomaSDK(BaseSDK):
             SDKConfiguration(
                 client=client,
                 async_client=async_client,
+                security=security,
                 server_url=server_url,
                 server_idx=server_idx,
                 retry_config=retry_config,
@@ -112,16 +121,16 @@ class AtomaSDK(BaseSDK):
 
     def _init_sdks(self):
         self.health = Health(self.sdk_configuration)
+        self.models = Models(self.sdk_configuration)
         self.node_public_address_registration = NodePublicAddressRegistration(
             self.sdk_configuration
         )
         self.chat = Chat(self.sdk_configuration)
         self.confidential_chat = ConfidentialChat(self.sdk_configuration)
-        self.confidential_embeddings = ConfidentialEmbeddings(self.sdk_configuration)
-        self.confidential_images = ConfidentialImages(self.sdk_configuration)
         self.embeddings = Embeddings(self.sdk_configuration)
+        self.confidential_embeddings = ConfidentialEmbeddings(self.sdk_configuration)
         self.images = Images(self.sdk_configuration)
-        self.models = Models(self.sdk_configuration)
+        self.confidential_images = ConfidentialImages(self.sdk_configuration)
 
     def __enter__(self):
         return self

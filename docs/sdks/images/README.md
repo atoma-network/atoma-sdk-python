@@ -41,8 +41,11 @@ validated by middleware before reaching this handler.
 
 ```python
 from atoma_sdk import AtomaSDK
+import os
 
-with AtomaSDK() as atoma_sdk:
+with AtomaSDK(
+    bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
+) as atoma_sdk:
 
     res = atoma_sdk.images.generate(model="Model X", n=447445, prompt="<value>")
 
