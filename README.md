@@ -29,6 +29,7 @@ Developer-friendly & type-safe Python SDK specifically catered to leverage *atom
   * [SDK Example Usage](#sdk-example-usage)
   * [Authentication](#authentication)
   * [Available Resources and Operations](#available-resources-and-operations)
+  * [Server-sent event streaming](#server-sent-event-streaming)
   * [Retries](#retries)
   * [Error Handling](#error-handling)
   * [Server Selection](#server-selection)
@@ -153,6 +154,7 @@ with AtomaSDK(
 ### [chat](docs/sdks/chat/README.md)
 
 * [create](docs/sdks/chat/README.md#create) - Create chat completion
+* [create_stream](docs/sdks/chat/README.md#create_stream)
 
 ### [confidential_chat](docs/sdks/confidentialchat/README.md)
 
@@ -165,6 +167,10 @@ with AtomaSDK(
 ### [confidential_images](docs/sdks/confidentialimages/README.md)
 
 * [generate](docs/sdks/confidentialimages/README.md#generate) - Create confidential image generations
+
+### [confidential_node_public_key_selection](docs/sdks/confidentialnodepublickeyselection/README.md)
+
+* [select_node_public_key](docs/sdks/confidentialnodepublickeyselection/README.md#select_node_public_key) - Handles requests to select a node's public key for confidential compute operations.
 
 ### [embeddings](docs/sdks/embeddings/README.md)
 
@@ -188,6 +194,45 @@ with AtomaSDK(
 
 </details>
 <!-- End Available Resources and Operations [operations] -->
+
+<!-- Start Server-sent event streaming [eventstream] -->
+## Server-sent event streaming
+
+[Server-sent events][mdn-sse] are used to stream content from certain
+operations. These operations will expose the stream as [Generator][generator] that
+can be consumed using a simple `for` loop. The loop will
+terminate when the server no longer has any events to send and closes the
+underlying connection.  
+
+The stream is also a [Context Manager][context-manager] and can be used with the `with` statement and will close the
+underlying connection when the context is exited.
+
+```python
+from atoma_sdk import AtomaSDK
+import os
+
+with AtomaSDK(
+    bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
+) as atoma_sdk:
+
+    res = atoma_sdk.chat.create_stream(messages=[
+        {
+            "content": "<value>",
+            "role": "<value>",
+        },
+    ], model="Impala")
+
+    with res as event_stream:
+        for event in event_stream:
+            # handle event
+            print(event, flush=True)
+
+```
+
+[mdn-sse]: https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events
+[generator]: https://book.pythontips.com/en/latest/generators.html
+[context-manager]: https://book.pythontips.com/en/latest/context_managers.html
+<!-- End Server-sent event streaming [eventstream] -->
 
 <!-- Start Retries [retries] -->
 ## Retries

@@ -4,7 +4,7 @@ from .basesdk import BaseSDK
 from atoma_sdk import models, utils
 from atoma_sdk._hooks import HookContext
 from atoma_sdk.types import OptionalNullable, UNSET
-from atoma_sdk.utils import get_security_from_env
+from atoma_sdk.utils import eventstreaming, get_security_from_env
 from typing import Any, Dict, List, Mapping, Optional, Union
 
 
@@ -29,7 +29,7 @@ class Chat(BaseSDK):
         response_format: Optional[Any] = None,
         seed: OptionalNullable[int] = UNSET,
         stop: OptionalNullable[List[str]] = UNSET,
-        stream: OptionalNullable[bool] = UNSET,
+        stream: OptionalNullable[bool] = False,
         temperature: OptionalNullable[float] = UNSET,
         tool_choice: Optional[Any] = None,
         tools: OptionalNullable[List[Any]] = UNSET,
@@ -78,7 +78,7 @@ class Chat(BaseSDK):
         :param response_format: The format to return the response in
         :param seed: If specified, our system will make a best effort to sample deterministically
         :param stop: Up to 4 sequences where the API will stop generating further tokens
-        :param stream: Whether to stream back partial progress
+        :param stream: Whether to stream back partial progress. Must be false for this request type.
         :param temperature: What sampling temperature to use, between 0 and 2
         :param tool_choice: Controls which (if any) tool the model should use
         :param tools: A list of tools the model may call
@@ -97,7 +97,7 @@ class Chat(BaseSDK):
         if server_url is not None:
             base_url = server_url
 
-        request = models.ChatCompletionRequest(
+        request = models.CreateChatCompletionRequest(
             frequency_penalty=frequency_penalty,
             function_call=function_call,
             functions=functions,
@@ -134,7 +134,7 @@ class Chat(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request, False, False, "json", models.ChatCompletionRequest
+                request, False, False, "json", models.CreateChatCompletionRequest
             ),
             timeout_ms=timeout_ms,
         )
@@ -195,7 +195,7 @@ class Chat(BaseSDK):
         response_format: Optional[Any] = None,
         seed: OptionalNullable[int] = UNSET,
         stop: OptionalNullable[List[str]] = UNSET,
-        stream: OptionalNullable[bool] = UNSET,
+        stream: OptionalNullable[bool] = False,
         temperature: OptionalNullable[float] = UNSET,
         tool_choice: Optional[Any] = None,
         tools: OptionalNullable[List[Any]] = UNSET,
@@ -244,7 +244,7 @@ class Chat(BaseSDK):
         :param response_format: The format to return the response in
         :param seed: If specified, our system will make a best effort to sample deterministically
         :param stop: Up to 4 sequences where the API will stop generating further tokens
-        :param stream: Whether to stream back partial progress
+        :param stream: Whether to stream back partial progress. Must be false for this request type.
         :param temperature: What sampling temperature to use, between 0 and 2
         :param tool_choice: Controls which (if any) tool the model should use
         :param tools: A list of tools the model may call
@@ -263,7 +263,7 @@ class Chat(BaseSDK):
         if server_url is not None:
             base_url = server_url
 
-        request = models.ChatCompletionRequest(
+        request = models.CreateChatCompletionRequest(
             frequency_penalty=frequency_penalty,
             function_call=function_call,
             functions=functions,
@@ -300,7 +300,7 @@ class Chat(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request, False, False, "json", models.ChatCompletionRequest
+                request, False, False, "json", models.CreateChatCompletionRequest
             ),
             timeout_ms=timeout_ms,
         )
@@ -328,6 +328,300 @@ class Chat(BaseSDK):
 
         if utils.match_response(http_res, "200", "application/json"):
             return utils.unmarshal_json(http_res.text, models.ChatCompletionResponse)
+        if utils.match_response(http_res, ["400", "401", "4XX", "500", "5XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise models.APIError(
+                "API error occurred", http_res.status_code, http_res_text, http_res
+            )
+
+        content_type = http_res.headers.get("Content-Type")
+        http_res_text = await utils.stream_to_text_async(http_res)
+        raise models.APIError(
+            f"Unexpected response received (code: {http_res.status_code}, type: {content_type})",
+            http_res.status_code,
+            http_res_text,
+            http_res,
+        )
+
+    def create_stream(
+        self,
+        *,
+        messages: Union[
+            List[models.ChatCompletionMessage],
+            List[models.ChatCompletionMessageTypedDict],
+        ],
+        model: str,
+        frequency_penalty: OptionalNullable[float] = UNSET,
+        function_call: Optional[Any] = None,
+        functions: OptionalNullable[List[Any]] = UNSET,
+        logit_bias: OptionalNullable[Dict[str, float]] = UNSET,
+        max_tokens: OptionalNullable[int] = UNSET,
+        n: OptionalNullable[int] = UNSET,
+        presence_penalty: OptionalNullable[float] = UNSET,
+        response_format: Optional[Any] = None,
+        seed: OptionalNullable[int] = UNSET,
+        stop: OptionalNullable[List[str]] = UNSET,
+        stream: Optional[bool] = True,
+        temperature: OptionalNullable[float] = UNSET,
+        tool_choice: Optional[Any] = None,
+        tools: OptionalNullable[List[Any]] = UNSET,
+        top_p: OptionalNullable[float] = UNSET,
+        user: OptionalNullable[str] = UNSET,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> eventstreaming.EventStream[models.ChatCompletionStreamResponse]:
+        r"""
+        :param messages: A list of messages comprising the conversation so far
+        :param model: ID of the model to use
+        :param frequency_penalty: Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far
+        :param function_call: Controls how the model responds to function calls
+        :param functions: A list of functions the model may generate JSON inputs for
+        :param logit_bias: Modify the likelihood of specified tokens appearing in the completion
+        :param max_tokens: The maximum number of tokens to generate in the chat completion
+        :param n: How many chat completion choices to generate for each input message
+        :param presence_penalty: Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far
+        :param response_format: The format to return the response in
+        :param seed: If specified, our system will make a best effort to sample deterministically
+        :param stop: Up to 4 sequences where the API will stop generating further tokens
+        :param stream: Whether to stream back partial progress. Must be true for this request type.
+        :param temperature: What sampling temperature to use, between 0 and 2
+        :param tool_choice: Controls which (if any) tool the model should use
+        :param tools: A list of tools the model may call
+        :param top_p: An alternative to sampling with temperature
+        :param user: A unique identifier representing your end-user
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+
+        request = models.CreateChatCompletionStreamRequest(
+            frequency_penalty=frequency_penalty,
+            function_call=function_call,
+            functions=functions,
+            logit_bias=logit_bias,
+            max_tokens=max_tokens,
+            messages=utils.get_pydantic_model(
+                messages, List[models.ChatCompletionMessage]
+            ),
+            model=model,
+            n=n,
+            presence_penalty=presence_penalty,
+            response_format=response_format,
+            seed=seed,
+            stop=stop,
+            stream=stream,
+            temperature=temperature,
+            tool_choice=tool_choice,
+            tools=tools,
+            top_p=top_p,
+            user=user,
+        )
+
+        req = self.build_request(
+            method="POST",
+            path="/v1/chat/completions#stream",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=False,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="text/event-stream",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request, False, False, "json", models.CreateChatCompletionStreamRequest
+            ),
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                operation_id="chat_completions_create_stream",
+                oauth2_scopes=[],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["400", "401", "4XX", "500", "5XX"],
+            stream=True,
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "text/event-stream"):
+            return eventstreaming.EventStream(
+                http_res,
+                lambda raw: utils.unmarshal_json(
+                    raw, models.ChatCompletionStreamResponse
+                ),
+            )
+        if utils.match_response(http_res, ["400", "401", "4XX", "500", "5XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise models.APIError(
+                "API error occurred", http_res.status_code, http_res_text, http_res
+            )
+
+        content_type = http_res.headers.get("Content-Type")
+        http_res_text = utils.stream_to_text(http_res)
+        raise models.APIError(
+            f"Unexpected response received (code: {http_res.status_code}, type: {content_type})",
+            http_res.status_code,
+            http_res_text,
+            http_res,
+        )
+
+    async def create_stream_async(
+        self,
+        *,
+        messages: Union[
+            List[models.ChatCompletionMessage],
+            List[models.ChatCompletionMessageTypedDict],
+        ],
+        model: str,
+        frequency_penalty: OptionalNullable[float] = UNSET,
+        function_call: Optional[Any] = None,
+        functions: OptionalNullable[List[Any]] = UNSET,
+        logit_bias: OptionalNullable[Dict[str, float]] = UNSET,
+        max_tokens: OptionalNullable[int] = UNSET,
+        n: OptionalNullable[int] = UNSET,
+        presence_penalty: OptionalNullable[float] = UNSET,
+        response_format: Optional[Any] = None,
+        seed: OptionalNullable[int] = UNSET,
+        stop: OptionalNullable[List[str]] = UNSET,
+        stream: Optional[bool] = True,
+        temperature: OptionalNullable[float] = UNSET,
+        tool_choice: Optional[Any] = None,
+        tools: OptionalNullable[List[Any]] = UNSET,
+        top_p: OptionalNullable[float] = UNSET,
+        user: OptionalNullable[str] = UNSET,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> eventstreaming.EventStreamAsync[models.ChatCompletionStreamResponse]:
+        r"""
+        :param messages: A list of messages comprising the conversation so far
+        :param model: ID of the model to use
+        :param frequency_penalty: Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far
+        :param function_call: Controls how the model responds to function calls
+        :param functions: A list of functions the model may generate JSON inputs for
+        :param logit_bias: Modify the likelihood of specified tokens appearing in the completion
+        :param max_tokens: The maximum number of tokens to generate in the chat completion
+        :param n: How many chat completion choices to generate for each input message
+        :param presence_penalty: Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far
+        :param response_format: The format to return the response in
+        :param seed: If specified, our system will make a best effort to sample deterministically
+        :param stop: Up to 4 sequences where the API will stop generating further tokens
+        :param stream: Whether to stream back partial progress. Must be true for this request type.
+        :param temperature: What sampling temperature to use, between 0 and 2
+        :param tool_choice: Controls which (if any) tool the model should use
+        :param tools: A list of tools the model may call
+        :param top_p: An alternative to sampling with temperature
+        :param user: A unique identifier representing your end-user
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+
+        request = models.CreateChatCompletionStreamRequest(
+            frequency_penalty=frequency_penalty,
+            function_call=function_call,
+            functions=functions,
+            logit_bias=logit_bias,
+            max_tokens=max_tokens,
+            messages=utils.get_pydantic_model(
+                messages, List[models.ChatCompletionMessage]
+            ),
+            model=model,
+            n=n,
+            presence_penalty=presence_penalty,
+            response_format=response_format,
+            seed=seed,
+            stop=stop,
+            stream=stream,
+            temperature=temperature,
+            tool_choice=tool_choice,
+            tools=tools,
+            top_p=top_p,
+            user=user,
+        )
+
+        req = self.build_request_async(
+            method="POST",
+            path="/v1/chat/completions#stream",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=False,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="text/event-stream",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request, False, False, "json", models.CreateChatCompletionStreamRequest
+            ),
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                operation_id="chat_completions_create_stream",
+                oauth2_scopes=[],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["400", "401", "4XX", "500", "5XX"],
+            stream=True,
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "text/event-stream"):
+            return eventstreaming.EventStreamAsync(
+                http_res,
+                lambda raw: utils.unmarshal_json(
+                    raw, models.ChatCompletionStreamResponse
+                ),
+            )
         if utils.match_response(http_res, ["400", "401", "4XX", "500", "5XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise models.APIError(
