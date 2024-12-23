@@ -4,7 +4,7 @@ from .basesdk import BaseSDK
 from atoma_sdk import models, utils
 from atoma_sdk._hooks import HookContext
 from atoma_sdk.types import OptionalNullable, UNSET
-from typing import Any, Dict, List, Mapping, Optional, Union
+from typing import Any, Dict, List, Mapping, Optional, Union, Generator, AsyncGenerator
 
 
 class Chat(BaseSDK):
@@ -38,7 +38,7 @@ class Chat(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.ChatCompletionResponse:
+    ) -> Union[models.ChatCompletionResponse, Generator[models.ChatCompletionChoice, None, None]]:
         r"""Create chat completion
 
         This function processes chat completion requests by determining whether to use streaming
@@ -119,59 +119,70 @@ class Chat(BaseSDK):
             user=user,
         )
 
-        req = self.build_request(
-            method="POST",
-            path="/v1/chat/completions",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=False,
-            request_has_query_params=False,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request, False, False, "json", models.ChatCompletionRequest
-            ),
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = self.do_request(
-            hook_ctx=HookContext(
-                operation_id="chat_completions_create",
-                oauth2_scopes=[],
-                security_source=None,
-            ),
-            request=req,
-            error_status_codes=["400", "401", "4XX", "500", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return utils.unmarshal_json(http_res.text, models.ChatCompletionResponse)
-        if utils.match_response(http_res, ["400", "401", "4XX", "500", "5XX"], "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise models.APIError(
-                "API error occurred", http_res.status_code, http_res_text, http_res
+        if stream:
+            return self.stream_request(
+                hook_ctx=HookContext(
+                    operation_id="chat_completions_create",
+                    oauth2_scopes=[],
+                    security_source=None
+                ),
+                request=request,
+                error_status_codes=["400", "401", "4XX", "500", "5XX"]
+            )
+        else:
+            req = self.build_request(
+                method="POST",
+                path="/v1/chat/completions",
+                base_url=base_url,
+                url_variables=url_variables,
+                request=request,
+                request_body_required=True,
+                request_has_path_params=False,
+                request_has_query_params=False,
+                user_agent_header="user-agent",
+                accept_header_value="application/json",
+                http_headers=http_headers,
+                get_serialized_body=lambda: utils.serialize_request_body(
+                    request, False, False, "json", models.ChatCompletionRequest
+                ),
+                timeout_ms=timeout_ms,
             )
 
-        content_type = http_res.headers.get("Content-Type")
-        http_res_text = utils.stream_to_text(http_res)
-        raise models.APIError(
-            f"Unexpected response received (code: {http_res.status_code}, type: {content_type})",
-            http_res.status_code,
-            http_res_text,
-            http_res,
-        )
+            if retries == UNSET:
+                if self.sdk_configuration.retry_config is not UNSET:
+                    retries = self.sdk_configuration.retry_config
+
+            retry_config = None
+            if isinstance(retries, utils.RetryConfig):
+                retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+            http_res = self.do_request(
+                hook_ctx=HookContext(
+                    operation_id="chat_completions_create",
+                    oauth2_scopes=[],
+                    security_source=None,
+                ),
+                request=req,
+                error_status_codes=["400", "401", "4XX", "500", "5XX"],
+                retry_config=retry_config,
+            )
+
+            if utils.match_response(http_res, "200", "application/json"):
+                return utils.unmarshal_json(http_res.text, models.ChatCompletionResponse)
+            if utils.match_response(http_res, ["400", "401", "4XX", "500", "5XX"], "*"):
+                http_res_text = utils.stream_to_text(http_res)
+                raise models.APIError(
+                    "API error occurred", http_res.status_code, http_res_text, http_res
+                )
+
+            content_type = http_res.headers.get("Content-Type")
+            http_res_text = utils.stream_to_text(http_res)
+            raise models.APIError(
+                f"Unexpected response received (code: {http_res.status_code}, type: {content_type})",
+                http_res.status_code,
+                http_res_text,
+                http_res,
+            )
 
     async def create_async(
         self,
@@ -201,7 +212,7 @@ class Chat(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.ChatCompletionResponse:
+    ) -> Union[models.ChatCompletionResponse, AsyncGenerator[models.ChatCompletionChoice, None]]:
         r"""Create chat completion
 
         This function processes chat completion requests by determining whether to use streaming
@@ -282,56 +293,67 @@ class Chat(BaseSDK):
             user=user,
         )
 
-        req = self.build_request_async(
-            method="POST",
-            path="/v1/chat/completions",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=False,
-            request_has_query_params=False,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request, False, False, "json", models.ChatCompletionRequest
-            ),
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = await self.do_request_async(
-            hook_ctx=HookContext(
-                operation_id="chat_completions_create",
-                oauth2_scopes=[],
-                security_source=None,
-            ),
-            request=req,
-            error_status_codes=["400", "401", "4XX", "500", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return utils.unmarshal_json(http_res.text, models.ChatCompletionResponse)
-        if utils.match_response(http_res, ["400", "401", "4XX", "500", "5XX"], "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise models.APIError(
-                "API error occurred", http_res.status_code, http_res_text, http_res
+        if stream:
+            return self.stream_request_async(
+                hook_ctx=HookContext(
+                    operation_id="chat_completions_create",
+                    oauth2_scopes=[],
+                    security_source=None
+                ),
+                request=request,
+                error_status_codes=["400", "401", "4XX", "500", "5XX"]
+            )
+        else:
+            req = self.build_request_async(
+                method="POST",
+                path="/v1/chat/completions",
+                base_url=base_url,
+                url_variables=url_variables,
+                request=request,
+                request_body_required=True,
+                request_has_path_params=False,
+                request_has_query_params=False,
+                user_agent_header="user-agent",
+                accept_header_value="application/json",
+                http_headers=http_headers,
+                get_serialized_body=lambda: utils.serialize_request_body(
+                    request, False, False, "json", models.ChatCompletionRequest
+                ),
+                timeout_ms=timeout_ms,
             )
 
-        content_type = http_res.headers.get("Content-Type")
-        http_res_text = await utils.stream_to_text_async(http_res)
-        raise models.APIError(
-            f"Unexpected response received (code: {http_res.status_code}, type: {content_type})",
-            http_res.status_code,
-            http_res_text,
-            http_res,
-        )
+            if retries == UNSET:
+                if self.sdk_configuration.retry_config is not UNSET:
+                    retries = self.sdk_configuration.retry_config
+
+            retry_config = None
+            if isinstance(retries, utils.RetryConfig):
+                retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+            http_res = await self.do_request_async(
+                hook_ctx=HookContext(
+                    operation_id="chat_completions_create",
+                    oauth2_scopes=[],
+                    security_source=None,
+                ),
+                request=req,
+                error_status_codes=["400", "401", "4XX", "500", "5XX"],
+                retry_config=retry_config,
+            )
+
+            if utils.match_response(http_res, "200", "application/json"):
+                return utils.unmarshal_json(http_res.text, models.ChatCompletionResponse)
+            if utils.match_response(http_res, ["400", "401", "4XX", "500", "5XX"], "*"):
+                http_res_text = await utils.stream_to_text_async(http_res)
+                raise models.APIError(
+                    "API error occurred", http_res.status_code, http_res_text, http_res
+                )
+
+            content_type = http_res.headers.get("Content-Type")
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise models.APIError(
+                f"Unexpected response received (code: {http_res.status_code}, type: {content_type})",
+                http_res.status_code,
+                http_res_text,
+                http_res,
+            )

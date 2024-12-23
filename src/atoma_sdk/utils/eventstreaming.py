@@ -10,8 +10,10 @@ from typing import (
     Generator,
     AsyncGenerator,
     Tuple,
+    List,
 )
 import httpx
+from dataclasses import dataclass
 
 T = TypeVar("T")
 
@@ -236,3 +238,52 @@ def _peek_sequence(position: int, buffer: bytearray, sequence: bytes):
             return None
 
     return sequence
+
+
+@dataclass
+class SSEvent:
+    data: str
+    event: Optional[str] = None
+    id: Optional[str] = None
+    retry: Optional[int] = None
+
+
+class SSEDecoder:
+    def __init__(self):
+        self.buffer = []
+        self.current_event = SSEvent("")
+    
+    def decode(self, line: str) -> List[SSEvent]:
+        events = []
+        
+        if line.strip() == "":
+            if self.buffer:
+                events.append(self.current_event)
+                self.current_event = SSEvent("")
+                self.buffer = []
+            return events
+            
+        if line.startswith(":"):
+            return events
+            
+        if ":" in line:
+            field, value = line.split(":", 1)
+            value = value.lstrip()
+            
+            if field == "data":
+                if self.current_event.data:
+                    self.current_event.data += "\n" + value
+                else:
+                    self.current_event.data = value
+            elif field == "event":
+                self.current_event.event = value
+            elif field == "id":
+                self.current_event.id = value
+            elif field == "retry":
+                try:
+                    self.current_event.retry = int(value)
+                except ValueError:
+                    pass
+                    
+        self.buffer.append(line)
+        return events

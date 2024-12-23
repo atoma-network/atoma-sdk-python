@@ -9,8 +9,10 @@ from atoma_sdk._hooks import (
 )
 from atoma_sdk.utils import RetryConfig, SerializedRequestBody, get_body_content
 import httpx
-from typing import Callable, List, Mapping, Optional, Tuple
+from typing import Callable, List, Mapping, Optional, Tuple, AsyncGenerator, Generator, Any
 from urllib.parse import parse_qs, urlparse
+import json
+from .utils.eventstreaming import SSEDecoder
 
 
 class BaseSDK:
@@ -352,3 +354,51 @@ class BaseSDK:
             )
 
         return http_res
+
+    def stream_request(
+        self,
+        hook_ctx,
+        request,
+        error_status_codes,
+        retry_config: Optional[Tuple[RetryConfig, List[str]]] = None
+    ) -> Generator[Any, None, None]:
+        """Handle streaming responses using SSE"""
+        http_res = self.do_request(
+            hook_ctx=hook_ctx,
+            request=request, 
+            error_status_codes=error_status_codes,
+            stream=True,
+            retry_config=retry_config
+        )
+        
+        if not utils.match_status_codes(error_status_codes, http_res.status_code):
+            decoder = SSEDecoder()
+            for line in http_res.iter_lines():
+                if line:
+                    for event in decoder.decode(line.decode('utf-8')):
+                        if event.data != '[DONE]':
+                            yield json.loads(event.data)
+                            
+    async def stream_request_async(
+        self,
+        hook_ctx,
+        request, 
+        error_status_codes,
+        retry_config: Optional[Tuple[RetryConfig, List[str]]] = None
+    ) -> AsyncGenerator[Any, None]:
+        """Handle async streaming responses using SSE"""
+        http_res = await self.do_request_async(
+            hook_ctx=hook_ctx,
+            request=request,
+            error_status_codes=error_status_codes, 
+            stream=True,
+            retry_config=retry_config
+        )
+        
+        if not utils.match_status_codes(error_status_codes, http_res.status_code):
+            decoder = SSEDecoder()
+            async for line in http_res.aiter_lines():
+                if line:
+                    for event in decoder.decode(line):
+                        if event.data != '[DONE]':
+                            yield json.loads(event.data)
