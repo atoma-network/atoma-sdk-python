@@ -474,6 +474,7 @@ class Chat(BaseSDK):
                 lambda raw: utils.unmarshal_json(
                     raw, models.ChatCompletionStreamResponse
                 ),
+                sentinel="[DONE]",
             )
         if utils.match_response(http_res, ["400", "401", "4XX", "500", "5XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
@@ -621,6 +622,7 @@ class Chat(BaseSDK):
                 lambda raw: utils.unmarshal_json(
                     raw, models.ChatCompletionStreamResponse
                 ),
+                sentinel="[DONE]",
             )
         if utils.match_response(http_res, ["400", "401", "4XX", "500", "5XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
