@@ -6,10 +6,32 @@ from atoma_sdk._hooks import HookContext
 from atoma_sdk.types import OptionalNullable, UNSET
 from atoma_sdk.utils import get_security_from_env
 from typing import Any, Dict, List, Mapping, Optional, Union
+from .models.encrypted_request import EncryptedRequest
+from .models.encrypted_response import EncryptedResponse
+from .encryption import encrypt_request, decrypt_response, EncryptedData
+from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
+import base64
 
 
 class ConfidentialChat(BaseSDK):
     r"""Atoma's API confidential chat completions v1 endpoint"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._private_key = None
+        self._node_public_key = None
+
+    def _ensure_node_public_key(self):
+        """Ensure we have the node's public key for encryption"""
+        if self._node_public_key is None:
+            # Get the node's public key
+            response = self.sdk_configuration.client.get(
+                "/v1/confidential/node/public-key",
+                headers={"Authorization": f"Bearer {self.sdk_configuration.security.bearer_auth}"}
+            )
+            if response.status_code != 200:
+                raise Exception("Failed to get node public key")
+            self._node_public_key = base64.b64decode(response.json()["node_public_key"])
 
     def create(
         self,
@@ -40,94 +62,11 @@ class ConfidentialChat(BaseSDK):
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
     ) -> models.ChatCompletionResponse:
-        r"""Create confidential chat completion
+        r"""Create confidential chat completion"""
+        # Ensure we have the node's public key
+        self._ensure_node_public_key()
 
-        This handler processes chat completion requests in a confidential manner, providing additional
-        encryption and security measures for sensitive data processing. It supports both streaming and
-        non-streaming responses while maintaining data confidentiality through AEAD encryption and TEE hardware,
-        for full private AI compute.
-
-        # Arguments
-
-        * `metadata` - Extension containing request metadata including:
-        * `endpoint` - The API endpoint being accessed
-        * `node_address` - Address of the inference node
-        * `node_id` - Identifier of the selected node
-        * `num_compute_units` - Available compute units
-        * `selected_stack_small_id` - Stack identifier
-        * `salt` - Optional salt for encryption
-        * `node_x25519_public_key` - Optional public key for encryption
-        * `model_name` - Name of the AI model being used
-        * `state` - Shared application state (ProxyState)
-        * `headers` - HTTP request headers
-        * `payload` - The chat completion request body
-
-        # Returns
-
-        Returns a `Result` containing either:
-        * An HTTP response with the chat completion result
-        * A streaming SSE connection for real-time completions
-        * A `StatusCode` error if the request processing fails
-
-        # Errors
-
-        Returns `StatusCode::BAD_REQUEST` if:
-        * The 'stream' field is missing or invalid in the payload
-
-        Returns `StatusCode::INTERNAL_SERVER_ERROR` if:
-        * The inference service request fails
-        * Response processing encounters errors
-        * State manager updates fail
-
-        # Security Features
-
-        * Utilizes AEAD encryption for request/response data
-        * Supports TEE (Trusted Execution Environment) processing
-        * Implements secure key exchange using X25519
-        * Maintains confidentiality throughout the request lifecycle
-
-        # Example
-
-        ```rust,ignore
-        let response = confidential_chat_completions_handler(
-        Extension(metadata),
-        State(state),
-        headers,
-        Json(payload)
-        ).await?;
-        ```
-
-        :param messages: A list of messages comprising the conversation so far
-        :param model: ID of the model to use
-        :param frequency_penalty: Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far
-        :param function_call: Controls how the model responds to function calls
-        :param functions: A list of functions the model may generate JSON inputs for
-        :param logit_bias: Modify the likelihood of specified tokens appearing in the completion
-        :param max_tokens: The maximum number of tokens to generate in the chat completion
-        :param n: How many chat completion choices to generate for each input message
-        :param presence_penalty: Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far
-        :param response_format: The format to return the response in
-        :param seed: If specified, our system will make a best effort to sample deterministically
-        :param stop: Up to 4 sequences where the API will stop generating further tokens
-        :param stream: Whether to stream back partial progress
-        :param temperature: What sampling temperature to use, between 0 and 2
-        :param tool_choice: Controls which (if any) tool the model should use
-        :param tools: A list of tools the model may call
-        :param top_p: An alternative to sampling with temperature
-        :param user: A unique identifier representing your end-user
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-
+        # Create the request object
         request = models.ChatCompletionRequest(
             frequency_penalty=frequency_penalty,
             function_call=function_call,
@@ -151,12 +90,28 @@ class ConfidentialChat(BaseSDK):
             user=user,
         )
 
+        # Convert request to dict for encryption
+        request_dict = request.dict(exclude_unset=True)
+
+        # Encrypt the request
+        encrypted_data = encrypt_request(request_dict, self._node_public_key)
+        self._private_key = encrypted_data.private_key  # Store for decryption
+
+        # Create encrypted request
+        encrypted_request = EncryptedRequest(
+            ciphertext=encrypted_data.ciphertext,
+            salt=encrypted_data.salt,
+            nonce=encrypted_data.nonce,
+            client_dh_public_key=encrypted_data.client_dh_public_key,
+            plaintext_body_hash=encrypted_data.plaintext_body_hash
+        )
+
+        # Build the request
         req = self.build_request(
             method="POST",
             path="/v1/confidential/chat/completions",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
+            base_url=server_url,
+            request=encrypted_request.to_dict(),
             request_body_required=True,
             request_has_path_params=False,
             request_has_query_params=True,
@@ -164,9 +119,6 @@ class ConfidentialChat(BaseSDK):
             accept_header_value="application/json",
             http_headers=http_headers,
             security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request, False, False, "json", models.ChatCompletionRequest
-            ),
             timeout_ms=timeout_ms,
         )
 
@@ -192,7 +144,25 @@ class ConfidentialChat(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return utils.unmarshal_json(http_res.text, models.ChatCompletionResponse)
+            # Parse encrypted response
+            encrypted_response = EncryptedResponse.from_dict(utils.unmarshal_json(http_res.text, dict))
+            
+            # Convert to EncryptedData for decryption
+            encrypted_data = EncryptedData(
+                ciphertext=encrypted_response.ciphertext,
+                salt=encrypted_response.salt,
+                nonce=encrypted_response.nonce,
+                client_dh_public_key=encrypted_data.client_dh_public_key,
+                plaintext_body_hash=encrypted_response.plaintext_body_hash,
+                node_dh_public_key=encrypted_response.node_dh_public_key
+            )
+            
+            # Decrypt response
+            decrypted_response = decrypt_response(encrypted_data, self._private_key)
+            
+            # Convert to ChatCompletionResponse
+            return models.ChatCompletionResponse(**decrypted_response)
+
         if utils.match_response(http_res, ["400", "401", "4XX", "500", "5XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise models.APIError(
