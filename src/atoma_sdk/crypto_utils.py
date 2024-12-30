@@ -48,10 +48,9 @@ def calculate_hash(data: bytes) -> bytes:
     except Exception as e:
         raise ValueError(f"Failed to calculate hash: {str(e)}")
 
-def encrypt_message(sdk: BaseSDK, chat_completions_request_body: BaseModel, model: str) -> EncryptedMessage:
+def encrypt_message(sdk: BaseSDK, private_key: X25519PrivateKey, chat_completions_request_body: BaseModel, model: str) -> EncryptedMessage:
     # Generate our private key
     try:
-        private_key = X25519PrivateKey.generate()
         public_key = private_key.public_key()
     except Exception as e:
         raise ValueError(f"Failed to generate key pair: {str(e)}")
@@ -91,3 +90,33 @@ def encrypt_message(sdk: BaseSDK, chat_completions_request_body: BaseModel, mode
         )
     except Exception as e:
         raise ValueError(f"Failed to encrypt message: {str(e)}")
+
+def decrypt_message(private_key: X25519PrivateKey, encrypted_message: DecryptedMessage) -> bytes:
+    try:
+        # Decode base64 values
+        ciphertext = base64.b64decode(encrypted_message.ciphertext)
+        node_public_key = base64.b64decode(encrypted_message.node_dh_public_key)
+        nonce = base64.b64decode(encrypted_message.nonce)
+        salt = base64.b64decode(encrypted_message.salt)
+        expected_hash = base64.b64decode(encrypted_message.plaintext_body_hash)
+        
+        # Load node's public key and create shared secret
+        node_public_key = X25519PublicKey.from_public_bytes(node_public_key)
+        shared_secret = private_key.exchange(node_public_key)
+        
+        # Derive encryption key
+        encryption_key = derive_key(shared_secret, salt)
+        cipher = AESGCM(encryption_key)
+        
+        # Decrypt the message
+        plaintext = cipher.decrypt(nonce, ciphertext, None)
+        
+        # Verify hash
+        actual_hash = calculate_hash(plaintext)
+        if not secrets.compare_digest(actual_hash, expected_hash):
+            raise ValueError("Message hash verification failed")
+            
+        return plaintext
+        
+    except Exception as e:
+        raise ValueError(f"Failed to decrypt message: {str(e)}")

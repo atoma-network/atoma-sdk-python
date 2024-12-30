@@ -110,8 +110,10 @@ class ConfidentialChat(BaseSDK):
                 user=user,
             )
 
+            private_key = X25519PrivateKey.generate()
+
             # Encrypt the message
-            encrypted_message = crypto_utils.encrypt_message(chat_completions_request_body, self.confidential_node_public_key_selection, model)
+            encrypted_message = crypto_utils.encrypt_message(sdk=self, private_key=private_key, chat_completions_request_body=chat_completions_request_body, model=model)
 
         except Exception as e:
             raise models.APIError(
@@ -276,8 +278,10 @@ class ConfidentialChat(BaseSDK):
                 user=user,
             )
 
+            private_key = X25519PrivateKey.generate()
+
             # Encrypt the message
-            encrypted_message = crypto_utils.encrypt_message(chat_completions_request_body, self.confidential_node_public_key_selection, model)
+            encrypted_message = crypto_utils.encrypt_message(sdk=self, private_key=private_key, chat_completions_request_body=chat_completions_request_body, model=model)
 
         except Exception as e:
             raise models.APIError(
