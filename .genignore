@@ -1,6 +1,2 @@
 # endpoints
 src/atoma_sdk/confidential_chat.py
-
-# models
-src/atoma_sdk/models/confidentialchatcompletionrequest.py
-src/atoma_sdk/models/confidentialchatcompletionresponse.py
