@@ -5,7 +5,7 @@ from atoma_sdk import models, utils
 from atoma_sdk._hooks import HookContext
 from atoma_sdk.types import OptionalNullable, UNSET
 from atoma_sdk.utils import get_security_from_env
-from typing import Any, Dict, List, Mapping, Optional, Union
+from typing import Mapping, Optional
 
 
 class ConfidentialChat(BaseSDK):
@@ -14,32 +14,16 @@ class ConfidentialChat(BaseSDK):
     def create(
         self,
         *,
-        messages: Union[
-            List[models.ChatCompletionMessage],
-            List[models.ChatCompletionMessageTypedDict],
-        ],
-        model: str,
-        frequency_penalty: OptionalNullable[float] = UNSET,
-        function_call: Optional[Any] = None,
-        functions: OptionalNullable[List[Any]] = UNSET,
-        logit_bias: OptionalNullable[Dict[str, float]] = UNSET,
-        max_tokens: OptionalNullable[int] = UNSET,
-        n: OptionalNullable[int] = UNSET,
-        presence_penalty: OptionalNullable[float] = UNSET,
-        response_format: Optional[Any] = None,
-        seed: OptionalNullable[int] = UNSET,
-        stop: OptionalNullable[List[str]] = UNSET,
-        stream: OptionalNullable[bool] = UNSET,
-        temperature: OptionalNullable[float] = UNSET,
-        tool_choice: Optional[Any] = None,
-        tools: OptionalNullable[List[Any]] = UNSET,
-        top_p: OptionalNullable[float] = UNSET,
-        user: OptionalNullable[str] = UNSET,
+        ciphertext: str,
+        client_dh_public_key: str,
+        nonce: str,
+        plaintext_body_hash: str,
+        salt: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.ChatCompletionResponse:
+    ) -> models.ConfidentialChatCompletionResponse:
         r"""Create confidential chat completion
 
         This handler processes chat completion requests in a confidential manner, providing additional
@@ -97,24 +81,11 @@ class ConfidentialChat(BaseSDK):
         ).await?;
         ```
 
-        :param messages: A list of messages comprising the conversation so far
-        :param model: ID of the model to use
-        :param frequency_penalty: Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far
-        :param function_call: Controls how the model responds to function calls
-        :param functions: A list of functions the model may generate JSON inputs for
-        :param logit_bias: Modify the likelihood of specified tokens appearing in the completion
-        :param max_tokens: The maximum number of tokens to generate in the chat completion
-        :param n: How many chat completion choices to generate for each input message
-        :param presence_penalty: Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far
-        :param response_format: The format to return the response in
-        :param seed: If specified, our system will make a best effort to sample deterministically
-        :param stop: Up to 4 sequences where the API will stop generating further tokens
-        :param stream: Whether to stream back partial progress
-        :param temperature: What sampling temperature to use, between 0 and 2
-        :param tool_choice: Controls which (if any) tool the model should use
-        :param tools: A list of tools the model may call
-        :param top_p: An alternative to sampling with temperature
-        :param user: A unique identifier representing your end-user
+        :param ciphertext: The encrypted CreateChatCompletionRequest
+        :param client_dh_public_key: Client's DH public key for key exchange
+        :param nonce: Nonce used for encryption
+        :param plaintext_body_hash: Hash of the plaintext body for verification
+        :param salt: Salt used for encryption
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -128,27 +99,12 @@ class ConfidentialChat(BaseSDK):
         if server_url is not None:
             base_url = server_url
 
-        request = models.ChatCompletionRequest(
-            frequency_penalty=frequency_penalty,
-            function_call=function_call,
-            functions=functions,
-            logit_bias=logit_bias,
-            max_tokens=max_tokens,
-            messages=utils.get_pydantic_model(
-                messages, List[models.ChatCompletionMessage]
-            ),
-            model=model,
-            n=n,
-            presence_penalty=presence_penalty,
-            response_format=response_format,
-            seed=seed,
-            stop=stop,
-            stream=stream,
-            temperature=temperature,
-            tool_choice=tool_choice,
-            tools=tools,
-            top_p=top_p,
-            user=user,
+        request = models.ConfidentialChatCompletionRequest(
+            ciphertext=ciphertext,
+            client_dh_public_key=client_dh_public_key,
+            nonce=nonce,
+            plaintext_body_hash=plaintext_body_hash,
+            salt=salt,
         )
 
         req = self.build_request(
@@ -165,7 +121,7 @@ class ConfidentialChat(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request, False, False, "json", models.ChatCompletionRequest
+                request, False, False, "json", models.ConfidentialChatCompletionRequest
             ),
             timeout_ms=timeout_ms,
         )
@@ -192,7 +148,9 @@ class ConfidentialChat(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return utils.unmarshal_json(http_res.text, models.ChatCompletionResponse)
+            return utils.unmarshal_json(
+                http_res.text, models.ConfidentialChatCompletionResponse
+            )
         if utils.match_response(http_res, ["400", "401", "4XX", "500", "5XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise models.APIError(
@@ -211,32 +169,16 @@ class ConfidentialChat(BaseSDK):
     async def create_async(
         self,
         *,
-        messages: Union[
-            List[models.ChatCompletionMessage],
-            List[models.ChatCompletionMessageTypedDict],
-        ],
-        model: str,
-        frequency_penalty: OptionalNullable[float] = UNSET,
-        function_call: Optional[Any] = None,
-        functions: OptionalNullable[List[Any]] = UNSET,
-        logit_bias: OptionalNullable[Dict[str, float]] = UNSET,
-        max_tokens: OptionalNullable[int] = UNSET,
-        n: OptionalNullable[int] = UNSET,
-        presence_penalty: OptionalNullable[float] = UNSET,
-        response_format: Optional[Any] = None,
-        seed: OptionalNullable[int] = UNSET,
-        stop: OptionalNullable[List[str]] = UNSET,
-        stream: OptionalNullable[bool] = UNSET,
-        temperature: OptionalNullable[float] = UNSET,
-        tool_choice: Optional[Any] = None,
-        tools: OptionalNullable[List[Any]] = UNSET,
-        top_p: OptionalNullable[float] = UNSET,
-        user: OptionalNullable[str] = UNSET,
+        ciphertext: str,
+        client_dh_public_key: str,
+        nonce: str,
+        plaintext_body_hash: str,
+        salt: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.ChatCompletionResponse:
+    ) -> models.ConfidentialChatCompletionResponse:
         r"""Create confidential chat completion
 
         This handler processes chat completion requests in a confidential manner, providing additional
@@ -294,24 +236,11 @@ class ConfidentialChat(BaseSDK):
         ).await?;
         ```
 
-        :param messages: A list of messages comprising the conversation so far
-        :param model: ID of the model to use
-        :param frequency_penalty: Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far
-        :param function_call: Controls how the model responds to function calls
-        :param functions: A list of functions the model may generate JSON inputs for
-        :param logit_bias: Modify the likelihood of specified tokens appearing in the completion
-        :param max_tokens: The maximum number of tokens to generate in the chat completion
-        :param n: How many chat completion choices to generate for each input message
-        :param presence_penalty: Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far
-        :param response_format: The format to return the response in
-        :param seed: If specified, our system will make a best effort to sample deterministically
-        :param stop: Up to 4 sequences where the API will stop generating further tokens
-        :param stream: Whether to stream back partial progress
-        :param temperature: What sampling temperature to use, between 0 and 2
-        :param tool_choice: Controls which (if any) tool the model should use
-        :param tools: A list of tools the model may call
-        :param top_p: An alternative to sampling with temperature
-        :param user: A unique identifier representing your end-user
+        :param ciphertext: The encrypted CreateChatCompletionRequest
+        :param client_dh_public_key: Client's DH public key for key exchange
+        :param nonce: Nonce used for encryption
+        :param plaintext_body_hash: Hash of the plaintext body for verification
+        :param salt: Salt used for encryption
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -325,27 +254,12 @@ class ConfidentialChat(BaseSDK):
         if server_url is not None:
             base_url = server_url
 
-        request = models.ChatCompletionRequest(
-            frequency_penalty=frequency_penalty,
-            function_call=function_call,
-            functions=functions,
-            logit_bias=logit_bias,
-            max_tokens=max_tokens,
-            messages=utils.get_pydantic_model(
-                messages, List[models.ChatCompletionMessage]
-            ),
-            model=model,
-            n=n,
-            presence_penalty=presence_penalty,
-            response_format=response_format,
-            seed=seed,
-            stop=stop,
-            stream=stream,
-            temperature=temperature,
-            tool_choice=tool_choice,
-            tools=tools,
-            top_p=top_p,
-            user=user,
+        request = models.ConfidentialChatCompletionRequest(
+            ciphertext=ciphertext,
+            client_dh_public_key=client_dh_public_key,
+            nonce=nonce,
+            plaintext_body_hash=plaintext_body_hash,
+            salt=salt,
         )
 
         req = self.build_request_async(
@@ -362,7 +276,7 @@ class ConfidentialChat(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request, False, False, "json", models.ChatCompletionRequest
+                request, False, False, "json", models.ConfidentialChatCompletionRequest
             ),
             timeout_ms=timeout_ms,
         )
@@ -389,7 +303,9 @@ class ConfidentialChat(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return utils.unmarshal_json(http_res.text, models.ChatCompletionResponse)
+            return utils.unmarshal_json(
+                http_res.text, models.ConfidentialChatCompletionResponse
+            )
         if utils.match_response(http_res, ["400", "401", "4XX", "500", "5XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise models.APIError(
