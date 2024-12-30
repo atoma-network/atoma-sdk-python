@@ -111,7 +111,7 @@ class ConfidentialChat(BaseSDK):
             )
 
             # Encrypt the message
-            ciphertext, client_dh_public_key, nonce, plaintext_body_hash, salt = crypto_utils.encrypt_message(chat_completions_request_body, self.confidential_node_public_key_selection, model)
+            encrypted_message = crypto_utils.encrypt_message(chat_completions_request_body, self.confidential_node_public_key_selection, model)
 
         except Exception as e:
             raise models.APIError(
@@ -122,13 +122,7 @@ class ConfidentialChat(BaseSDK):
             )
         ##################################################################################################
 
-        request = models.ConfidentialChatCompletionRequest(
-            ciphertext=ciphertext,
-            client_dh_public_key=client_dh_public_key,
-            nonce=nonce,
-            plaintext_body_hash=plaintext_body_hash,
-            salt=salt,
-        )
+        request = models.ConfidentialChatCompletionRequest(**encrypted_message.model_dump())
 
         req = self.build_request(
             method="POST",
@@ -283,7 +277,7 @@ class ConfidentialChat(BaseSDK):
             )
 
             # Encrypt the message
-            ciphertext, client_dh_public_key, nonce, plaintext_body_hash, salt = crypto_utils.encrypt_message(chat_completions_request_body, self.confidential_node_public_key_selection, model)
+            encrypted_message = crypto_utils.encrypt_message(chat_completions_request_body, self.confidential_node_public_key_selection, model)
 
         except Exception as e:
             raise models.APIError(
@@ -294,13 +288,7 @@ class ConfidentialChat(BaseSDK):
             )
         #########################################################################################################
 
-        request = models.ConfidentialChatCompletionRequest(
-            ciphertext=ciphertext,
-            client_dh_public_key=client_dh_public_key,
-            nonce=nonce,
-            plaintext_body_hash=plaintext_body_hash,
-            salt=salt,
-        )
+        request = models.ConfidentialChatCompletionRequest(**encrypted_message.model_dump())
 
         req = self.build_request_async(
             method="POST",

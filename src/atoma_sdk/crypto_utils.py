@@ -11,6 +11,22 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 import secrets
+import base64
+
+
+class EncryptedMessage(BaseModel):
+    ciphertext: str             # request body encrypted with node's public key, base64 encoded
+    client_dh_public_key: str   # our public key, base64 encoded
+    nonce: str                  # random nonce, base64 encoded
+    plaintext_body_hash: str    # hash of the request body, base64 encoded
+    salt: str                   # random salt, base64 encoded
+
+class DecryptedMessage(BaseModel):
+    ciphertext: str             # request body encrypted with node's public key, base64 encoded
+    node_dh_public_key: str     # node's public key, base64 encoded
+    nonce: str                  # random nonce, base64 encoded
+    plaintext_body_hash: str    # hash of the request body, base64 encoded
+    salt: str                   # random salt, base64 encoded
 
 def derive_key(shared_secret: bytes, salt: bytes) -> bytes:
     try:
@@ -32,7 +48,7 @@ def calculate_hash(data: bytes) -> bytes:
     except Exception as e:
         raise ValueError(f"Failed to calculate hash: {str(e)}")
 
-def encrypt_message(sdk: BaseSDK, chat_completions_request_body: BaseModel, model: str):
+def encrypt_message(sdk: BaseSDK, chat_completions_request_body: BaseModel, model: str) -> EncryptedMessage:
     # Generate our private key
     try:
         private_key = X25519PrivateKey.generate()
@@ -64,7 +80,14 @@ def encrypt_message(sdk: BaseSDK, chat_completions_request_body: BaseModel, mode
         message = chat_completions_request_body.model_dump_json().encode('utf-8')
         plaintext_body_hash = calculate_hash(message)
         ciphertext = cipher.encrypt(nonce, message, None)
+        
+        # Convert binary data to base64 strings
+        return EncryptedMessage(
+            ciphertext=base64.b64encode(ciphertext).decode('utf-8'),
+            client_dh_public_key=base64.b64encode(public_key.public_bytes()).decode('utf-8'),
+            nonce=base64.b64encode(nonce).decode('utf-8'),
+            plaintext_body_hash=base64.b64encode(plaintext_body_hash).decode('utf-8'),
+            salt=base64.b64encode(salt).decode('utf-8')
+        )
     except Exception as e:
         raise ValueError(f"Failed to encrypt message: {str(e)}")
-    
-    return ciphertext, public_key, nonce, plaintext_body_hash, salt
