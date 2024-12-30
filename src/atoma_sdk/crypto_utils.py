@@ -7,19 +7,8 @@ from cryptography.hazmat.primitives import serialization
 import secrets
 import base64
 
-class EncryptedMessage(BaseModel):
-    ciphertext: str             # request body encrypted with node's public key, base64 encoded
-    client_dh_public_key: str   # our public key, base64 encoded
-    nonce: str                  # random nonce, base64 encoded
-    plaintext_body_hash: str    # hash of the request body, base64 encoded
-    salt: str                   # random salt, base64 encoded
-
-class DecryptedMessage(BaseModel):
-    ciphertext: str             # request body encrypted with node's public key, base64 encoded
-    node_dh_public_key: str     # node's public key, base64 encoded
-    nonce: str                  # random nonce, base64 encoded
-    plaintext_body_hash: str    # hash of the request body, base64 encoded
-    salt: str                   # random salt, base64 encoded
+from atoma_sdk.models.confidentialchatcompletionrequest import ConfidentialChatCompletionRequest
+from atoma_sdk.models.confidentialchatcompletionresponse import ConfidentialChatCompletionResponse          # random salt, base64 encoded
 
 def derive_key(shared_secret: bytes, salt: bytes) -> bytes:
     try:
@@ -40,7 +29,7 @@ def calculate_hash(data: bytes) -> bytes:
         return digest.finalize()
     except Exception as e:
         raise ValueError(f"Failed to calculate hash: {str(e)}") from e
-def encrypt_message(sdk, private_key: X25519PrivateKey, chat_completions_request_body: BaseModel, model: str) -> EncryptedMessage:
+def encrypt_message(sdk, private_key: X25519PrivateKey, chat_completions_request_body: BaseModel, model: str) -> ConfidentialChatCompletionRequest:
     # Generate our private key
     try:
         public_key = private_key.public_key()
@@ -53,6 +42,7 @@ def encrypt_message(sdk, private_key: X25519PrivateKey, chat_completions_request
         if not res or not res.public_key:
             raise ValueError("Failed to retrieve node public key")
         public_key_node = res.public_key
+        stack_small_id = res.stack_small_id
     except Exception as e:
         raise ValueError(f"Failed to get node public key: {str(e)}") from e
 
@@ -73,7 +63,7 @@ def encrypt_message(sdk, private_key: X25519PrivateKey, chat_completions_request
         ciphertext = cipher.encrypt(nonce, message, None)
         
         # Convert binary data to base64 strings
-        return EncryptedMessage(
+        return ConfidentialChatCompletionRequest(
             ciphertext=base64.b64encode(ciphertext).decode('utf-8'),
             client_dh_public_key=base64.b64encode(public_key.public_bytes(
                 encoding=serialization.Encoding.Raw,
@@ -81,12 +71,15 @@ def encrypt_message(sdk, private_key: X25519PrivateKey, chat_completions_request
             )).decode('utf-8'),
             nonce=base64.b64encode(nonce).decode('utf-8'),
             plaintext_body_hash=base64.b64encode(plaintext_body_hash).decode('utf-8'),
-            salt=base64.b64encode(salt).decode('utf-8')
+            salt=base64.b64encode(salt).decode('utf-8'),
+            stack_small_id=stack_small_id,
+            stream=chat_completions_request_body.stream,
+            max_tokens=chat_completions_request_body.max_tokens
         )
     except Exception as e:
         raise ValueError(f"Failed to encrypt message: {str(e)}") from e
 
-def decrypt_message(private_key: X25519PrivateKey, encrypted_message: DecryptedMessage) -> bytes:
+def decrypt_message(private_key: X25519PrivateKey, encrypted_message: ConfidentialChatCompletionResponse) -> bytes:
     try:
         # Decode base64 values
         ciphertext = base64.b64decode(encrypted_message.ciphertext)
