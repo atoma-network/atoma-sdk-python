@@ -76,7 +76,7 @@ with AtomaSDK(
     bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
 ) as atoma_sdk:
 
-    res = atoma_sdk.confidential_chat.create(ciphertext="<value>", client_dh_public_key="<value>", nonce="<value>", plaintext_body_hash="<value>", salt="<value>")
+    res = atoma_sdk.confidential_chat.create(ciphertext="<value>", client_dh_public_key="<value>", nonce="<value>", plaintext_body_hash="<value>", salt="<value>", stack_small_id=486589)
 
     # Handle response
     print(res)
@@ -92,6 +92,9 @@ with AtomaSDK(
 | `nonce`                                                             | *str*                                                               | :heavy_check_mark:                                                  | Nonce used for encryption                                           |
 | `plaintext_body_hash`                                               | *str*                                                               | :heavy_check_mark:                                                  | Hash of the plaintext body for verification                         |
 | `salt`                                                              | *str*                                                               | :heavy_check_mark:                                                  | Salt used for encryption                                            |
+| `stack_small_id`                                                    | *int*                                                               | :heavy_check_mark:                                                  | The small ID of the stack                                           |
+| `max_tokens`                                                        | *OptionalNullable[int]*                                             | :heavy_minus_sign:                                                  | The maximum number of tokens to generate                            |
+| `stream`                                                            | *OptionalNullable[bool]*                                            | :heavy_minus_sign:                                                  | Whether to stream back partial progress                             |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
 ### Response
