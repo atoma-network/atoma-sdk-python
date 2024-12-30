@@ -84,81 +84,92 @@ class ConfidentialChat(BaseSDK):
         if server_url is not None:
             base_url = server_url
 
-        # TODO: Add error handling
         ################## Our code starts here #########################################################
-
-        chat_completions_request_body = models.CreateChatCompletionRequest(
-            frequency_penalty=frequency_penalty,
-            function_call=function_call,
-            functions=functions,
-            logit_bias=logit_bias,
-            max_tokens=max_tokens,
-            messages=utils.get_pydantic_model(
-                messages, List[models.ChatCompletionMessage]
-            ),
-            model=model,
-            n=n,
-            presence_penalty=presence_penalty,
-            response_format=response_format,
-            seed=seed,
-            stop=stop,
-            stream=stream,
-            temperature=temperature,
-            tool_choice=tool_choice,
-            tools=tools,
-            top_p=top_p,
-            user=user,
-        )
-
-        def derive_key(shared_secret: bytes, salt: bytes) -> bytes:
-            # Use HKDF to derive a key from the shared secret
-            hkdf = HKDF(
-                algorithm=hashes.SHA256(),
-                length=32,
-                salt=salt,
-                info=b"encryption-key",
+        try:
+            chat_completions_request_body = models.CreateChatCompletionRequest(
+                frequency_penalty=frequency_penalty,
+                function_call=function_call,
+                functions=functions,
+                logit_bias=logit_bias,
+                max_tokens=max_tokens,
+                messages=utils.get_pydantic_model(
+                    messages, List[models.ChatCompletionMessage]
+                ),
+                model=model,
+                n=n,
+                presence_penalty=presence_penalty,
+                response_format=response_format,
+                seed=seed,
+                stop=stop,
+                stream=stream,
+                temperature=temperature,
+                tool_choice=tool_choice,
+                tools=tools,
+                top_p=top_p,
+                user=user,
             )
-            return hkdf.derive(shared_secret)
-        
-        def calculate_hash(data: bytes) -> bytes:
-            digest = hashes.Hash(hashes.SHA256())
-            digest.update(data)
-            return digest.finalize()
 
-        # Generate our private key
-        private_key = X25519PrivateKey.generate()
-    
-        # Get our public key
-        public_key = private_key.public_key()
-        
-        # Get node's public key
-        res = self.confidential_node_public_key_selection.select_node_public_key(model_name=model)
-        public_key_node = res.public_key
+            def derive_key(shared_secret: bytes, salt: bytes) -> bytes:
+                try:
+                    hkdf = HKDF(
+                        algorithm=hashes.SHA256(),
+                        length=32,
+                        salt=salt,
+                        info=b"encryption-key",
+                    )
+                    return hkdf.derive(shared_secret)
+                except Exception as e:
+                    raise ValueError(f"Failed to derive encryption key: {str(e)}")
+            
+            def calculate_hash(data: bytes) -> bytes:
+                try:
+                    digest = hashes.Hash(hashes.SHA256())
+                    digest.update(data)
+                    return digest.finalize()
+                except Exception as e:
+                    raise ValueError(f"Failed to calculate hash: {str(e)}")
 
-        # Generate a random 24-byte salt
-        salt = secrets.token_bytes(24)
-        
-        # Create shared secret using Diffie-Hellman
-        shared_secret = private_key.exchange(public_key_node)
-        
-        # Derive the encryption key using HKDF
-        encryption_key = derive_key(shared_secret, salt)
-        
-        # Create AES-GCM cipher with the derived key
-        cipher = AESGCM(encryption_key)
-        
-        # Generate a random 12-byte nonce
-        nonce = secrets.token_bytes(12)
-        
-        # Serialize the chat completions request body to JSON
-        message = chat_completions_request_body.model_dump_json().encode('utf-8')
+            # Generate our private key
+            try:
+                private_key = X25519PrivateKey.generate()
+                public_key = private_key.public_key()
+            except Exception as e:
+                raise ValueError(f"Failed to generate key pair: {str(e)}")
+            
+            # Get node's public key
+            try:
+                res = self.confidential_node_public_key_selection.select_node_public_key(model_name=model)
+                if not res or not res.public_key:
+                    raise ValueError("Failed to retrieve node public key")
+                public_key_node = res.public_key
+            except Exception as e:
+                raise ValueError(f"Failed to get node public key: {str(e)}")
 
-        # Calculate message hash
-        plaintext_body_hash = calculate_hash(message)
+            # Generate a random salt and create shared secret
+            try:
+                salt = secrets.token_bytes(24)
+                shared_secret = private_key.exchange(public_key_node)
+                encryption_key = derive_key(shared_secret, salt)
+                cipher = AESGCM(encryption_key)
+                nonce = secrets.token_bytes(12)
+            except Exception as e:
+                raise ValueError(f"Failed to setup encryption: {str(e)}")
+            
+            # Encrypt the message
+            try:
+                message = chat_completions_request_body.model_dump_json().encode('utf-8')
+                plaintext_body_hash = calculate_hash(message)
+                ciphertext = cipher.encrypt(nonce, message, None)
+            except Exception as e:
+                raise ValueError(f"Failed to encrypt message: {str(e)}")
 
-        # Encrypt the message
-        ciphertext = cipher.encrypt(nonce, message, None)
-        
+        except Exception as e:
+            raise models.APIError(
+                f"Failed to prepare confidential chat request: {str(e)}",
+                500,
+                str(e),
+                None
+            )
         ##################################################################################################
 
         request = models.ConfidentialChatCompletionRequest(
