@@ -7,8 +7,8 @@ from cryptography.hazmat.primitives import serialization
 import secrets
 import base64
 
-from atoma_sdk.models.confidentialchatcompletionrequest import ConfidentialChatCompletionRequest
-from atoma_sdk.models.confidentialchatcompletionresponse import ConfidentialChatCompletionResponse          # random salt, base64 encoded
+from atoma_sdk.models.confidentialcomputerequest import ConfidentialComputeRequest
+from atoma_sdk.models.confidentialcomputeresponse import ConfidentialComputeResponse       # random salt, base64 encoded
 
 def derive_key(shared_secret: bytes, salt: bytes) -> bytes:
     try:
@@ -29,7 +29,7 @@ def calculate_hash(data: bytes) -> bytes:
         return digest.finalize()
     except Exception as e:
         raise ValueError(f"Failed to calculate hash: {str(e)}") from e
-def encrypt_message(sdk, private_key: X25519PrivateKey, chat_completions_request_body: BaseModel, model: str) -> ConfidentialChatCompletionRequest:
+def encrypt_message(sdk, private_key: X25519PrivateKey, request_body: BaseModel, model: str) -> ConfidentialComputeRequest:
     # Generate our private key
     try:
         public_key = private_key.public_key()
@@ -56,16 +56,40 @@ def encrypt_message(sdk, private_key: X25519PrivateKey, chat_completions_request
     except Exception as e:
         raise ValueError(f"Failed to setup encryption: {str(e)}") from e
     
+    # Get num_compute_units based on request type
+    num_compute_units = None
+    try:
+        # For image generations compute units is number of pixels
+        if hasattr(request_body, 'width') and hasattr(request_body, 'height'):
+            width = getattr(request_body, 'width', 1024)  # Default to 1024 if not specified
+            height = getattr(request_body, 'height', 1024)  # Default to 1024 if not specified
+            num_compute_units = width * height
+
+        # For chat completions compute units is max_tokens
+        if hasattr(request_body, 'max_tokens'):
+            num_compute_units = request_body.max_tokens
+        
+        # For embeddings (CreateEmbeddingRequest), let server calculate tokens
+        # No need to set num_compute_units as it defaults to None
+
+    except Exception as e:
+        raise ValueError(f"Failed to calculate compute units: {str(e)}") from e
+
     # Encrypt the message
     try:
-        message = chat_completions_request_body.model_dump_json().encode('utf-8')
+        message = request_body.model_dump_json().encode('utf-8')
         plaintext_body_hash = calculate_hash(message)
         ciphertext = cipher.encrypt(nonce, message, None)
         
         # Convert binary data to base64 strings
-        return ConfidentialChatCompletionRequest(
+        return ConfidentialComputeRequest(
             ciphertext=base64.b64encode(ciphertext).decode('utf-8'),
             client_dh_public_key=base64.b64encode(public_key.public_bytes(
+                encoding=serialization.Encoding.Raw,
+                format=serialization.PublicFormat.Raw
+            )).decode('utf-8'),
+            model_name=model,
+            node_dh_public_key=base64.b64encode(public_key_node.public_bytes(
                 encoding=serialization.Encoding.Raw,
                 format=serialization.PublicFormat.Raw
             )).decode('utf-8'),
@@ -73,13 +97,13 @@ def encrypt_message(sdk, private_key: X25519PrivateKey, chat_completions_request
             plaintext_body_hash=base64.b64encode(plaintext_body_hash).decode('utf-8'),
             salt=base64.b64encode(salt).decode('utf-8'),
             stack_small_id=stack_small_id,
-            stream=chat_completions_request_body.stream,
-            max_tokens=chat_completions_request_body.max_tokens
+            num_compute_units=num_compute_units,
+            stream=request_body.stream,
         )
     except Exception as e:
         raise ValueError(f"Failed to encrypt message: {str(e)}") from e
 
-def decrypt_message(private_key: X25519PrivateKey, encrypted_message: ConfidentialChatCompletionResponse) -> bytes:
+def decrypt_message(private_key: X25519PrivateKey, encrypted_message: ConfidentialComputeResponse) -> bytes:
     try:
         # Decode base64 values
         ciphertext = base64.b64decode(encrypted_message.ciphertext)
