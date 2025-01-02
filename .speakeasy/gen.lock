@@ -1,12 +1,12 @@
 lockVersion: 2.0.0
 id: abb58176-a92d-43ea-b418-227f4288eed7
 management:
-  docChecksum: c349ff1d1182c64a0b426dd5a7de9174
+  docChecksum: 55fdaf4fb0779c6a37faf741db813413
   docVersion: 0.1.0
   speakeasyVersion: 1.455.7
   generationVersion: 2.480.1
   releaseVersion: 0.1.0
-  configChecksum: 8b06e875a245a161e660fab2be3ad756
+  configChecksum: 24d2e8fe799493f6216a1d468a6f924d
 features:
   python:
     additionalDependencies: 1.0.0
@@ -27,8 +27,6 @@ features:
     responseFormat: 1.0.1
     retries: 3.0.2
     sdkHooks: 1.0.0
-    serverEvents: 1.0.7
-    serverEventsSentinels: 0.1.0
     unions: 3.0.4
 generatedFiles:
   - .devcontainer/README.md
@@ -40,17 +38,12 @@ generatedFiles:
   - CONTRIBUTING.md
   - USAGE.md
   - docs/models/chatcompletionchoice.md
-  - docs/models/chatcompletionchunk.md
-  - docs/models/chatcompletionchunkchoice.md
-  - docs/models/chatcompletionchunkdelta.md
   - docs/models/chatcompletionmessage.md
   - docs/models/chatcompletionresponse.md
-  - docs/models/chatcompletionstreamresponse.md
   - docs/models/completionusage.md
-  - docs/models/confidentialchatcompletionrequest.md
-  - docs/models/confidentialchatcompletionresponse.md
+  - docs/models/confidentialcomputerequest.md
+  - docs/models/confidentialcomputeresponse.md
   - docs/models/createchatcompletionrequest.md
-  - docs/models/createchatcompletionstreamrequest.md
   - docs/models/createembeddingrequest.md
   - docs/models/createembeddingresponse.md
   - docs/models/createimagerequest.md
@@ -64,6 +57,7 @@ generatedFiles:
   - docs/models/selectnodepublickeyrequest.md
   - docs/models/two.md
   - docs/models/two2.md
+  - docs/models/usage.md
   - docs/models/utils/retryconfig.md
   - docs/sdks/atomasdk/README.md
   - docs/sdks/chat/README.md
@@ -89,7 +83,6 @@ generatedFiles:
   - src/atoma_sdk/_version.py
   - src/atoma_sdk/basesdk.py
   - src/atoma_sdk/chat.py
-  - src/atoma_sdk/confidential_chat.py
   - src/atoma_sdk/confidential_embeddings.py
   - src/atoma_sdk/confidential_images.py
   - src/atoma_sdk/confidential_node_public_key_selection.py
@@ -100,17 +93,12 @@ generatedFiles:
   - src/atoma_sdk/models/__init__.py
   - src/atoma_sdk/models/apierror.py
   - src/atoma_sdk/models/chatcompletionchoice.py
-  - src/atoma_sdk/models/chatcompletionchunk.py
-  - src/atoma_sdk/models/chatcompletionchunkchoice.py
-  - src/atoma_sdk/models/chatcompletionchunkdelta.py
   - src/atoma_sdk/models/chatcompletionmessage.py
   - src/atoma_sdk/models/chatcompletionresponse.py
-  - src/atoma_sdk/models/chatcompletionstreamresponse.py
   - src/atoma_sdk/models/completionusage.py
-  - src/atoma_sdk/models/confidentialchatcompletionrequest.py
-  - src/atoma_sdk/models/confidentialchatcompletionresponse.py
+  - src/atoma_sdk/models/confidentialcomputerequest.py
+  - src/atoma_sdk/models/confidentialcomputeresponse.py
   - src/atoma_sdk/models/createchatcompletionrequest.py
-  - src/atoma_sdk/models/createchatcompletionstreamrequest.py
   - src/atoma_sdk/models/createembeddingrequest.py
   - src/atoma_sdk/models/createembeddingresponse.py
   - src/atoma_sdk/models/createimagerequest.py
@@ -120,6 +108,7 @@ generatedFiles:
   - src/atoma_sdk/models/imagedata.py
   - src/atoma_sdk/models/security.py
   - src/atoma_sdk/models/selectnodepublickeyrequest.py
+  - src/atoma_sdk/models/usage.py
   - src/atoma_sdk/models_.py
   - src/atoma_sdk/node_public_address_registration.py
   - src/atoma_sdk/py.typed
@@ -206,24 +195,24 @@ examples:
   confidential_chat_completions_create:
     speakeasy-default-confidential-chat-completions-create:
       requestBody:
-        application/json: {"ciphertext": "<value>", "client_dh_public_key": "<value>", "nonce": "<value>", "plaintext_body_hash": "<value>", "salt": "<value>"}
+        application/json: {"ciphertext": "<value>", "client_dh_public_key": "<value>", "model_name": "<value>", "node_dh_public_key": "<value>", "nonce": "<value>", "plaintext_body_hash": "<value>", "salt": "<value>", "stack_small_id": 486589}
       responses:
         "200":
-          application/json: {"ciphertext": "<value>", "node_dh_public_key": "<value>", "nonce": "<value>", "plaintext_body_hash": "<value>", "salt": "<value>"}
+          application/json: {"ciphertext": "<value>", "nonce": "<value>"}
   confidential_embeddings_create:
     speakeasy-default-confidential-embeddings-create:
       requestBody:
-        application/json: "<value>"
+        application/json: {"ciphertext": "<value>", "client_dh_public_key": "<value>", "model_name": "<value>", "node_dh_public_key": "<value>", "nonce": "<value>", "plaintext_body_hash": "<value>", "salt": "<value>", "stack_small_id": 486589}
       responses:
         "200":
-          application/json: {"data": [{"embedding": [], "index": 69025, "object": "<value>"}], "model": "PT Cruiser", "object": "<value>", "usage": {"prompt_tokens": 951062, "total_tokens": 86}}
+          application/json: {"ciphertext": "<value>", "nonce": "<value>", "usage": {"prompt_tokens": 951062, "total_tokens": 86}}
   confidential_image_generations_create:
     speakeasy-default-confidential-image-generations-create:
       requestBody:
-        application/json: {"model": "Model X", "n": 447445, "prompt": "<value>"}
+        application/json: {"ciphertext": "<value>", "client_dh_public_key": "<value>", "model_name": "<value>", "node_dh_public_key": "<value>", "nonce": "<value>", "plaintext_body_hash": "<value>", "salt": "<value>", "stack_small_id": 740198}
       responses:
         "200":
-          application/json: {"created": 331048, "data": [{"revised_prompt": "<value>", "url": "https://enlightened-coliseum.com"}]}
+          application/json: {"ciphertext": "<value>", "nonce": "<value>"}
   chat_completions_create_stream:
     speakeasy-default-chat-completions-create-stream:
       requestBody:

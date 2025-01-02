@@ -3,9 +3,9 @@
 from .basesdk import BaseSDK
 from atoma_sdk import models, utils
 from atoma_sdk._hooks import HookContext
-from atoma_sdk.types import BaseModel, OptionalNullable, UNSET
+from atoma_sdk.types import OptionalNullable, UNSET
 from atoma_sdk.utils import get_security_from_env
-from typing import Mapping, Optional, Union, cast
+from typing import Mapping, Optional
 
 
 class ConfidentialEmbeddings(BaseSDK):
@@ -14,14 +14,21 @@ class ConfidentialEmbeddings(BaseSDK):
     def create(
         self,
         *,
-        request: Union[
-            models.CreateEmbeddingRequest, models.CreateEmbeddingRequestTypedDict
-        ],
+        ciphertext: str,
+        client_dh_public_key: str,
+        model_name: str,
+        node_dh_public_key: str,
+        nonce: str,
+        plaintext_body_hash: str,
+        salt: str,
+        stack_small_id: int,
+        num_compute_units: OptionalNullable[int] = UNSET,
+        stream: OptionalNullable[bool] = UNSET,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.CreateEmbeddingResponse:
+    ) -> models.ConfidentialComputeResponse:
         r"""Create confidential embeddings
 
         This endpoint follows the OpenAI API format for generating vector embeddings from input text,
@@ -40,12 +47,21 @@ class ConfidentialEmbeddings(BaseSDK):
 
         # Returns
         * `Ok(Response)` - The embeddings response from the processing node
-        * `Err(StatusCode)` - An error status code if any step fails
+        * `Err(AtomaProxyError)` - An error status code if any step fails
 
         # Errors
         * `INTERNAL_SERVER_ERROR` - Processing or node communication failures
 
-        :param request: The request object to send.
+        :param ciphertext: The encrypted payload that needs to be processed (base64 encoded)
+        :param client_dh_public_key: Client's public key for Diffie-Hellman key exchange (base64 encoded)
+        :param model_name: Model name
+        :param node_dh_public_key: Node's public key for Diffie-Hellman key exchange (base64 encoded)
+        :param nonce: Cryptographic nonce used for encryption (base64 encoded)
+        :param plaintext_body_hash: Hash of the original plaintext body for integrity verification (base64 encoded)
+        :param salt: Salt value used in key derivation (base64 encoded)
+        :param stack_small_id: Unique identifier for the small stack being used
+        :param num_compute_units: Number of compute units to be used for the request, for image generations, as this value is known in advance (the number of pixels to generate)
+        :param stream: Indicates whether this is a streaming request
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -59,9 +75,18 @@ class ConfidentialEmbeddings(BaseSDK):
         if server_url is not None:
             base_url = server_url
 
-        if not isinstance(request, BaseModel):
-            request = utils.unmarshal(request, models.CreateEmbeddingRequest)
-        request = cast(models.CreateEmbeddingRequest, request)
+        request = models.ConfidentialComputeRequest(
+            ciphertext=ciphertext,
+            client_dh_public_key=client_dh_public_key,
+            model_name=model_name,
+            node_dh_public_key=node_dh_public_key,
+            nonce=nonce,
+            num_compute_units=num_compute_units,
+            plaintext_body_hash=plaintext_body_hash,
+            salt=salt,
+            stack_small_id=stack_small_id,
+            stream=stream,
+        )
 
         req = self.build_request(
             method="POST",
@@ -77,7 +102,7 @@ class ConfidentialEmbeddings(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request, False, False, "json", models.CreateEmbeddingRequest
+                request, False, False, "json", models.ConfidentialComputeRequest
             ),
             timeout_ms=timeout_ms,
         )
@@ -104,7 +129,9 @@ class ConfidentialEmbeddings(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return utils.unmarshal_json(http_res.text, models.CreateEmbeddingResponse)
+            return utils.unmarshal_json(
+                http_res.text, models.ConfidentialComputeResponse
+            )
         if utils.match_response(http_res, ["400", "401", "4XX", "500", "5XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise models.APIError(
@@ -123,14 +150,21 @@ class ConfidentialEmbeddings(BaseSDK):
     async def create_async(
         self,
         *,
-        request: Union[
-            models.CreateEmbeddingRequest, models.CreateEmbeddingRequestTypedDict
-        ],
+        ciphertext: str,
+        client_dh_public_key: str,
+        model_name: str,
+        node_dh_public_key: str,
+        nonce: str,
+        plaintext_body_hash: str,
+        salt: str,
+        stack_small_id: int,
+        num_compute_units: OptionalNullable[int] = UNSET,
+        stream: OptionalNullable[bool] = UNSET,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.CreateEmbeddingResponse:
+    ) -> models.ConfidentialComputeResponse:
         r"""Create confidential embeddings
 
         This endpoint follows the OpenAI API format for generating vector embeddings from input text,
@@ -149,12 +183,21 @@ class ConfidentialEmbeddings(BaseSDK):
 
         # Returns
         * `Ok(Response)` - The embeddings response from the processing node
-        * `Err(StatusCode)` - An error status code if any step fails
+        * `Err(AtomaProxyError)` - An error status code if any step fails
 
         # Errors
         * `INTERNAL_SERVER_ERROR` - Processing or node communication failures
 
-        :param request: The request object to send.
+        :param ciphertext: The encrypted payload that needs to be processed (base64 encoded)
+        :param client_dh_public_key: Client's public key for Diffie-Hellman key exchange (base64 encoded)
+        :param model_name: Model name
+        :param node_dh_public_key: Node's public key for Diffie-Hellman key exchange (base64 encoded)
+        :param nonce: Cryptographic nonce used for encryption (base64 encoded)
+        :param plaintext_body_hash: Hash of the original plaintext body for integrity verification (base64 encoded)
+        :param salt: Salt value used in key derivation (base64 encoded)
+        :param stack_small_id: Unique identifier for the small stack being used
+        :param num_compute_units: Number of compute units to be used for the request, for image generations, as this value is known in advance (the number of pixels to generate)
+        :param stream: Indicates whether this is a streaming request
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -168,9 +211,18 @@ class ConfidentialEmbeddings(BaseSDK):
         if server_url is not None:
             base_url = server_url
 
-        if not isinstance(request, BaseModel):
-            request = utils.unmarshal(request, models.CreateEmbeddingRequest)
-        request = cast(models.CreateEmbeddingRequest, request)
+        request = models.ConfidentialComputeRequest(
+            ciphertext=ciphertext,
+            client_dh_public_key=client_dh_public_key,
+            model_name=model_name,
+            node_dh_public_key=node_dh_public_key,
+            nonce=nonce,
+            num_compute_units=num_compute_units,
+            plaintext_body_hash=plaintext_body_hash,
+            salt=salt,
+            stack_small_id=stack_small_id,
+            stream=stream,
+        )
 
         req = self.build_request_async(
             method="POST",
@@ -186,7 +238,7 @@ class ConfidentialEmbeddings(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request, False, False, "json", models.CreateEmbeddingRequest
+                request, False, False, "json", models.ConfidentialComputeRequest
             ),
             timeout_ms=timeout_ms,
         )
@@ -213,7 +265,9 @@ class ConfidentialEmbeddings(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return utils.unmarshal_json(http_res.text, models.CreateEmbeddingResponse)
+            return utils.unmarshal_json(
+                http_res.text, models.ConfidentialComputeResponse
+            )
         if utils.match_response(http_res, ["400", "401", "4XX", "500", "5XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise models.APIError(

@@ -7,30 +7,9 @@ Atoma's API confidential images v1 endpoint
 
 ### Available Operations
 
-* [generate](#generate) - Create confidential image generations
+* [generate](#generate)
 
 ## generate
-
-This endpoint follows the OpenAI API format for generating images,
-but with confidential processing (through AEAD encryption and TEE hardware).
-The handler receives pre-processed metadata from middleware and forwards the request to
-the selected node.
-
-Note: Authentication, node selection, initial request validation and encryption
-are handled by middleware before this handler is called.
-
-# Arguments
-* `metadata` - Pre-processed request metadata containing node information and compute units
-* `state` - The shared proxy state containing configuration and runtime information
-* `headers` - HTTP headers from the incoming request
-* `payload` - The JSON request body containing the model and input text
-
-# Returns
-* `Ok(Response)` - The image generations response from the processing node
-* `Err(StatusCode)` - An error status code if any step fails
-
-# Errors
-* `INTERNAL_SERVER_ERROR` - Processing or node communication failures
 
 ### Example Usage
 
@@ -42,7 +21,7 @@ with AtomaSDK(
     bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
 ) as atoma_sdk:
 
-    res = atoma_sdk.confidential_images.generate(model="Model X", n=447445, prompt="<value>")
+    res = atoma_sdk.confidential_images.generate(ciphertext="<value>", client_dh_public_key="<value>", model_name="<value>", node_dh_public_key="<value>", nonce="<value>", plaintext_body_hash="<value>", salt="<value>", stack_small_id=740198)
 
     # Handle response
     print(res)
@@ -51,21 +30,23 @@ with AtomaSDK(
 
 ### Parameters
 
-| Parameter                                                                                                                         | Type                                                                                                                              | Required                                                                                                                          | Description                                                                                                                       |
-| --------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `model`                                                                                                                           | *str*                                                                                                                             | :heavy_check_mark:                                                                                                                | The model to use for image generation.                                                                                            |
-| `n`                                                                                                                               | *int*                                                                                                                             | :heavy_check_mark:                                                                                                                | The number of images to generate. Must be between 1 and 10.                                                                       |
-| `prompt`                                                                                                                          | *str*                                                                                                                             | :heavy_check_mark:                                                                                                                | A text description of the desired image(s). The maximum length is 1000 characters.                                                |
-| `quality`                                                                                                                         | *OptionalNullable[str]*                                                                                                           | :heavy_minus_sign:                                                                                                                | The quality of the image that will be generated.<br/>`hd` creates images with finer details and greater consistency across the image. |
-| `response_format`                                                                                                                 | *OptionalNullable[str]*                                                                                                           | :heavy_minus_sign:                                                                                                                | The format in which the generated images are returned.                                                                            |
-| `size`                                                                                                                            | *OptionalNullable[str]*                                                                                                           | :heavy_minus_sign:                                                                                                                | The size of the generated images.                                                                                                 |
-| `style`                                                                                                                           | *OptionalNullable[str]*                                                                                                           | :heavy_minus_sign:                                                                                                                | The style of the generated images.                                                                                                |
-| `user`                                                                                                                            | *OptionalNullable[str]*                                                                                                           | :heavy_minus_sign:                                                                                                                | A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.                                |
-| `retries`                                                                                                                         | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                                                  | :heavy_minus_sign:                                                                                                                | Configuration to override the default retry behavior of the client.                                                               |
+| Parameter                                                                                                                                       | Type                                                                                                                                            | Required                                                                                                                                        | Description                                                                                                                                     |
+| ----------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ciphertext`                                                                                                                                    | *str*                                                                                                                                           | :heavy_check_mark:                                                                                                                              | The encrypted payload that needs to be processed (base64 encoded)                                                                               |
+| `client_dh_public_key`                                                                                                                          | *str*                                                                                                                                           | :heavy_check_mark:                                                                                                                              | Client's public key for Diffie-Hellman key exchange (base64 encoded)                                                                            |
+| `model_name`                                                                                                                                    | *str*                                                                                                                                           | :heavy_check_mark:                                                                                                                              | Model name                                                                                                                                      |
+| `node_dh_public_key`                                                                                                                            | *str*                                                                                                                                           | :heavy_check_mark:                                                                                                                              | Node's public key for Diffie-Hellman key exchange (base64 encoded)                                                                              |
+| `nonce`                                                                                                                                         | *str*                                                                                                                                           | :heavy_check_mark:                                                                                                                              | Cryptographic nonce used for encryption (base64 encoded)                                                                                        |
+| `plaintext_body_hash`                                                                                                                           | *str*                                                                                                                                           | :heavy_check_mark:                                                                                                                              | Hash of the original plaintext body for integrity verification (base64 encoded)                                                                 |
+| `salt`                                                                                                                                          | *str*                                                                                                                                           | :heavy_check_mark:                                                                                                                              | Salt value used in key derivation (base64 encoded)                                                                                              |
+| `stack_small_id`                                                                                                                                | *int*                                                                                                                                           | :heavy_check_mark:                                                                                                                              | Unique identifier for the small stack being used                                                                                                |
+| `num_compute_units`                                                                                                                             | *OptionalNullable[int]*                                                                                                                         | :heavy_minus_sign:                                                                                                                              | Number of compute units to be used for the request, for image generations,<br/>as this value is known in advance (the number of pixels to generate) |
+| `stream`                                                                                                                                        | *OptionalNullable[bool]*                                                                                                                        | :heavy_minus_sign:                                                                                                                              | Indicates whether this is a streaming request                                                                                                   |
+| `retries`                                                                                                                                       | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                                                                | :heavy_minus_sign:                                                                                                                              | Configuration to override the default retry behavior of the client.                                                                             |
 
 ### Response
 
-**[models.CreateImageResponse](../../models/createimageresponse.md)**
+**[models.ConfidentialComputeResponse](../../models/confidentialcomputeresponse.md)**
 
 ### Errors
 

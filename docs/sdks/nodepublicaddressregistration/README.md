@@ -22,21 +22,30 @@ the system has its current address for routing requests.
 
 # Returns
 
-Returns `Ok(Json(Value::Null))` on successful registration, or an error status code
-if the registration fails.
+Returns `Ok(Json(Value::Null))` on successful registration, or an error if the registration fails.
 
 # Errors
 
-Returns `StatusCode::INTERNAL_SERVER_ERROR` if:
-* The state manager channel is closed
-* The registration event cannot be sent
+Returns various `AtomaProxyError` variants:
+* `MissingHeader` - If the signature header is missing
+* `InvalidHeader` - If the signature header is malformed
+* `InvalidBody` - If:
+  - The request body cannot be read
+  - The signature is invalid
+  - The body cannot be parsed
+  - The sui address doesn't match the signature
+* `InternalError` - If:
+  - The state manager channel is closed
+  - The registration event cannot be sent
+  - Node Sui address lookup fails
 
 # Example Request Payload
 
 ```json
 {
     "node_small_id": 123,
-    "public_address": "http://node-123.example.com:8080"
+    "public_address": "http://node-123.example.com:8080",
+    "country": "US"
 }
 ```
 

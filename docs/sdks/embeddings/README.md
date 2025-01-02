@@ -26,7 +26,7 @@ before this handler is called.
 
 # Returns
 * `Ok(Response)` - The embeddings response from the processing node
-* `Err(StatusCode)` - An error status code if any step fails
+* `Err(AtomaProxyError)` - An error status code if any step fails
 
 # Errors
 * `INTERNAL_SERVER_ERROR` - Processing or node communication failures

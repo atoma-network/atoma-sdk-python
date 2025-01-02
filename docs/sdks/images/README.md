@@ -22,7 +22,7 @@ validated by middleware before reaching this handler.
 * `payload` - JSON payload containing image generation parameters
 
 # Returns
-* `Result<Response<Body>, StatusCode>` - The processed response from the AI node or an error status
+* `Result<Response<Body>>` - The processed response from the AI node or an error status
 
 # Errors
 * Returns various status codes based on the underlying `handle_image_generation_response`:

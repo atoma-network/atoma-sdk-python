@@ -14,50 +14,32 @@ class ConfidentialImages(BaseSDK):
     def generate(
         self,
         *,
-        model: str,
-        n: int,
-        prompt: str,
-        quality: OptionalNullable[str] = UNSET,
-        response_format: OptionalNullable[str] = UNSET,
-        size: OptionalNullable[str] = UNSET,
-        style: OptionalNullable[str] = UNSET,
-        user: OptionalNullable[str] = UNSET,
+        ciphertext: str,
+        client_dh_public_key: str,
+        model_name: str,
+        node_dh_public_key: str,
+        nonce: str,
+        plaintext_body_hash: str,
+        salt: str,
+        stack_small_id: int,
+        num_compute_units: OptionalNullable[int] = UNSET,
+        stream: OptionalNullable[bool] = UNSET,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.CreateImageResponse:
-        r"""Create confidential image generations
-
-        This endpoint follows the OpenAI API format for generating images,
-        but with confidential processing (through AEAD encryption and TEE hardware).
-        The handler receives pre-processed metadata from middleware and forwards the request to
-        the selected node.
-
-        Note: Authentication, node selection, initial request validation and encryption
-        are handled by middleware before this handler is called.
-
-        # Arguments
-        * `metadata` - Pre-processed request metadata containing node information and compute units
-        * `state` - The shared proxy state containing configuration and runtime information
-        * `headers` - HTTP headers from the incoming request
-        * `payload` - The JSON request body containing the model and input text
-
-        # Returns
-        * `Ok(Response)` - The image generations response from the processing node
-        * `Err(StatusCode)` - An error status code if any step fails
-
-        # Errors
-        * `INTERNAL_SERVER_ERROR` - Processing or node communication failures
-
-        :param model: The model to use for image generation.
-        :param n: The number of images to generate. Must be between 1 and 10.
-        :param prompt: A text description of the desired image(s). The maximum length is 1000 characters.
-        :param quality: The quality of the image that will be generated. `hd` creates images with finer details and greater consistency across the image.
-        :param response_format: The format in which the generated images are returned.
-        :param size: The size of the generated images.
-        :param style: The style of the generated images.
-        :param user: A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
+    ) -> models.ConfidentialComputeResponse:
+        r"""
+        :param ciphertext: The encrypted payload that needs to be processed (base64 encoded)
+        :param client_dh_public_key: Client's public key for Diffie-Hellman key exchange (base64 encoded)
+        :param model_name: Model name
+        :param node_dh_public_key: Node's public key for Diffie-Hellman key exchange (base64 encoded)
+        :param nonce: Cryptographic nonce used for encryption (base64 encoded)
+        :param plaintext_body_hash: Hash of the original plaintext body for integrity verification (base64 encoded)
+        :param salt: Salt value used in key derivation (base64 encoded)
+        :param stack_small_id: Unique identifier for the small stack being used
+        :param num_compute_units: Number of compute units to be used for the request, for image generations, as this value is known in advance (the number of pixels to generate)
+        :param stream: Indicates whether this is a streaming request
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -71,15 +53,17 @@ class ConfidentialImages(BaseSDK):
         if server_url is not None:
             base_url = server_url
 
-        request = models.CreateImageRequest(
-            model=model,
-            n=n,
-            prompt=prompt,
-            quality=quality,
-            response_format=response_format,
-            size=size,
-            style=style,
-            user=user,
+        request = models.ConfidentialComputeRequest(
+            ciphertext=ciphertext,
+            client_dh_public_key=client_dh_public_key,
+            model_name=model_name,
+            node_dh_public_key=node_dh_public_key,
+            nonce=nonce,
+            num_compute_units=num_compute_units,
+            plaintext_body_hash=plaintext_body_hash,
+            salt=salt,
+            stack_small_id=stack_small_id,
+            stream=stream,
         )
 
         req = self.build_request(
@@ -96,7 +80,7 @@ class ConfidentialImages(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request, False, False, "json", models.CreateImageRequest
+                request, False, False, "json", models.ConfidentialComputeRequest
             ),
             timeout_ms=timeout_ms,
         )
@@ -123,7 +107,9 @@ class ConfidentialImages(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return utils.unmarshal_json(http_res.text, models.CreateImageResponse)
+            return utils.unmarshal_json(
+                http_res.text, models.ConfidentialComputeResponse
+            )
         if utils.match_response(http_res, ["400", "401", "4XX", "500", "5XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise models.APIError(
@@ -142,50 +128,32 @@ class ConfidentialImages(BaseSDK):
     async def generate_async(
         self,
         *,
-        model: str,
-        n: int,
-        prompt: str,
-        quality: OptionalNullable[str] = UNSET,
-        response_format: OptionalNullable[str] = UNSET,
-        size: OptionalNullable[str] = UNSET,
-        style: OptionalNullable[str] = UNSET,
-        user: OptionalNullable[str] = UNSET,
+        ciphertext: str,
+        client_dh_public_key: str,
+        model_name: str,
+        node_dh_public_key: str,
+        nonce: str,
+        plaintext_body_hash: str,
+        salt: str,
+        stack_small_id: int,
+        num_compute_units: OptionalNullable[int] = UNSET,
+        stream: OptionalNullable[bool] = UNSET,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.CreateImageResponse:
-        r"""Create confidential image generations
-
-        This endpoint follows the OpenAI API format for generating images,
-        but with confidential processing (through AEAD encryption and TEE hardware).
-        The handler receives pre-processed metadata from middleware and forwards the request to
-        the selected node.
-
-        Note: Authentication, node selection, initial request validation and encryption
-        are handled by middleware before this handler is called.
-
-        # Arguments
-        * `metadata` - Pre-processed request metadata containing node information and compute units
-        * `state` - The shared proxy state containing configuration and runtime information
-        * `headers` - HTTP headers from the incoming request
-        * `payload` - The JSON request body containing the model and input text
-
-        # Returns
-        * `Ok(Response)` - The image generations response from the processing node
-        * `Err(StatusCode)` - An error status code if any step fails
-
-        # Errors
-        * `INTERNAL_SERVER_ERROR` - Processing or node communication failures
-
-        :param model: The model to use for image generation.
-        :param n: The number of images to generate. Must be between 1 and 10.
-        :param prompt: A text description of the desired image(s). The maximum length is 1000 characters.
-        :param quality: The quality of the image that will be generated. `hd` creates images with finer details and greater consistency across the image.
-        :param response_format: The format in which the generated images are returned.
-        :param size: The size of the generated images.
-        :param style: The style of the generated images.
-        :param user: A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
+    ) -> models.ConfidentialComputeResponse:
+        r"""
+        :param ciphertext: The encrypted payload that needs to be processed (base64 encoded)
+        :param client_dh_public_key: Client's public key for Diffie-Hellman key exchange (base64 encoded)
+        :param model_name: Model name
+        :param node_dh_public_key: Node's public key for Diffie-Hellman key exchange (base64 encoded)
+        :param nonce: Cryptographic nonce used for encryption (base64 encoded)
+        :param plaintext_body_hash: Hash of the original plaintext body for integrity verification (base64 encoded)
+        :param salt: Salt value used in key derivation (base64 encoded)
+        :param stack_small_id: Unique identifier for the small stack being used
+        :param num_compute_units: Number of compute units to be used for the request, for image generations, as this value is known in advance (the number of pixels to generate)
+        :param stream: Indicates whether this is a streaming request
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -199,15 +167,17 @@ class ConfidentialImages(BaseSDK):
         if server_url is not None:
             base_url = server_url
 
-        request = models.CreateImageRequest(
-            model=model,
-            n=n,
-            prompt=prompt,
-            quality=quality,
-            response_format=response_format,
-            size=size,
-            style=style,
-            user=user,
+        request = models.ConfidentialComputeRequest(
+            ciphertext=ciphertext,
+            client_dh_public_key=client_dh_public_key,
+            model_name=model_name,
+            node_dh_public_key=node_dh_public_key,
+            nonce=nonce,
+            num_compute_units=num_compute_units,
+            plaintext_body_hash=plaintext_body_hash,
+            salt=salt,
+            stack_small_id=stack_small_id,
+            stream=stream,
         )
 
         req = self.build_request_async(
@@ -224,7 +194,7 @@ class ConfidentialImages(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request, False, False, "json", models.CreateImageRequest
+                request, False, False, "json", models.ConfidentialComputeRequest
             ),
             timeout_ms=timeout_ms,
         )
@@ -251,7 +221,9 @@ class ConfidentialImages(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return utils.unmarshal_json(http_res.text, models.CreateImageResponse)
+            return utils.unmarshal_json(
+                http_res.text, models.ConfidentialComputeResponse
+            )
         if utils.match_response(http_res, ["400", "401", "4XX", "500", "5XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise models.APIError(

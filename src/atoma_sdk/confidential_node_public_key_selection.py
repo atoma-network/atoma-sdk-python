@@ -38,7 +38,7 @@ class ConfidentialNodePublicKeySelection(BaseSDK):
         - The selected node's public key (base64 encoded)
         - The node's small ID
         - Optional stack entry digest (if a new stack entry was acquired)
-        - `StatusCode` error if:
+        - `AtomaProxyError` error if:
         - `INTERNAL_SERVER_ERROR` - Communication errors or missing node public keys
         - `SERVICE_UNAVAILABLE` - No nodes available for confidential compute
 
@@ -158,7 +158,7 @@ class ConfidentialNodePublicKeySelection(BaseSDK):
         - The selected node's public key (base64 encoded)
         - The node's small ID
         - Optional stack entry digest (if a new stack entry was acquired)
-        - `StatusCode` error if:
+        - `AtomaProxyError` error if:
         - `INTERNAL_SERVER_ERROR` - Communication errors or missing node public keys
         - `SERVICE_UNAVAILABLE` - No nodes available for confidential compute
 
