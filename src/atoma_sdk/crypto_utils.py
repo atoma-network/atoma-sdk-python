@@ -29,10 +29,10 @@ def calculate_hash(data: bytes) -> bytes:
         return digest.finalize()
     except Exception as e:
         raise ValueError(f"Failed to calculate hash: {str(e)}") from e
-def encrypt_message(sdk, private_key: X25519PrivateKey, request_body: BaseModel, model: str) -> ConfidentialComputeRequest:
+def encrypt_message(sdk, client_dh_private_key: X25519PrivateKey, request_body: BaseModel, model: str) -> tuple[X25519PublicKey, bytes, ConfidentialComputeRequest]:
     # Generate our private key
     try:
-        public_key = private_key.public_key()
+        client_dh_public_key = client_dh_private_key.public_key()
     except Exception as e:
         raise ValueError(f"Failed to generate key pair: {str(e)}") from e
     
@@ -41,7 +41,8 @@ def encrypt_message(sdk, private_key: X25519PrivateKey, request_body: BaseModel,
         res = sdk.confidential_node_public_key_selection.select_node_public_key(model_name=model)
         if not res or not res.public_key:
             raise ValueError("Failed to retrieve node public key")
-        public_key_node = res.public_key
+        node_dh_public_key_encoded = res.public_key
+        node_dh_public_key = X25519PublicKey.from_public_bytes(node_dh_public_key_encoded)
         stack_small_id = res.stack_small_id
     except Exception as e:
         raise ValueError(f"Failed to get node public key: {str(e)}") from e
@@ -49,7 +50,7 @@ def encrypt_message(sdk, private_key: X25519PrivateKey, request_body: BaseModel,
     # Generate a random salt and create shared secret
     try:
         salt = secrets.token_bytes(24)
-        shared_secret = private_key.exchange(public_key_node)
+        shared_secret = client_dh_private_key.exchange(node_dh_public_key_encoded)
         encryption_key = derive_key(shared_secret, salt)
         cipher = AESGCM(encryption_key)
         nonce = secrets.token_bytes(12)
@@ -82,14 +83,14 @@ def encrypt_message(sdk, private_key: X25519PrivateKey, request_body: BaseModel,
         ciphertext = cipher.encrypt(nonce, message, None)
         
         # Convert binary data to base64 strings
-        return ConfidentialComputeRequest(
+        return node_dh_public_key, salt, ConfidentialComputeRequest(
             ciphertext=base64.b64encode(ciphertext).decode('utf-8'),
-            client_dh_public_key=base64.b64encode(public_key.public_bytes(
+            client_dh_public_key=base64.b64encode(client_dh_public_key.public_bytes(
                 encoding=serialization.Encoding.Raw,
                 format=serialization.PublicFormat.Raw
             )).decode('utf-8'),
             model_name=model,
-            node_dh_public_key=base64.b64encode(public_key_node.public_bytes(
+            node_dh_public_key=base64.b64encode(node_dh_public_key.public_bytes(
                 encoding=serialization.Encoding.Raw,
                 format=serialization.PublicFormat.Raw
             )).decode('utf-8'),
@@ -98,22 +99,20 @@ def encrypt_message(sdk, private_key: X25519PrivateKey, request_body: BaseModel,
             salt=base64.b64encode(salt).decode('utf-8'),
             stack_small_id=stack_small_id,
             num_compute_units=num_compute_units,
-            stream=request_body.stream,
+            stream=getattr(request_body, 'stream', False),
         )
     except Exception as e:
         raise ValueError(f"Failed to encrypt message: {str(e)}") from e
 
-def decrypt_message(private_key: X25519PrivateKey, encrypted_message: ConfidentialComputeResponse) -> bytes:
+def decrypt_message(client_dh_private_key: X25519PrivateKey, node_dh_public_key: X25519PublicKey, salt: bytes, encrypted_message: ConfidentialComputeResponse) -> bytes:
     try:
         # Decode base64 values
         ciphertext = base64.b64decode(encrypted_message.ciphertext)
-        node_public_key = X25519PublicKey.from_public_bytes(base64.b64decode(encrypted_message.node_dh_public_key))
         nonce = base64.b64decode(encrypted_message.nonce)
-        salt = base64.b64decode(encrypted_message.salt)
-        expected_hash = base64.b64decode(encrypted_message.plaintext_body_hash)
+        expected_hash = encrypted_message.response_hash
         
         # Load node's public key and create shared secret
-        shared_secret = private_key.exchange(node_public_key)
+        shared_secret = client_dh_private_key.exchange(node_dh_public_key)
         
         # Derive encryption key
         encryption_key = derive_key(shared_secret, salt)
@@ -124,7 +123,8 @@ def decrypt_message(private_key: X25519PrivateKey, encrypted_message: Confidenti
         
         # Verify hash
         actual_hash = calculate_hash(plaintext)
-        if not secrets.compare_digest(actual_hash, expected_hash):
+        expected_hash_bytes = base64.b64decode(expected_hash) if expected_hash else None
+        if not expected_hash_bytes or not secrets.compare_digest(actual_hash, expected_hash_bytes):
             raise ValueError("Message hash verification failed")
             
         return plaintext

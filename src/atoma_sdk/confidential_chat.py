@@ -102,10 +102,10 @@ class ConfidentialChat(BaseSDK):
                 user=user,
             )
 
-            private_key = X25519PrivateKey.generate()
+            client_dh_private_key = X25519PrivateKey.generate()
 
             # Encrypt the message
-            encrypted_message = crypto_utils.encrypt_message(sdk=self, private_key=private_key, chat_completions_request_body=chat_completions_request_body, model=model)
+            node_dh_public_key, salt, encrypted_message = crypto_utils.encrypt_message(sdk=self, client_dh_private_key=client_dh_private_key, request_body=chat_completions_request_body, model=model)
 
         except Exception as e:
             raise models.APIError(
@@ -116,7 +116,7 @@ class ConfidentialChat(BaseSDK):
             )
         ##################################################################################################
 
-        request = models.ConfidentialChatCompletionRequest(**encrypted_message.model_dump())
+        request = encrypted_message
 
         req = self.build_request(
             method="POST",
@@ -132,7 +132,7 @@ class ConfidentialChat(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request, False, False, "json", models.ConfidentialChatCompletionRequest
+                request, False, False, "json", models.ConfidentialComputeRequest
             ),
             timeout_ms=timeout_ms,
         )
@@ -159,14 +159,15 @@ class ConfidentialChat(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
+            ##################################################################################################
             encrypted_response = utils.unmarshal_json(
-                http_res.text, models.ConfidentialChatCompletionResponse
+                http_res.text, models.ConfidentialComputeResponse
             )
             # Decrypt the response
             try:
-                decrypted_response = crypto_utils.decrypt_message(private_key, encrypted_response)
+                decrypted_response = crypto_utils.decrypt_message(client_dh_private_key=client_dh_private_key, node_dh_public_key=node_dh_public_key, salt=salt, encrypted_message=encrypted_response)
                 return utils.unmarshal_json(
-                    decrypted_response.decode('utf-8'), models.ChatCompletionResponse
+                    decrypted_response.decode('utf-8'), models.ConfidentialComputeResponse
                 )
             except Exception as e:
                 raise models.APIError(
@@ -175,6 +176,7 @@ class ConfidentialChat(BaseSDK):
                     str(e),
                     http_res
                 )
+            ##################################################################################################
         if utils.match_response(http_res, ["400", "401", "4XX", "500", "5XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise models.APIError(
@@ -283,10 +285,10 @@ class ConfidentialChat(BaseSDK):
                 user=user,
             )
 
-            private_key = X25519PrivateKey.generate()
+            client_dh_private_key = X25519PrivateKey.generate()
 
             # Encrypt the message
-            encrypted_message = crypto_utils.encrypt_message(sdk=self, private_key=private_key, chat_completions_request_body=chat_completions_request_body, model=model)
+            node_dh_public_key, salt, encrypted_message = crypto_utils.encrypt_message(sdk=self, client_dh_private_key=client_dh_private_key, request_body=chat_completions_request_body, model=model)
 
         except Exception as e:
             raise models.APIError(
@@ -297,7 +299,7 @@ class ConfidentialChat(BaseSDK):
             )
         #########################################################################################################
 
-        request = models.ConfidentialChatCompletionRequest(**encrypted_message.model_dump())
+        request = encrypted_message
 
         req = self.build_request_async(
             method="POST",
@@ -313,7 +315,7 @@ class ConfidentialChat(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request, False, False, "json", models.ConfidentialChatCompletionRequest
+                request, False, False, "json", models.ConfidentialComputeRequest
             ),
             timeout_ms=timeout_ms,
         )
@@ -340,14 +342,15 @@ class ConfidentialChat(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
+            ##################################################################################################
             encrypted_response = utils.unmarshal_json(
-                http_res.text, models.ConfidentialChatCompletionResponse
+                http_res.text, models.ConfidentialComputeResponse
             )
             # Decrypt the response
             try:
-                decrypted_response = crypto_utils.decrypt_message(private_key, encrypted_response)
+                decrypted_response = crypto_utils.decrypt_message(client_dh_private_key=client_dh_private_key, node_dh_public_key=node_dh_public_key, salt=salt, encrypted_message=encrypted_response)
                 return utils.unmarshal_json(
-                    decrypted_response.decode('utf-8'), models.ChatCompletionResponse
+                    decrypted_response.decode('utf-8'), models.ConfidentialComputeResponse
                 )
             except Exception as e:
                 raise models.APIError(
@@ -356,6 +359,7 @@ class ConfidentialChat(BaseSDK):
                     str(e),
                     http_res
                 )
+            ##################################################################################################
         if utils.match_response(http_res, ["400", "401", "4XX", "500", "5XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise models.APIError(
