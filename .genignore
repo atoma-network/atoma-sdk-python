@@ -1,2 +1,3 @@
 # endpoints
 src/atoma_sdk/confidential_chat.py
+src/atoma_sdk/confidential_embeddings.py
