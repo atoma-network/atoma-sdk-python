@@ -15,7 +15,7 @@ class ConfidentialImages(BaseSDK):
     def generate(
         self,
         *,
-        input: str,
+        prompt: str,
         model: str,
         n: OptionalNullable[int] = UNSET,
         quality: OptionalNullable[str] = UNSET,
@@ -27,9 +27,9 @@ class ConfidentialImages(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.ImageResponse:
+    ) -> models.CreateImageResponse:
         r"""
-        :param input: The input text for image generation
+        :param prompt: The input text for image generation
         :param model: The model name for image generation
         :param n: The number of images to generate
         :param quality: The quality of the generated images
@@ -54,7 +54,7 @@ class ConfidentialImages(BaseSDK):
         # Add encryption
         try:
             image_generation_request_body = models.CreateImageRequest(
-                input=input,
+                prompt=prompt,
                 model=model,
                 n=n,
                 quality=quality,
@@ -139,7 +139,7 @@ class ConfidentialImages(BaseSDK):
                     encrypted_message=encrypted_response
                 )
                 return utils.unmarshal_json(
-                    decrypted_response.decode('utf-8'), models.ImageResponse
+                    decrypted_response.decode('utf-8'), models.CreateImageResponse
                 )
             except Exception as e:
                 raise models.APIError(
@@ -167,7 +167,7 @@ class ConfidentialImages(BaseSDK):
     async def generate_async(
         self,
         *,
-        input: str,
+        prompt: str,
         model: str,
         n: OptionalNullable[int] = UNSET,
         quality: OptionalNullable[str] = UNSET,
@@ -179,9 +179,9 @@ class ConfidentialImages(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.ImageResponse:
+    ) -> models.CreateImageResponse:
         r"""
-        :param input: The input text for image generation
+        :param prompt: The input text for image generation
         :param model: The model name for image generation
         :param n: The number of images to generate
         :param quality: The quality of the generated images
@@ -206,7 +206,7 @@ class ConfidentialImages(BaseSDK):
         # Add encryption
         try:
             image_generation_request_body = models.CreateImageRequest(
-                input=input,
+                prompt=prompt,
                 model=model,
                 n=n,
                 quality=quality,
@@ -291,7 +291,7 @@ class ConfidentialImages(BaseSDK):
                     encrypted_message=encrypted_response
                 )
                 return utils.unmarshal_json(
-                    decrypted_response.decode('utf-8'), models.ImageResponse
+                    decrypted_response.decode('utf-8'), models.CreateImageResponse
                 )
             except Exception as e:
                 raise models.APIError(

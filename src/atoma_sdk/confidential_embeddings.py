@@ -23,7 +23,7 @@ class ConfidentialEmbeddings(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.EmbeddingResponse:
+    ) -> models.CreateEmbeddingResponse:
         base_url = None
         url_variables = None
         if timeout_ms is None:
@@ -116,7 +116,7 @@ class ConfidentialEmbeddings(BaseSDK):
                     encrypted_message=encrypted_response
                 )
                 return utils.unmarshal_json(
-                    decrypted_response.decode('utf-8'), models.EmbeddingResponse
+                    decrypted_response.decode('utf-8'), models.CreateEmbeddingResponse
                 )
             except Exception as e:
                 raise models.APIError(
@@ -138,7 +138,7 @@ class ConfidentialEmbeddings(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.EmbeddingResponse:
+    ) -> models.CreateEmbeddingResponse:
         base_url = None
         url_variables = None
         if timeout_ms is None:
@@ -231,7 +231,7 @@ class ConfidentialEmbeddings(BaseSDK):
                     encrypted_message=encrypted_response
                 )
                 return utils.unmarshal_json(
-                    decrypted_response.decode('utf-8'), models.EmbeddingResponse
+                    decrypted_response.decode('utf-8'), models.CreateEmbeddingResponse
                 )
             except Exception as e:
                 raise models.APIError(
