@@ -16,10 +16,12 @@ generation:
     oAuth2ClientCredentialsEnabled: false
     oAuth2PasswordEnabled: false
 python:
-  version: 0.1.0
+  version: 0.1.4
   additionalDependencies:
     dev: {}
-    main: {}
+    main:
+      cryptography: '>=44.0.0'
+      python: '>=3.8,!=3.9.0,!=3.9.1,<4.0'
   authors:
     - Speakeasy
   clientServerStatusCodesAsErrors: true
