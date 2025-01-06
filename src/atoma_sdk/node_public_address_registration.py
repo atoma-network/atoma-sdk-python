@@ -25,16 +25,7 @@ class NodePublicAddressRegistration(BaseSDK):
         When a node comes online or changes its address, it can use this endpoint to ensure
         the system has its current address for routing requests.
 
-        # Arguments
-
-        * `state` - The shared application state containing the state manager sender
-        * `payload` - The registration payload containing the node's ID and public address
-
-        # Returns
-
-        Returns `Ok(Json(Value::Null))` on successful registration, or an error if the registration fails.
-
-        # Errors
+        ## Errors
 
         Returns various `AtomaProxyError` variants:
         * `MissingHeader` - If the signature header is missing
@@ -49,16 +40,6 @@ class NodePublicAddressRegistration(BaseSDK):
         - The registration event cannot be sent
         - Node Sui address lookup fails
 
-        # Example Request Payload
-
-        ```json
-        {
-        \"node_small_id\": 123,
-        \"public_address\": \"http://node-123.example.com:8080\",
-        \"country\": \"US\"
-        }
-        ```
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -71,7 +52,7 @@ class NodePublicAddressRegistration(BaseSDK):
 
         if server_url is not None:
             base_url = server_url
-        req = self.build_request(
+        req = self._build_request(
             method="POST",
             path="/node/registration",
             base_url=base_url,
@@ -139,16 +120,7 @@ class NodePublicAddressRegistration(BaseSDK):
         When a node comes online or changes its address, it can use this endpoint to ensure
         the system has its current address for routing requests.
 
-        # Arguments
-
-        * `state` - The shared application state containing the state manager sender
-        * `payload` - The registration payload containing the node's ID and public address
-
-        # Returns
-
-        Returns `Ok(Json(Value::Null))` on successful registration, or an error if the registration fails.
-
-        # Errors
+        ## Errors
 
         Returns various `AtomaProxyError` variants:
         * `MissingHeader` - If the signature header is missing
@@ -163,16 +135,6 @@ class NodePublicAddressRegistration(BaseSDK):
         - The registration event cannot be sent
         - Node Sui address lookup fails
 
-        # Example Request Payload
-
-        ```json
-        {
-        \"node_small_id\": 123,
-        \"public_address\": \"http://node-123.example.com:8080\",
-        \"country\": \"US\"
-        }
-        ```
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -185,7 +147,7 @@ class NodePublicAddressRegistration(BaseSDK):
 
         if server_url is not None:
             base_url = server_url
-        req = self.build_request_async(
+        req = self._build_request_async(
             method="POST",
             path="/node/registration",
             base_url=base_url,

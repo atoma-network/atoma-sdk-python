@@ -5,7 +5,7 @@ from atoma_sdk import crypto_utils, models, utils
 from atoma_sdk._hooks import HookContext
 from atoma_sdk.types import OptionalNullable, UNSET
 from atoma_sdk.utils import get_security_from_env
-from typing import Mapping, Optional
+from typing import Mapping, Optional, Union
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
 
 
@@ -15,7 +15,7 @@ class ConfidentialEmbeddings(BaseSDK):
     def create(
         self,
         *,
-        input: str,
+        input: Union[models.EmbeddingInput, models.EmbeddingInputTypedDict],  # pylint: disable=redefined-builtin
         model: str,
         encoding_format: OptionalNullable[str] = UNSET,
         user: OptionalNullable[str] = UNSET,
@@ -62,7 +62,7 @@ class ConfidentialEmbeddings(BaseSDK):
 
         request = encrypted_message
 
-        req = self.build_request(
+        req = self._build_request(
             method="POST",
             path="/v1/confidential/embeddings",
             base_url=base_url,
@@ -126,11 +126,25 @@ class ConfidentialEmbeddings(BaseSDK):
                     http_res
                 )
             ##################################################################################################
+        if utils.match_response(http_res, ["400", "401", "4XX", "500", "5XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise models.APIError(
+                "API error occurred", http_res.status_code, http_res_text, http_res
+            )
+
+        content_type = http_res.headers.get("Content-Type")
+        http_res_text = utils.stream_to_text(http_res)
+        raise models.APIError(
+            f"Unexpected response received (code: {http_res.status_code}, type: {content_type})",
+            http_res.status_code,
+            http_res_text,
+            http_res,
+        )
 
     async def create_async(
         self,
         *,
-        input: str,
+        input: Union[models.EmbeddingInput, models.EmbeddingInputTypedDict],  # pylint: disable=redefined-builtin
         model: str,
         encoding_format: OptionalNullable[str] = UNSET,
         user: OptionalNullable[str] = UNSET,
@@ -177,7 +191,7 @@ class ConfidentialEmbeddings(BaseSDK):
 
         request = encrypted_message
 
-        req = self.build_request_async(
+        req = self._build_request_async(
             method="POST",
             path="/v1/confidential/embeddings",
             base_url=base_url,
@@ -241,3 +255,17 @@ class ConfidentialEmbeddings(BaseSDK):
                     http_res
                 )
             ##################################################################################################
+        if utils.match_response(http_res, ["400", "401", "4XX", "500", "5XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise models.APIError(
+                "API error occurred", http_res.status_code, http_res_text, http_res
+            )
+
+        content_type = http_res.headers.get("Content-Type")
+        http_res_text = await utils.stream_to_text_async(http_res)
+        raise models.APIError(
+            f"Unexpected response received (code: {http_res.status_code}, type: {content_type})",
+            http_res.status_code,
+            http_res_text,
+            http_res,
+        )

@@ -15,8 +15,8 @@ class Images(BaseSDK):
         self,
         *,
         model: str,
-        n: int,
         prompt: str,
+        n: OptionalNullable[int] = UNSET,
         quality: OptionalNullable[str] = UNSET,
         response_format: OptionalNullable[str] = UNSET,
         size: OptionalNullable[str] = UNSET,
@@ -27,37 +27,19 @@ class Images(BaseSDK):
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
     ) -> models.CreateImageResponse:
-        r"""Create image generation
+        r"""Create image
 
         This endpoint processes requests to generate images using AI models by forwarding them
         to the appropriate AI node. The request metadata and compute units have already been
         validated by middleware before reaching this handler.
 
-        # Arguments
-        * `metadata` - Extension containing pre-processed request metadata (node address, compute units, etc.)
-        * `state` - Application state containing configuration and shared resources
-        * `headers` - HTTP headers from the incoming request
-        * `payload` - JSON payload containing image generation parameters
-
-        # Returns
-        * `Result<Response<Body>>` - The processed response from the AI node or an error status
-
-        # Errors
+        ## Errors
         * Returns various status codes based on the underlying `handle_image_generation_response`:
         - `INTERNAL_SERVER_ERROR` - If there's an error communicating with the AI node
 
-        # Example Payload
-        ```json
-        {
-        \"model\": \"stable-diffusion-v1-5\",
-        \"n\": 1,
-        \"size\": \"1024x1024\"
-        }
-        ```
-
         :param model: The model to use for image generation.
-        :param n: The number of images to generate. Must be between 1 and 10.
         :param prompt: A text description of the desired image(s). The maximum length is 1000 characters.
+        :param n: The number of images to generate. Defaults to 1.
         :param quality: The quality of the image that will be generated. `hd` creates images with finer details and greater consistency across the image.
         :param response_format: The format in which the generated images are returned.
         :param size: The size of the generated images.
@@ -87,7 +69,7 @@ class Images(BaseSDK):
             user=user,
         )
 
-        req = self.build_request(
+        req = self._build_request(
             method="POST",
             path="/v1/images/generations",
             base_url=base_url,
@@ -148,8 +130,8 @@ class Images(BaseSDK):
         self,
         *,
         model: str,
-        n: int,
         prompt: str,
+        n: OptionalNullable[int] = UNSET,
         quality: OptionalNullable[str] = UNSET,
         response_format: OptionalNullable[str] = UNSET,
         size: OptionalNullable[str] = UNSET,
@@ -160,37 +142,19 @@ class Images(BaseSDK):
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
     ) -> models.CreateImageResponse:
-        r"""Create image generation
+        r"""Create image
 
         This endpoint processes requests to generate images using AI models by forwarding them
         to the appropriate AI node. The request metadata and compute units have already been
         validated by middleware before reaching this handler.
 
-        # Arguments
-        * `metadata` - Extension containing pre-processed request metadata (node address, compute units, etc.)
-        * `state` - Application state containing configuration and shared resources
-        * `headers` - HTTP headers from the incoming request
-        * `payload` - JSON payload containing image generation parameters
-
-        # Returns
-        * `Result<Response<Body>>` - The processed response from the AI node or an error status
-
-        # Errors
+        ## Errors
         * Returns various status codes based on the underlying `handle_image_generation_response`:
         - `INTERNAL_SERVER_ERROR` - If there's an error communicating with the AI node
 
-        # Example Payload
-        ```json
-        {
-        \"model\": \"stable-diffusion-v1-5\",
-        \"n\": 1,
-        \"size\": \"1024x1024\"
-        }
-        ```
-
         :param model: The model to use for image generation.
-        :param n: The number of images to generate. Must be between 1 and 10.
         :param prompt: A text description of the desired image(s). The maximum length is 1000 characters.
+        :param n: The number of images to generate. Defaults to 1.
         :param quality: The quality of the image that will be generated. `hd` creates images with finer details and greater consistency across the image.
         :param response_format: The format in which the generated images are returned.
         :param size: The size of the generated images.
@@ -220,7 +184,7 @@ class Images(BaseSDK):
             user=user,
         )
 
-        req = self.build_request_async(
+        req = self._build_request_async(
             method="POST",
             path="/v1/images/generations",
             base_url=base_url,

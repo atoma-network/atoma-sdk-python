@@ -40,14 +40,6 @@ from .createchatcompletionstreamrequest import (
 from .createembeddingrequest import (
     CreateEmbeddingRequest,
     CreateEmbeddingRequestTypedDict,
-    One,
-    One2,
-    One2TypedDict,
-    OneTypedDict,
-    Two,
-    Two2,
-    Two2TypedDict,
-    TwoTypedDict,
 )
 from .createembeddingresponse import (
     CreateEmbeddingResponse,
@@ -55,6 +47,7 @@ from .createembeddingresponse import (
 )
 from .createimagerequest import CreateImageRequest, CreateImageRequestTypedDict
 from .createimageresponse import CreateImageResponse, CreateImageResponseTypedDict
+from .embeddinginput import EmbeddingInput, EmbeddingInputTypedDict
 from .embeddingobject import EmbeddingObject, EmbeddingObjectTypedDict
 from .embeddingusage import EmbeddingUsage, EmbeddingUsageTypedDict
 from .imagedata import ImageData, ImageDataTypedDict
@@ -99,24 +92,18 @@ __all__ = [
     "CreateImageRequestTypedDict",
     "CreateImageResponse",
     "CreateImageResponseTypedDict",
+    "EmbeddingInput",
+    "EmbeddingInputTypedDict",
     "EmbeddingObject",
     "EmbeddingObjectTypedDict",
     "EmbeddingUsage",
     "EmbeddingUsageTypedDict",
     "ImageData",
     "ImageDataTypedDict",
-    "One",
-    "One2",
-    "One2TypedDict",
-    "OneTypedDict",
     "Security",
     "SecurityTypedDict",
     "SelectNodePublicKeyRequest",
     "SelectNodePublicKeyRequestTypedDict",
-    "Two",
-    "Two2",
-    "Two2TypedDict",
-    "TwoTypedDict",
     "Usage",
     "UsageTypedDict",
 ]

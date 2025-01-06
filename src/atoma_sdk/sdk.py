@@ -27,7 +27,7 @@ from typing import Any, Callable, Dict, Optional, Union
 class AtomaSDK(BaseSDK):
     health: Health
     r"""Health check"""
-    models: Models
+    models_: Models
     r"""OpenAI's API models v1 endpoint"""
     node_public_address_registration: NodePublicAddressRegistration
     r"""Node public address registration"""
@@ -125,7 +125,7 @@ class AtomaSDK(BaseSDK):
 
     def _init_sdks(self):
         self.health = Health(self.sdk_configuration)
-        self.models = Models(self.sdk_configuration)
+        self.models_ = Models(self.sdk_configuration)
         self.node_public_address_registration = NodePublicAddressRegistration(
             self.sdk_configuration
         )

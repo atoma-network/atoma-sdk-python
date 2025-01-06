@@ -3,9 +3,9 @@
 from .basesdk import BaseSDK
 from atoma_sdk import models, utils
 from atoma_sdk._hooks import HookContext
-from atoma_sdk.types import BaseModel, OptionalNullable, UNSET
+from atoma_sdk.types import OptionalNullable, UNSET
 from atoma_sdk.utils import get_security_from_env
-from typing import Mapping, Optional, Union, cast
+from typing import Mapping, Optional, Union
 
 
 class Embeddings(BaseSDK):
@@ -14,9 +14,11 @@ class Embeddings(BaseSDK):
     def create(
         self,
         *,
-        request: Union[
-            models.CreateEmbeddingRequest, models.CreateEmbeddingRequestTypedDict
-        ],
+        input_: Union[models.EmbeddingInput, models.EmbeddingInputTypedDict],
+        model: str,
+        dimensions: OptionalNullable[int] = UNSET,
+        encoding_format: OptionalNullable[str] = UNSET,
+        user: OptionalNullable[str] = UNSET,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -28,23 +30,18 @@ class Embeddings(BaseSDK):
         The handler receives pre-processed metadata from middleware and forwards the request to
         the selected node.
 
-        Note: Authentication, node selection, and initial request validation are handled by middleware
-        before this handler is called.
-
-        # Arguments
-        * `metadata` - Pre-processed request metadata containing node information and compute units
-        * `state` - The shared proxy state containing configuration and runtime information
-        * `headers` - HTTP headers from the incoming request
-        * `payload` - The JSON request body containing the model and input text
-
         # Returns
         * `Ok(Response)` - The embeddings response from the processing node
         * `Err(AtomaProxyError)` - An error status code if any step fails
 
-        # Errors
+        ## Errors
         * `INTERNAL_SERVER_ERROR` - Processing or node communication failures
 
-        :param request: The request object to send.
+        :param input:
+        :param model: ID of the model to use.
+        :param dimensions: The number of dimensions the resulting output embeddings should have. Only supported in text-embedding-3 models.
+        :param encoding_format: The format to return the embeddings in. Can be \"float\" or \"base64\". Defaults to \"float\"
+        :param user: A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -58,11 +55,15 @@ class Embeddings(BaseSDK):
         if server_url is not None:
             base_url = server_url
 
-        if not isinstance(request, BaseModel):
-            request = utils.unmarshal(request, models.CreateEmbeddingRequest)
-        request = cast(models.CreateEmbeddingRequest, request)
+        request = models.CreateEmbeddingRequest(
+            dimensions=dimensions,
+            encoding_format=encoding_format,
+            input=input_,
+            model=model,
+            user=user,
+        )
 
-        req = self.build_request(
+        req = self._build_request(
             method="POST",
             path="/v1/embeddings",
             base_url=base_url,
@@ -122,9 +123,11 @@ class Embeddings(BaseSDK):
     async def create_async(
         self,
         *,
-        request: Union[
-            models.CreateEmbeddingRequest, models.CreateEmbeddingRequestTypedDict
-        ],
+        input_: Union[models.EmbeddingInput, models.EmbeddingInputTypedDict],
+        model: str,
+        dimensions: OptionalNullable[int] = UNSET,
+        encoding_format: OptionalNullable[str] = UNSET,
+        user: OptionalNullable[str] = UNSET,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -136,23 +139,18 @@ class Embeddings(BaseSDK):
         The handler receives pre-processed metadata from middleware and forwards the request to
         the selected node.
 
-        Note: Authentication, node selection, and initial request validation are handled by middleware
-        before this handler is called.
-
-        # Arguments
-        * `metadata` - Pre-processed request metadata containing node information and compute units
-        * `state` - The shared proxy state containing configuration and runtime information
-        * `headers` - HTTP headers from the incoming request
-        * `payload` - The JSON request body containing the model and input text
-
         # Returns
         * `Ok(Response)` - The embeddings response from the processing node
         * `Err(AtomaProxyError)` - An error status code if any step fails
 
-        # Errors
+        ## Errors
         * `INTERNAL_SERVER_ERROR` - Processing or node communication failures
 
-        :param request: The request object to send.
+        :param input:
+        :param model: ID of the model to use.
+        :param dimensions: The number of dimensions the resulting output embeddings should have. Only supported in text-embedding-3 models.
+        :param encoding_format: The format to return the embeddings in. Can be \"float\" or \"base64\". Defaults to \"float\"
+        :param user: A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -166,11 +164,15 @@ class Embeddings(BaseSDK):
         if server_url is not None:
             base_url = server_url
 
-        if not isinstance(request, BaseModel):
-            request = utils.unmarshal(request, models.CreateEmbeddingRequest)
-        request = cast(models.CreateEmbeddingRequest, request)
+        request = models.CreateEmbeddingRequest(
+            dimensions=dimensions,
+            encoding_format=encoding_format,
+            input=input_,
+            model=model,
+            user=user,
+        )
 
-        req = self.build_request_async(
+        req = self._build_request_async(
             method="POST",
             path="/v1/embeddings",
             base_url=base_url,

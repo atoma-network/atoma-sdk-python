@@ -18,7 +18,7 @@ class ConfidentialNodePublicKeySelection(BaseSDK):
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
     ) -> Any:
-        r"""Handles requests to select a node's public key for confidential compute operations.
+        r"""Select node public key
 
         This endpoint attempts to find a suitable node and retrieve its public key for encryption
         through a two-step process:
@@ -27,32 +27,12 @@ class ConfidentialNodePublicKeySelection(BaseSDK):
         2. If no node is immediately available, it falls back to finding the cheapest compatible node
         and acquiring a new stack entry for it.
 
-        # Parameters
-        - `state`: The shared proxy state containing connections to the state manager and Sui
-        - `metadata`: Request metadata from middleware
-        - `request`: JSON payload containing the requested model name
-
-        # Returns
-        Returns a `Result` containing either:
-        - `Json<SelectNodePublicKeyResponse>` with:
-        - The selected node's public key (base64 encoded)
-        - The node's small ID
-        - Optional stack entry digest (if a new stack entry was acquired)
-        - `AtomaProxyError` error if:
-        - `INTERNAL_SERVER_ERROR` - Communication errors or missing node public keys
-        - `SERVICE_UNAVAILABLE` - No nodes available for confidential compute
-
-        # Example Response
-        ```json
-        {
-        \"public_key\": [base64_encoded_bytes],
-        \"node_small_id\": 123,
-        \"stack_entry_digest\": \"transaction_digest_string\"
-        }
-        ```
-
         This endpoint is specifically designed for confidential compute scenarios where
         requests need to be encrypted before being processed by nodes.
+
+        ## Errors
+        - `INTERNAL_SERVER_ERROR` - Communication errors or missing node public keys
+        - `SERVICE_UNAVAILABLE` - No nodes available for confidential compute
 
         :param model_name: The request model name
         :param retries: Override the default retry configuration for this method
@@ -72,7 +52,7 @@ class ConfidentialNodePublicKeySelection(BaseSDK):
             model_name=model_name,
         )
 
-        req = self.build_request(
+        req = self._build_request(
             method="GET",
             path="/v1/encryption/public-key",
             base_url=base_url,
@@ -138,7 +118,7 @@ class ConfidentialNodePublicKeySelection(BaseSDK):
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
     ) -> Any:
-        r"""Handles requests to select a node's public key for confidential compute operations.
+        r"""Select node public key
 
         This endpoint attempts to find a suitable node and retrieve its public key for encryption
         through a two-step process:
@@ -147,32 +127,12 @@ class ConfidentialNodePublicKeySelection(BaseSDK):
         2. If no node is immediately available, it falls back to finding the cheapest compatible node
         and acquiring a new stack entry for it.
 
-        # Parameters
-        - `state`: The shared proxy state containing connections to the state manager and Sui
-        - `metadata`: Request metadata from middleware
-        - `request`: JSON payload containing the requested model name
-
-        # Returns
-        Returns a `Result` containing either:
-        - `Json<SelectNodePublicKeyResponse>` with:
-        - The selected node's public key (base64 encoded)
-        - The node's small ID
-        - Optional stack entry digest (if a new stack entry was acquired)
-        - `AtomaProxyError` error if:
-        - `INTERNAL_SERVER_ERROR` - Communication errors or missing node public keys
-        - `SERVICE_UNAVAILABLE` - No nodes available for confidential compute
-
-        # Example Response
-        ```json
-        {
-        \"public_key\": [base64_encoded_bytes],
-        \"node_small_id\": 123,
-        \"stack_entry_digest\": \"transaction_digest_string\"
-        }
-        ```
-
         This endpoint is specifically designed for confidential compute scenarios where
         requests need to be encrypted before being processed by nodes.
+
+        ## Errors
+        - `INTERNAL_SERVER_ERROR` - Communication errors or missing node public keys
+        - `SERVICE_UNAVAILABLE` - No nodes available for confidential compute
 
         :param model_name: The request model name
         :param retries: Override the default retry configuration for this method
@@ -192,7 +152,7 @@ class ConfidentialNodePublicKeySelection(BaseSDK):
             model_name=model_name,
         )
 
-        req = self.build_request_async(
+        req = self._build_request_async(
             method="GET",
             path="/v1/encryption/public-key",
             base_url=base_url,

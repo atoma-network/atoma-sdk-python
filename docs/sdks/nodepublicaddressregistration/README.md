@@ -15,16 +15,7 @@ This endpoint allows nodes to register or update their public address in the sys
 When a node comes online or changes its address, it can use this endpoint to ensure
 the system has its current address for routing requests.
 
-# Arguments
-
-* `state` - The shared application state containing the state manager sender
-* `payload` - The registration payload containing the node's ID and public address
-
-# Returns
-
-Returns `Ok(Json(Value::Null))` on successful registration, or an error if the registration fails.
-
-# Errors
+## Errors
 
 Returns various `AtomaProxyError` variants:
 * `MissingHeader` - If the signature header is missing
@@ -38,16 +29,6 @@ Returns various `AtomaProxyError` variants:
   - The state manager channel is closed
   - The registration event cannot be sent
   - Node Sui address lookup fails
-
-# Example Request Payload
-
-```json
-{
-    "node_small_id": 123,
-    "public_address": "http://node-123.example.com:8080",
-    "country": "US"
-}
-```
 
 ### Example Usage
 

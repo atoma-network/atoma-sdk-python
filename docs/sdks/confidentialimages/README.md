@@ -7,9 +7,14 @@ Atoma's API confidential images v1 endpoint
 
 ### Available Operations
 
-* [generate](#generate)
+* [generate](#generate) - Create confidential image
 
 ## generate
+
+This handler processes image generation requests in a confidential manner, providing additional
+encryption and security measures for sensitive data processing. It supports both streaming and
+non-streaming responses while maintaining data confidentiality through AEAD encryption and TEE hardware,
+for full private AI compute.
 
 ### Example Usage
 

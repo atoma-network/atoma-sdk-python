@@ -15,44 +15,44 @@ Developer-friendly & type-safe Python SDK specifically catered to leverage _atom
 > This SDK is not yet ready for production use. To complete setup please follow the steps outlined in your [workspace](https://app.speakeasy.com/org/atoma-francis/atoma-proxy). Delete this section before > publishing to a package manager.
 
 <!-- Start Summary [summary] -->
-
 ## Summary
+
 
 <!-- End Summary [summary] -->
 
 <!-- Start Table of Contents [toc] -->
-
 ## Table of Contents
-
 <!-- $toc-max-depth=2 -->
-
-- [atoma-sdk](#atoma-sdk)
-  - [SDK Installation](#sdk-installation)
-  - [IDE Support](#ide-support)
-  - [SDK Example Usage](#sdk-example-usage)
-  - [Authentication](#authentication)
-  - [Available Resources and Operations](#available-resources-and-operations)
-  - [Server-sent event streaming](#server-sent-event-streaming)
-  - [Retries](#retries)
-  - [Error Handling](#error-handling)
-  - [Server Selection](#server-selection)
-  - [Custom HTTP Client](#custom-http-client)
-  - [Debugging](#debugging)
-- [Development](#development)
-  - [Maturity](#maturity)
-  - [Contributions](#contributions)
+* [atoma-sdk](#atoma-sdk)
+  * [SDK Installation](#sdk-installation)
+  * [IDE Support](#ide-support)
+  * [SDK Example Usage](#sdk-example-usage)
+  * [Authentication](#authentication)
+  * [Available Resources and Operations](#available-resources-and-operations)
+  * [Server-sent event streaming](#server-sent-event-streaming)
+  * [Retries](#retries)
+  * [Error Handling](#error-handling)
+  * [Server Selection](#server-selection)
+  * [Custom HTTP Client](#custom-http-client)
+  * [Debugging](#debugging)
+* [Development](#development)
+  * [Maturity](#maturity)
+  * [Contributions](#contributions)
 
 <!-- End Table of Contents [toc] -->
 
 <!-- Start SDK Installation [installation] -->
-
 ## SDK Installation
 
-The SDK can be installed with either _pip_ or _poetry_ package managers.
+> [!TIP]
+> To finish publishing your SDK to PyPI you must [run your first generation action](https://www.speakeasy.com/docs/github-setup#step-by-step-guide).
+
+
+The SDK can be installed with either *pip* or *poetry* package managers.
 
 ### PIP
 
-_PIP_ is the default package installer for Python, enabling easy installation and management of packages from PyPI via the command line.
+*PIP* is the default package installer for Python, enabling easy installation and management of packages from PyPI via the command line.
 
 ```bash
 pip install git+<UNSET>.git
@@ -60,16 +60,14 @@ pip install git+<UNSET>.git
 
 ### Poetry
 
-_Poetry_ is a modern tool that simplifies dependency management and package publishing by using a single `pyproject.toml` file to handle project metadata and dependencies.
+*Poetry* is a modern tool that simplifies dependency management and package publishing by using a single `pyproject.toml` file to handle project metadata and dependencies.
 
 ```bash
 poetry add git+<UNSET>.git
 ```
-
 <!-- End SDK Installation [installation] -->
 
 <!-- Start IDE Support [idesupport] -->
-
 ## IDE Support
 
 ### PyCharm
@@ -80,7 +78,6 @@ Generally, the SDK will work well with most IDEs out of the box. However, when u
 <!-- End IDE Support [idesupport] -->
 
 <!-- Start SDK Example Usage [usage] -->
-
 ## SDK Example Usage
 
 ### Example
@@ -103,7 +100,6 @@ with AtomaSDK(
 </br>
 
 The same SDK client can also be used to make asychronous requests by importing asyncio.
-
 ```python
 # Asynchronous Example
 import asyncio
@@ -122,11 +118,9 @@ async def main():
 
 asyncio.run(main())
 ```
-
 <!-- End SDK Example Usage [usage] -->
 
 <!-- Start Authentication [security] -->
-
 ## Authentication
 
 ### Per-Client Security Schemes
@@ -138,7 +132,6 @@ This SDK supports the following security scheme globally:
 | `bearer_auth` | http | HTTP Bearer | `ATOMASDK_BEARER_AUTH` |
 
 To authenticate with the API the `bearer_auth` parameter must be set when initializing the SDK client instance. For example:
-
 ```python
 from atoma_sdk import AtomaSDK
 import os
@@ -153,69 +146,67 @@ with AtomaSDK(
     print(res)
 
 ```
-
 <!-- End Authentication [security] -->
 
 <!-- Start Available Resources and Operations [operations] -->
-
 ## Available Resources and Operations
 
 <details open>
 <summary>Available methods</summary>
 
+
 ### [chat](docs/sdks/chat/README.md)
 
-- [create](docs/sdks/chat/README.md#create) - Create chat completion
-- [create_stream](docs/sdks/chat/README.md#create_stream)
+* [create](docs/sdks/chat/README.md#create) - Create chat completion
+* [create_stream](docs/sdks/chat/README.md#create_stream)
 
 ### [confidential_chat](docs/sdks/confidentialchat/README.md)
 
-- [create](docs/sdks/confidentialchat/README.md#create) - Create confidential chat completion
+* [create](docs/sdks/confidentialchat/README.md#create) - Create confidential chat completion
 
 ### [confidential_embeddings](docs/sdks/confidentialembeddings/README.md)
 
-- [create](docs/sdks/confidentialembeddings/README.md#create) - Create confidential embeddings
+* [create](docs/sdks/confidentialembeddings/README.md#create) - Create confidential embeddings
 
 ### [confidential_images](docs/sdks/confidentialimages/README.md)
 
-- [generate](docs/sdks/confidentialimages/README.md#generate)
+* [generate](docs/sdks/confidentialimages/README.md#generate) - Create confidential image
 
 ### [confidential_node_public_key_selection](docs/sdks/confidentialnodepublickeyselection/README.md)
 
-- [select_node_public_key](docs/sdks/confidentialnodepublickeyselection/README.md#select_node_public_key) - Handles requests to select a node's public key for confidential compute operations.
+* [select_node_public_key](docs/sdks/confidentialnodepublickeyselection/README.md#select_node_public_key) - Select node public key
 
 ### [embeddings](docs/sdks/embeddings/README.md)
 
-- [create](docs/sdks/embeddings/README.md#create) - Create embeddings
+* [create](docs/sdks/embeddings/README.md#create) - Create embeddings
 
 ### [health](docs/sdks/health/README.md)
 
-- [health](docs/sdks/health/README.md#health) - Health
+* [health](docs/sdks/health/README.md#health) - Health
 
 ### [images](docs/sdks/images/README.md)
 
-- [generate](docs/sdks/images/README.md#generate) - Create image generation
+* [generate](docs/sdks/images/README.md#generate) - Create image
 
 ### [models](docs/sdks/models/README.md)
 
-- [models_handler](docs/sdks/models/README.md#models_handler) - List models
+* [models_handler](docs/sdks/models/README.md#models_handler) - List models
 
 ### [node_public_address_registration](docs/sdks/nodepublicaddressregistration/README.md)
 
-- [node_public_address_registration](docs/sdks/nodepublicaddressregistration/README.md#node_public_address_registration) - Register node
+* [node_public_address_registration](docs/sdks/nodepublicaddressregistration/README.md#node_public_address_registration) - Register node
 
 </details>
 <!-- End Available Resources and Operations [operations] -->
 
 <!-- Start Server-sent event streaming [eventstream] -->
-
 ## Server-sent event streaming
 
 [Server-sent events][mdn-sse] are used to stream content from certain
 operations. These operations will expose the stream as [Generator][generator] that
 can be consumed using a simple `for` loop. The loop will
 terminate when the server no longer has any events to send and closes the
-underlying connection.
+underlying connection.  
 
 The stream is also a [Context Manager][context-manager] and can be used with the `with` statement and will close the
 underlying connection when the context is exited.
@@ -245,17 +236,14 @@ with AtomaSDK(
 [mdn-sse]: https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events
 [generator]: https://book.pythontips.com/en/latest/generators.html
 [context-manager]: https://book.pythontips.com/en/latest/context_managers.html
-
 <!-- End Server-sent event streaming [eventstream] -->
 
 <!-- Start Retries [retries] -->
-
 ## Retries
 
 Some of the endpoints in this SDK support retries. If you use the SDK without any configuration, it will fall back to the default retry strategy provided by the API. However, the default retry strategy can be overridden on a per-operation basis, or across the entire SDK.
 
 To change the default retry strategy for a single API call, simply provide a `RetryConfig` object to the call:
-
 ```python
 from atoma_sdk import AtomaSDK
 from atoma_sdk.utils import BackoffStrategy, RetryConfig
@@ -274,7 +262,6 @@ with AtomaSDK(
 ```
 
 If you'd like to override the default retry strategy for all operations that support retries, you can use the `retry_config` optional parameter when initializing the SDK:
-
 ```python
 from atoma_sdk import AtomaSDK
 from atoma_sdk.utils import BackoffStrategy, RetryConfig
@@ -291,11 +278,9 @@ with AtomaSDK(
     print(res)
 
 ```
-
 <!-- End Retries [retries] -->
 
 <!-- Start Error Handling [errors] -->
-
 ## Error Handling
 
 Handling errors in this SDK should largely match your expectations. All operations return a response object or raise an exception.
@@ -303,13 +288,13 @@ Handling errors in this SDK should largely match your expectations. All operatio
 By default, an API error will raise a models.APIError exception, which has the following properties:
 
 | Property        | Type             | Description           |
-| --------------- | ---------------- | --------------------- |
-| `.status_code`  | _int_            | The HTTP status code  |
-| `.message`      | _str_            | The error message     |
-| `.raw_response` | _httpx.Response_ | The raw HTTP response |
-| `.body`         | _str_            | The response content  |
+|-----------------|------------------|-----------------------|
+| `.status_code`  | *int*            | The HTTP status code  |
+| `.message`      | *str*            | The error message     |
+| `.raw_response` | *httpx.Response* | The raw HTTP response |
+| `.body`         | *str*            | The response content  |
 
-When custom error responses are specified for an operation, the SDK may also raise their associated exceptions. You can refer to respective _Errors_ tables in SDK docs for more details on possible exception types for each operation. For example, the `health_async` method may raise the following exceptions:
+When custom error responses are specified for an operation, the SDK may also raise their associated exceptions. You can refer to respective *Errors* tables in SDK docs for more details on possible exception types for each operation. For example, the `health_async` method may raise the following exceptions:
 
 | Error Type      | Status Code | Content Type |
 | --------------- | ----------- | ------------ |
@@ -336,23 +321,20 @@ with AtomaSDK(
         # handle exception
         raise(e)
 ```
-
 <!-- End Error Handling [errors] -->
 
 <!-- Start Server Selection [server] -->
-
 ## Server Selection
 
 ### Override Server URL Per-Client
 
 The default server can also be overridden globally by passing a URL to the `server_url: str` optional parameter when initializing the SDK client instance. For example:
-
 ```python
 from atoma_sdk import AtomaSDK
 import os
 
 with AtomaSDK(
-    server_url="http://localhost:8080",
+    server_url="https://api.atomacloud.com",
     bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
 ) as atoma_sdk:
 
@@ -362,19 +344,16 @@ with AtomaSDK(
     print(res)
 
 ```
-
 <!-- End Server Selection [server] -->
 
 <!-- Start Custom HTTP Client [http-client] -->
-
 ## Custom HTTP Client
 
-The Python SDK makes API calls using the [httpx](https://www.python-httpx.org/) HTTP library. In order to provide a convenient way to configure timeouts, cookies, proxies, custom headers, and other low-level configuration, you can initialize the SDK client with your own HTTP client instance.
+The Python SDK makes API calls using the [httpx](https://www.python-httpx.org/) HTTP library.  In order to provide a convenient way to configure timeouts, cookies, proxies, custom headers, and other low-level configuration, you can initialize the SDK client with your own HTTP client instance.
 Depending on whether you are using the sync or async version of the SDK, you can pass an instance of `HttpClient` or `AsyncHttpClient` respectively, which are Protocol's ensuring that the client has the necessary methods to make API calls.
 This allows you to wrap the client with your own custom logic, such as adding custom headers, logging, or error handling, or you can just pass an instance of `httpx.Client` or `httpx.AsyncClient` directly.
 
 For example, you could specify a header for every request that this sdk makes as follows:
-
 ```python
 from atoma_sdk import AtomaSDK
 import httpx
@@ -384,7 +363,6 @@ s = AtomaSDK(client=http_client)
 ```
 
 or you could wrap the client with your own custom logic:
-
 ```python
 from atoma_sdk import AtomaSDK
 from atoma_sdk.httpclient import AsyncHttpClient
@@ -447,17 +425,14 @@ class CustomClient(AsyncHttpClient):
 
 s = AtomaSDK(async_client=CustomClient(httpx.AsyncClient()))
 ```
-
 <!-- End Custom HTTP Client [http-client] -->
 
 <!-- Start Debugging [debug] -->
-
 ## Debugging
 
 You can setup your SDK to emit debug logs for SDK requests and responses.
 
 You can pass your own logger class directly into your SDK.
-
 ```python
 from atoma_sdk import AtomaSDK
 import logging
@@ -467,7 +442,6 @@ s = AtomaSDK(debug_logger=logging.getLogger("atoma_sdk"))
 ```
 
 You can also enable a default debug logger by setting an environment variable `ATOMASDK_DEBUG` to true.
-
 <!-- End Debugging [debug] -->
 
 <!-- Placeholder for Future Speakeasy SDK Sections -->

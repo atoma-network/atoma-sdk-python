@@ -1,4 +1,4 @@
-speakeasyVersion: 1.455.7
+speakeasyVersion: 1.463.1
 sources:
     atoma-proxy:
         sourceNamespace: atoma-proxy
@@ -13,8 +13,6 @@ targets:
         sourceNamespace: atoma-proxy
         sourceRevisionDigest: sha256:f3b03c8cacb3e995a9afeecbcca78d71578557634753b5e7c641844db139fd38
         sourceBlobDigest: sha256:dd7be15bf05429b4ce5e8144d8f4115b25fb9bc486ee59f50707bd64bc4fe8d6
-        codeSamplesNamespace: atoma-proxy-python-code-samples
-        codeSamplesRevisionDigest: sha256:9f7653133f5e0ce5b810fb172e37373decc59209359a287088ae2c2408ecb48f
 workflow:
     workflowVersion: 1.0.0
     speakeasyVersion: latest

@@ -26,59 +26,6 @@ class Models(BaseSDK):
         includes standard OpenAI-compatible fields to ensure compatibility with
         existing OpenAI client libraries.
 
-        # Arguments
-
-        * `state` - The shared application state containing the list of available models
-
-        # Returns
-
-        Returns a JSON response containing:
-        * An \"object\" field set to \"list\"
-        * A \"data\" array containing model objects with the following fields:
-        - id: The model identifier
-        - object: Always set to \"model\"
-        - created: Timestamp (currently hardcoded)
-        - owned_by: Set to \"atoma\"
-        - root: Same as the model id
-        - parent: Set to null
-        - max_model_len: Maximum context length (currently hardcoded to 2048)
-        - permission: Array of permission objects describing model capabilities
-
-        # Example Response
-
-        ```json
-        {
-        \"object\": \"list\",
-        \"data\": [
-        {
-        \"id\": \"meta-llama/Llama-3.1-70B-Instruct\",
-        \"object\": \"model\",
-        \"created\": 1730930595,
-        \"owned_by\": \"atoma\",
-        \"root\": \"meta-llama/Llama-3.1-70B-Instruct\",
-        \"parent\": null,
-        \"max_model_len\": 2048,
-        \"permission\": [
-        {
-        \"id\": \"modelperm-meta-llama/Llama-3.1-70B-Instruct\",
-        \"object\": \"model_permission\",
-        \"created\": 1730930595,
-        \"allow_create_engine\": false,
-        \"allow_sampling\": true,
-        \"allow_logprobs\": true,
-        \"allow_search_indices\": false,
-        \"allow_view\": true,
-        \"allow_fine_tuning\": false,
-        \"organization\": \"*\",
-        \"group\": null,
-        \"is_blocking\": false
-        }
-        ]
-        }
-        ]
-        }
-        ```
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -91,7 +38,7 @@ class Models(BaseSDK):
 
         if server_url is not None:
             base_url = server_url
-        req = self.build_request(
+        req = self._build_request(
             method="GET",
             path="/v1/models",
             base_url=base_url,
@@ -160,59 +107,6 @@ class Models(BaseSDK):
         includes standard OpenAI-compatible fields to ensure compatibility with
         existing OpenAI client libraries.
 
-        # Arguments
-
-        * `state` - The shared application state containing the list of available models
-
-        # Returns
-
-        Returns a JSON response containing:
-        * An \"object\" field set to \"list\"
-        * A \"data\" array containing model objects with the following fields:
-        - id: The model identifier
-        - object: Always set to \"model\"
-        - created: Timestamp (currently hardcoded)
-        - owned_by: Set to \"atoma\"
-        - root: Same as the model id
-        - parent: Set to null
-        - max_model_len: Maximum context length (currently hardcoded to 2048)
-        - permission: Array of permission objects describing model capabilities
-
-        # Example Response
-
-        ```json
-        {
-        \"object\": \"list\",
-        \"data\": [
-        {
-        \"id\": \"meta-llama/Llama-3.1-70B-Instruct\",
-        \"object\": \"model\",
-        \"created\": 1730930595,
-        \"owned_by\": \"atoma\",
-        \"root\": \"meta-llama/Llama-3.1-70B-Instruct\",
-        \"parent\": null,
-        \"max_model_len\": 2048,
-        \"permission\": [
-        {
-        \"id\": \"modelperm-meta-llama/Llama-3.1-70B-Instruct\",
-        \"object\": \"model_permission\",
-        \"created\": 1730930595,
-        \"allow_create_engine\": false,
-        \"allow_sampling\": true,
-        \"allow_logprobs\": true,
-        \"allow_search_indices\": false,
-        \"allow_view\": true,
-        \"allow_fine_tuning\": false,
-        \"organization\": \"*\",
-        \"group\": null,
-        \"is_blocking\": false
-        }
-        ]
-        }
-        ]
-        }
-        ```
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -225,7 +119,7 @@ class Models(BaseSDK):
 
         if server_url is not None:
             base_url = server_url
-        req = self.build_request_async(
+        req = self._build_request_async(
             method="GET",
             path="/v1/models",
             base_url=base_url,

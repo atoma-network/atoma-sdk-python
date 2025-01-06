@@ -11,10 +11,10 @@ class CreateImageRequestTypedDict(TypedDict):
 
     model: str
     r"""The model to use for image generation."""
-    n: int
-    r"""The number of images to generate. Must be between 1 and 10."""
     prompt: str
     r"""A text description of the desired image(s). The maximum length is 1000 characters."""
+    n: NotRequired[Nullable[int]]
+    r"""The number of images to generate. Defaults to 1."""
     quality: NotRequired[Nullable[str]]
     r"""The quality of the image that will be generated.
     `hd` creates images with finer details and greater consistency across the image.
@@ -35,11 +35,11 @@ class CreateImageRequest(BaseModel):
     model: str
     r"""The model to use for image generation."""
 
-    n: int
-    r"""The number of images to generate. Must be between 1 and 10."""
-
     prompt: str
     r"""A text description of the desired image(s). The maximum length is 1000 characters."""
+
+    n: OptionalNullable[int] = UNSET
+    r"""The number of images to generate. Defaults to 1."""
 
     quality: OptionalNullable[str] = UNSET
     r"""The quality of the image that will be generated.
@@ -60,8 +60,8 @@ class CreateImageRequest(BaseModel):
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = ["quality", "response_format", "size", "style", "user"]
-        nullable_fields = ["quality", "response_format", "size", "style", "user"]
+        optional_fields = ["n", "quality", "response_format", "size", "style", "user"]
+        nullable_fields = ["n", "quality", "response_format", "size", "style", "user"]
         null_default_fields = []
 
         serialized = handler(self)

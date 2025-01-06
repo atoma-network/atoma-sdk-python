@@ -33,7 +33,7 @@ class Health(BaseSDK):
 
         if server_url is not None:
             base_url = server_url
-        req = self.build_request(
+        req = self._build_request(
             method="GET",
             path="/health",
             base_url=base_url,
@@ -109,7 +109,7 @@ class Health(BaseSDK):
 
         if server_url is not None:
             base_url = server_url
-        req = self.build_request_async(
+        req = self._build_request_async(
             method="GET",
             path="/health",
             base_url=base_url,

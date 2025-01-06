@@ -1,4 +1,4 @@
-# One
+# EmbeddingInput
 
 
 ## Supported Types
@@ -9,9 +9,9 @@
 value: str = /* values here */
 ```
 
-### `models.One2`
+### `List[str]`
 
 ```python
-value: models.One2 = /* values here */
+value: List[str] = /* values here */
 ```
 

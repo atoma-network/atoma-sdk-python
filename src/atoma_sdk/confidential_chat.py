@@ -118,7 +118,7 @@ class ConfidentialChat(BaseSDK):
 
         request = encrypted_message
 
-        req = self.build_request(
+        req = self._build_request(
             method="POST",
             path="/v1/confidential/chat/completions",
             base_url=base_url,
@@ -301,7 +301,7 @@ class ConfidentialChat(BaseSDK):
 
         request = encrypted_message
 
-        req = self.build_request_async(
+        req = self._build_request_async(
             method="POST",
             path="/v1/confidential/chat/completions",
             base_url=base_url,

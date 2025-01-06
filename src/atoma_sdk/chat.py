@@ -46,20 +46,13 @@ class Chat(BaseSDK):
         or non-streaming response handling based on the request payload. For streaming requests,
         it configures additional options to track token usage.
 
-        # Arguments
-
-        * `metadata`: Extension containing request metadata (node address, ID, compute units, etc.)
-        * `state`: The shared state of the application
-        * `headers`: The headers of the request
-        * `payload`: The JSON payload containing the chat completion request
-
-        # Returns
+        ## Returns
 
         Returns a Response containing either:
         - A streaming SSE connection for real-time completions
         - A single JSON response for non-streaming completions
 
-        # Errors
+        ## Errors
 
         Returns an error status code if:
         - The request processing fails
@@ -120,7 +113,7 @@ class Chat(BaseSDK):
             user=user,
         )
 
-        req = self.build_request(
+        req = self._build_request(
             method="POST",
             path="/v1/chat/completions",
             base_url=base_url,
@@ -212,20 +205,13 @@ class Chat(BaseSDK):
         or non-streaming response handling based on the request payload. For streaming requests,
         it configures additional options to track token usage.
 
-        # Arguments
-
-        * `metadata`: Extension containing request metadata (node address, ID, compute units, etc.)
-        * `state`: The shared state of the application
-        * `headers`: The headers of the request
-        * `payload`: The JSON payload containing the chat completion request
-
-        # Returns
+        ## Returns
 
         Returns a Response containing either:
         - A streaming SSE connection for real-time completions
         - A single JSON response for non-streaming completions
 
-        # Errors
+        ## Errors
 
         Returns an error status code if:
         - The request processing fails
@@ -286,7 +272,7 @@ class Chat(BaseSDK):
             user=user,
         )
 
-        req = self.build_request_async(
+        req = self._build_request_async(
             method="POST",
             path="/v1/chat/completions",
             base_url=base_url,
@@ -427,7 +413,7 @@ class Chat(BaseSDK):
             user=user,
         )
 
-        req = self.build_request(
+        req = self._build_request(
             method="POST",
             path="/v1/chat/completions#stream",
             base_url=base_url,
@@ -474,7 +460,6 @@ class Chat(BaseSDK):
                 lambda raw: utils.unmarshal_json(
                     raw, models.ChatCompletionStreamResponse
                 ),
-                sentinel="[DONE]",
             )
         if utils.match_response(http_res, ["400", "401", "4XX", "500", "5XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
@@ -575,7 +560,7 @@ class Chat(BaseSDK):
             user=user,
         )
 
-        req = self.build_request_async(
+        req = self._build_request_async(
             method="POST",
             path="/v1/chat/completions#stream",
             base_url=base_url,
@@ -622,7 +607,6 @@ class Chat(BaseSDK):
                 lambda raw: utils.unmarshal_json(
                     raw, models.ChatCompletionStreamResponse
                 ),
-                sentinel="[DONE]",
             )
         if utils.match_response(http_res, ["400", "401", "4XX", "500", "5XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)

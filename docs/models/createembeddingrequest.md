@@ -3,17 +3,12 @@
 Request object for creating embeddings
 
 
-## Supported Types
+## Fields
 
-### `models.One`
-
-```python
-value: models.One = /* values here */
-```
-
-### `models.Two`
-
-```python
-value: models.Two = /* values here */
-```
-
+| Field                                                                                                            | Type                                                                                                             | Required                                                                                                         | Description                                                                                                      |
+| ---------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `input`                                                                                                          | [models.EmbeddingInput](../models/embeddinginput.md)                                                             | :heavy_check_mark:                                                                                               | N/A                                                                                                              |
+| `model`                                                                                                          | *str*                                                                                                            | :heavy_check_mark:                                                                                               | ID of the model to use.                                                                                          |
+| `dimensions`                                                                                                     | *OptionalNullable[int]*                                                                                          | :heavy_minus_sign:                                                                                               | The number of dimensions the resulting output embeddings should have.<br/>Only supported in text-embedding-3 models. |
+| `encoding_format`                                                                                                | *OptionalNullable[str]*                                                                                          | :heavy_minus_sign:                                                                                               | The format to return the embeddings in. Can be "float" or "base64".<br/>Defaults to "float"                      |
+| `user`                                                                                                           | *OptionalNullable[str]*                                                                                          | :heavy_minus_sign:                                                                                               | A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.               |
