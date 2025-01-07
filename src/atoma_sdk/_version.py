@@ -3,7 +3,7 @@
 import importlib.metadata
 
 __title__: str = "atoma-sdk"
-__version__: str = "0.1.4"
+__version__: str = "0.1.1"
 
 try:
     if __package__ is not None:
