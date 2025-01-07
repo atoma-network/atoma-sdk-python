@@ -5,8 +5,8 @@ management:
   docVersion: 0.1.0
   speakeasyVersion: 1.463.1
   generationVersion: 2.486.6
-  releaseVersion: 0.1.1
-  configChecksum: 31e420f621d38d7968c89adcec9702fe
+  releaseVersion: 0.1.0
+  configChecksum: 24d2e8fe799493f6216a1d468a6f924d
   repoURL: https://github.com/atoma-network/atoma-sdk-python.git
   installationURL: https://github.com/atoma-network/atoma-sdk-python.git
 features:
