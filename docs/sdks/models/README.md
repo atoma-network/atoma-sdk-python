@@ -7,14 +7,13 @@ OpenAI's API models v1 endpoint
 
 ### Available Operations
 
-* [models_handler](#models_handler) - List models
+* [models_list](#models_list) - List models
 
-## models_handler
+## models_list
 
 This endpoint mimics the OpenAI models endpoint format, returning a list of
-available models with their associated metadata and permissions. Each model
-includes standard OpenAI-compatible fields to ensure compatibility with
-existing OpenAI client libraries.
+available models with their associated metadata. Each model includes standard
+OpenAI-compatible fields to ensure compatibility with existing OpenAI client libraries.
 
 ### Example Usage
 
@@ -26,7 +25,7 @@ with AtomaSDK(
     bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
 ) as atoma_sdk:
 
-    res = atoma_sdk.models.models_handler()
+    res = atoma_sdk.models.models_list()
 
     # Handle response
     print(res)
@@ -41,7 +40,7 @@ with AtomaSDK(
 
 ### Response
 
-**[Any](../../models/.md)**
+**[models.ModelList](../../models/modellist.md)**
 
 ### Errors
 

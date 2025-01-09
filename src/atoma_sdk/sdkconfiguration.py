@@ -11,7 +11,7 @@ from typing import Callable, Dict, Optional, Tuple, Union
 
 
 SERVERS = [
-    "https://api.atomacloud.com",
+    "https://api.atoma.network",
 ]
 """Contains the list of servers available to the SDK"""
 
@@ -26,9 +26,9 @@ class SDKConfiguration:
     server_idx: Optional[int] = 0
     language: str = "python"
     openapi_doc_version: str = "0.1.0"
-    sdk_version: str = "0.1.0"
+    sdk_version: str = "0.2.0"
     gen_version: str = "2.486.6"
-    user_agent: str = "speakeasy-sdk/python 0.1.0 2.486.6 0.1.0 atoma-sdk"
+    user_agent: str = "speakeasy-sdk/python 0.2.0 2.486.6 0.1.0 atoma-sdk"
     retry_config: OptionalNullable[RetryConfig] = Field(default_factory=lambda: UNSET)
     timeout_ms: Optional[int] = None
 

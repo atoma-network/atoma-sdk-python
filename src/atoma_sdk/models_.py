@@ -5,26 +5,25 @@ from atoma_sdk import models, utils
 from atoma_sdk._hooks import HookContext
 from atoma_sdk.types import OptionalNullable, UNSET
 from atoma_sdk.utils import get_security_from_env
-from typing import Any, Mapping, Optional
+from typing import Mapping, Optional
 
 
 class Models(BaseSDK):
     r"""OpenAI's API models v1 endpoint"""
 
-    def models_handler(
+    def models_list(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> Any:
+    ) -> models.ModelList:
         r"""List models
 
         This endpoint mimics the OpenAI models endpoint format, returning a list of
-        available models with their associated metadata and permissions. Each model
-        includes standard OpenAI-compatible fields to ensure compatibility with
-        existing OpenAI client libraries.
+        available models with their associated metadata. Each model includes standard
+        OpenAI-compatible fields to ensure compatibility with existing OpenAI client libraries.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -64,7 +63,7 @@ class Models(BaseSDK):
 
         http_res = self.do_request(
             hook_ctx=HookContext(
-                operation_id="models_handler",
+                operation_id="models_list",
                 oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
@@ -76,7 +75,7 @@ class Models(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return utils.unmarshal_json(http_res.text, Any)
+            return utils.unmarshal_json(http_res.text, models.ModelList)
         if utils.match_response(http_res, ["4XX", "500", "5XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise models.APIError(
@@ -92,20 +91,19 @@ class Models(BaseSDK):
             http_res,
         )
 
-    async def models_handler_async(
+    async def models_list_async(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> Any:
+    ) -> models.ModelList:
         r"""List models
 
         This endpoint mimics the OpenAI models endpoint format, returning a list of
-        available models with their associated metadata and permissions. Each model
-        includes standard OpenAI-compatible fields to ensure compatibility with
-        existing OpenAI client libraries.
+        available models with their associated metadata. Each model includes standard
+        OpenAI-compatible fields to ensure compatibility with existing OpenAI client libraries.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -145,7 +143,7 @@ class Models(BaseSDK):
 
         http_res = await self.do_request_async(
             hook_ctx=HookContext(
-                operation_id="models_handler",
+                operation_id="models_list",
                 oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
@@ -157,7 +155,7 @@ class Models(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return utils.unmarshal_json(http_res.text, Any)
+            return utils.unmarshal_json(http_res.text, models.ModelList)
         if utils.match_response(http_res, ["4XX", "500", "5XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise models.APIError(

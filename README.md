@@ -91,7 +91,12 @@ with AtomaSDK(
     bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
 ) as atoma_sdk:
 
-    res = atoma_sdk.health.health()
+    res = atoma_sdk.chat.create(messages=[
+        {
+            "content": "<value>",
+            "role": "<value>",
+        },
+    ], model="LeBaron")
 
     # Handle response
     print(res)
@@ -111,7 +116,12 @@ async def main():
         bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
     ) as atoma_sdk:
 
-        res = await atoma_sdk.health.health_async()
+        res = await atoma_sdk.chat.create_async(messages=[
+            {
+                "content": "<value>",
+                "role": "<value>",
+            },
+        ], model="LeBaron")
 
         # Handle response
         print(res)
@@ -140,7 +150,12 @@ with AtomaSDK(
     bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
 ) as atoma_sdk:
 
-    res = atoma_sdk.health.health()
+    res = atoma_sdk.chat.create(messages=[
+        {
+            "content": "<value>",
+            "role": "<value>",
+        },
+    ], model="LeBaron")
 
     # Handle response
     print(res)
@@ -172,10 +187,6 @@ with AtomaSDK(
 
 * [generate](docs/sdks/confidentialimages/README.md#generate) - Create confidential image
 
-### [confidential_node_public_key_selection](docs/sdks/confidentialnodepublickeyselection/README.md)
-
-* [select_node_public_key](docs/sdks/confidentialnodepublickeyselection/README.md#select_node_public_key) - Select node public key
-
 ### [embeddings](docs/sdks/embeddings/README.md)
 
 * [create](docs/sdks/embeddings/README.md#create) - Create embeddings
@@ -190,11 +201,12 @@ with AtomaSDK(
 
 ### [models](docs/sdks/models/README.md)
 
-* [models_handler](docs/sdks/models/README.md#models_handler) - List models
+* [models_list](docs/sdks/models/README.md#models_list) - List models
 
-### [node_public_address_registration](docs/sdks/nodepublicaddressregistration/README.md)
+### [nodes](docs/sdks/nodes/README.md)
 
-* [node_public_address_registration](docs/sdks/nodepublicaddressregistration/README.md#node_public_address_registration) - Register node
+* [nodes_create](docs/sdks/nodes/README.md#nodes_create) - Create node
+* [nodes_models_retrieve](docs/sdks/nodes/README.md#nodes_models_retrieve) - Retrieve node for a given model
 
 </details>
 <!-- End Available Resources and Operations [operations] -->
@@ -253,7 +265,12 @@ with AtomaSDK(
     bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
 ) as atoma_sdk:
 
-    res = atoma_sdk.health.health(,
+    res = atoma_sdk.chat.create(messages=[
+        {
+            "content": "<value>",
+            "role": "<value>",
+        },
+    ], model="LeBaron",
         RetryConfig("backoff", BackoffStrategy(1, 50, 1.1, 100), False))
 
     # Handle response
@@ -272,7 +289,12 @@ with AtomaSDK(
     bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
 ) as atoma_sdk:
 
-    res = atoma_sdk.health.health()
+    res = atoma_sdk.chat.create(messages=[
+        {
+            "content": "<value>",
+            "role": "<value>",
+        },
+    ], model="LeBaron")
 
     # Handle response
     print(res)
@@ -294,7 +316,7 @@ By default, an API error will raise a models.APIError exception, which has the f
 | `.raw_response` | *httpx.Response* | The raw HTTP response |
 | `.body`         | *str*            | The response content  |
 
-When custom error responses are specified for an operation, the SDK may also raise their associated exceptions. You can refer to respective *Errors* tables in SDK docs for more details on possible exception types for each operation. For example, the `health_async` method may raise the following exceptions:
+When custom error responses are specified for an operation, the SDK may also raise their associated exceptions. You can refer to respective *Errors* tables in SDK docs for more details on possible exception types for each operation. For example, the `create_async` method may raise the following exceptions:
 
 | Error Type      | Status Code | Content Type |
 | --------------- | ----------- | ------------ |
@@ -312,7 +334,12 @@ with AtomaSDK(
     res = None
     try:
 
-        res = atoma_sdk.health.health()
+        res = atoma_sdk.chat.create(messages=[
+            {
+                "content": "<value>",
+                "role": "<value>",
+            },
+        ], model="LeBaron")
 
         # Handle response
         print(res)
@@ -334,11 +361,16 @@ from atoma_sdk import AtomaSDK
 import os
 
 with AtomaSDK(
-    server_url="https://api.atomacloud.com",
+    server_url="https://api.atoma.network",
     bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
 ) as atoma_sdk:
 
-    res = atoma_sdk.health.health()
+    res = atoma_sdk.chat.create(messages=[
+        {
+            "content": "<value>",
+            "role": "<value>",
+        },
+    ], model="LeBaron")
 
     # Handle response
     print(res)

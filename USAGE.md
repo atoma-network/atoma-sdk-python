@@ -8,7 +8,12 @@ with AtomaSDK(
     bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
 ) as atoma_sdk:
 
-    res = atoma_sdk.health.health()
+    res = atoma_sdk.chat.create(messages=[
+        {
+            "content": "<value>",
+            "role": "<value>",
+        },
+    ], model="LeBaron")
 
     # Handle response
     print(res)
@@ -28,7 +33,12 @@ async def main():
         bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
     ) as atoma_sdk:
 
-        res = await atoma_sdk.health.health_async()
+        res = await atoma_sdk.chat.create_async(messages=[
+            {
+                "content": "<value>",
+                "role": "<value>",
+            },
+        ], model="LeBaron")
 
         # Handle response
         print(res)

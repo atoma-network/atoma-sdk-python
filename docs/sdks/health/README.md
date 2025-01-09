@@ -38,7 +38,7 @@ with AtomaSDK(
 
 ### Response
 
-**[Any](../../models/.md)**
+**[models.HealthResponse](../../models/healthresponse.md)**
 
 ### Errors
 

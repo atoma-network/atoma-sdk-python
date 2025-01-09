@@ -11,39 +11,35 @@ from atoma_sdk.chat import Chat
 from atoma_sdk.confidential_chat import ConfidentialChat
 from atoma_sdk.confidential_embeddings import ConfidentialEmbeddings
 from atoma_sdk.confidential_images import ConfidentialImages
-from atoma_sdk.confidential_node_public_key_selection import (
-    ConfidentialNodePublicKeySelection,
-)
 from atoma_sdk.embeddings import Embeddings
 from atoma_sdk.health import Health
 from atoma_sdk.images import Images
 from atoma_sdk.models_ import Models
-from atoma_sdk.node_public_address_registration import NodePublicAddressRegistration
+from atoma_sdk.nodes import Nodes
 from atoma_sdk.types import OptionalNullable, UNSET
 import httpx
 from typing import Any, Callable, Dict, Optional, Union
 
 
 class AtomaSDK(BaseSDK):
-    health: Health
-    r"""Health check"""
-    models_: Models
-    r"""OpenAI's API models v1 endpoint"""
-    node_public_address_registration: NodePublicAddressRegistration
-    r"""Node public address registration"""
     chat: Chat
     r"""OpenAI's API chat completions v1 endpoint"""
     confidential_chat: ConfidentialChat
     r"""Atoma's API confidential chat completions v1 endpoint"""
-    embeddings: Embeddings
-    r"""OpenAI's API embeddings v1 endpoint"""
     confidential_embeddings: ConfidentialEmbeddings
     r"""Atoma's API confidential embeddings v1 endpoint"""
-    images: Images
-    r"""OpenAI's API images v1 endpoint"""
     confidential_images: ConfidentialImages
     r"""Atoma's API confidential images v1 endpoint"""
-    confidential_node_public_key_selection: ConfidentialNodePublicKeySelection
+    embeddings: Embeddings
+    r"""OpenAI's API embeddings v1 endpoint"""
+    health: Health
+    r"""Health check"""
+    images: Images
+    r"""OpenAI's API images v1 endpoint"""
+    models_: Models
+    r"""OpenAI's API models v1 endpoint"""
+    nodes: Nodes
+    r"""Nodes Management"""
 
     def __init__(
         self,
@@ -124,20 +120,15 @@ class AtomaSDK(BaseSDK):
         self._init_sdks()
 
     def _init_sdks(self):
-        self.health = Health(self.sdk_configuration)
-        self.models_ = Models(self.sdk_configuration)
-        self.node_public_address_registration = NodePublicAddressRegistration(
-            self.sdk_configuration
-        )
         self.chat = Chat(self.sdk_configuration)
         self.confidential_chat = ConfidentialChat(self.sdk_configuration)
-        self.embeddings = Embeddings(self.sdk_configuration)
         self.confidential_embeddings = ConfidentialEmbeddings(self.sdk_configuration)
-        self.images = Images(self.sdk_configuration)
         self.confidential_images = ConfidentialImages(self.sdk_configuration)
-        self.confidential_node_public_key_selection = (
-            ConfidentialNodePublicKeySelection(self.sdk_configuration)
-        )
+        self.embeddings = Embeddings(self.sdk_configuration)
+        self.health = Health(self.sdk_configuration)
+        self.images = Images(self.sdk_configuration)
+        self.models_ = Models(self.sdk_configuration)
+        self.nodes = Nodes(self.sdk_configuration)
 
     def __enter__(self):
         return self

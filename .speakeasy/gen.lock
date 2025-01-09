@@ -1,12 +1,12 @@
 lockVersion: 2.0.0
 id: abb58176-a92d-43ea-b418-227f4288eed7
 management:
-  docChecksum: 0463008ff3011f43c54201460abcfa6d
+  docChecksum: 8b43958c5807bd02b511ea1737673d76
   docVersion: 0.1.0
   speakeasyVersion: 1.463.1
   generationVersion: 2.486.6
-  releaseVersion: 0.1.0
-  configChecksum: 24d2e8fe799493f6216a1d468a6f924d
+  releaseVersion: 0.2.0
+  configChecksum: c8e56728786af3b1edb38ec20e361443
   repoURL: https://github.com/atoma-network/atoma-sdk-python.git
   installationURL: https://github.com/atoma-network/atoma-sdk-python.git
 features:
@@ -18,7 +18,7 @@ features:
     devContainers: 3.0.0
     envVarSecurityUsage: 0.3.2
     flatRequests: 1.0.1
-    getRequestBodies: 3.0.0
+    flattening: 3.1.0
     globalSecurity: 3.0.2
     globalSecurityCallbacks: 1.0.0
     globalSecurityFlattening: 1.0.0
@@ -59,9 +59,16 @@ generatedFiles:
   - docs/models/embeddinginput.md
   - docs/models/embeddingobject.md
   - docs/models/embeddingusage.md
+  - docs/models/healthresponse.md
   - docs/models/imagedata.md
+  - docs/models/model.md
+  - docs/models/modellist.md
+  - docs/models/nodepublicaddressassignment.md
+  - docs/models/nodescreaterequest.md
+  - docs/models/nodescreateresponse.md
+  - docs/models/nodesmodelsretrieverequest.md
+  - docs/models/nodesmodelsretrieveresponse.md
   - docs/models/security.md
-  - docs/models/selectnodepublickeyrequest.md
   - docs/models/usage.md
   - docs/models/utils/retryconfig.md
   - docs/sdks/atomasdk/README.md
@@ -69,12 +76,11 @@ generatedFiles:
   - docs/sdks/confidentialchat/README.md
   - docs/sdks/confidentialembeddings/README.md
   - docs/sdks/confidentialimages/README.md
-  - docs/sdks/confidentialnodepublickeyselection/README.md
   - docs/sdks/embeddings/README.md
   - docs/sdks/health/README.md
   - docs/sdks/images/README.md
   - docs/sdks/models/README.md
-  - docs/sdks/nodepublicaddressregistration/README.md
+  - docs/sdks/nodes/README.md
   - poetry.toml
   - py.typed
   - pylintrc
@@ -88,7 +94,6 @@ generatedFiles:
   - src/atoma_sdk/_version.py
   - src/atoma_sdk/basesdk.py
   - src/atoma_sdk/chat.py
-  - src/atoma_sdk/confidential_node_public_key_selection.py
   - src/atoma_sdk/embeddings.py
   - src/atoma_sdk/health.py
   - src/atoma_sdk/httpclient.py
@@ -114,12 +119,19 @@ generatedFiles:
   - src/atoma_sdk/models/embeddinginput.py
   - src/atoma_sdk/models/embeddingobject.py
   - src/atoma_sdk/models/embeddingusage.py
+  - src/atoma_sdk/models/healthresponse.py
   - src/atoma_sdk/models/imagedata.py
+  - src/atoma_sdk/models/model.py
+  - src/atoma_sdk/models/modellist.py
+  - src/atoma_sdk/models/nodepublicaddressassignment.py
+  - src/atoma_sdk/models/nodes_models_retrieveop.py
+  - src/atoma_sdk/models/nodescreaterequest.py
+  - src/atoma_sdk/models/nodescreateresponse.py
+  - src/atoma_sdk/models/nodesmodelsretrieveresponse.py
   - src/atoma_sdk/models/security.py
-  - src/atoma_sdk/models/selectnodepublickeyrequest.py
   - src/atoma_sdk/models/usage.py
   - src/atoma_sdk/models_.py
-  - src/atoma_sdk/node_public_address_registration.py
+  - src/atoma_sdk/nodes.py
   - src/atoma_sdk/py.typed
   - src/atoma_sdk/sdk.py
   - src/atoma_sdk/sdkconfiguration.py
@@ -145,7 +157,7 @@ examples:
     speakeasy-default-health:
       responses:
         "200":
-          application/json: "<value>"
+          application/json: {"message": "<value>"}
   node_public_address_registration:
     speakeasy-default-node-public-address-registration:
       responses:
@@ -235,4 +247,24 @@ examples:
       responses:
         "200":
           application/json: "<value>"
+  models_list:
+    speakeasy-default-models-list:
+      responses:
+        "200":
+          application/json: {"data": [{"created": 640785, "id": "<id>", "object": "<value>", "owned_by": "<value>"}, {"created": 744692, "id": "<id>", "object": "<value>", "owned_by": "<value>"}, {"created": 941970, "id": "<id>", "object": "<value>", "owned_by": "<value>"}], "object": "<value>"}
+  nodes_create:
+    speakeasy-default-nodes-create:
+      requestBody:
+        application/json: {"data": {"country": "Andorra", "node_small_id": 3665, "public_address": "<value>"}, "signature": "<value>"}
+      responses:
+        "200":
+          application/json: {"message": "<value>"}
+  nodes_models_retrieve:
+    speakeasy-default-nodes-models-retrieve:
+      parameters:
+        path:
+          model: "Charger"
+      responses:
+        "200":
+          application/json: {"node_small_id": 695945, "public_key": [325052, 699180], "stack_small_id": 363417}
 generatedTests: {}
