@@ -11,6 +11,7 @@ targets:
         target: python
         source: atoma-proxy
         codeSamples:
+            output: codeSamples.yaml
             registry:
                 location: registry.speakeasyapi.dev/atoma-francis/atoma-proxy/atoma-proxy-python-code-samples
             blocking: false

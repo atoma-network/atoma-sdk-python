@@ -1,0 +1,208 @@
+overlay: 1.0.0
+info:
+  title: CodeSamples overlay for python target
+  version: 0.0.0
+actions:
+  - target: $["paths"]["/health"]["get"]
+    update:
+      x-codeSamples:
+        - lang: python
+          label: health
+          source: |-
+            from atoma_sdk import AtomaSDK
+            import os
+
+            with AtomaSDK(
+                bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
+            ) as atoma_sdk:
+
+                res = atoma_sdk.health.health()
+
+                # Handle response
+                print(res)
+  - target: $["paths"]["/v1/chat/completions"]["post"]
+    update:
+      x-codeSamples:
+        - lang: python
+          label: chat_completions_create
+          source: |-
+            from atoma_sdk import AtomaSDK
+            import os
+
+            with AtomaSDK(
+                bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
+            ) as atoma_sdk:
+
+                res = atoma_sdk.chat.create(messages=[
+                    {
+                        "content": "<value>",
+                        "role": "<value>",
+                    },
+                ], model="LeBaron")
+
+                # Handle response
+                print(res)
+  - target: $["paths"]["/v1/chat/completions#stream"]["post"]
+    update:
+      x-codeSamples:
+        - lang: python
+          label: chat_completions_create_stream
+          source: |-
+            from atoma_sdk import AtomaSDK
+            import os
+
+            with AtomaSDK(
+                bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
+            ) as atoma_sdk:
+
+                res = atoma_sdk.chat.create_stream(messages=[
+                    {
+                        "content": "<value>",
+                        "role": "<value>",
+                    },
+                ], model="Impala")
+
+                with res as event_stream:
+                    for event in event_stream:
+                        # handle event
+                        print(event, flush=True)
+  - target: $["paths"]["/v1/confidential/chat/completions"]["post"]
+    update:
+      x-codeSamples:
+        - lang: python
+          label: confidential_chat_completions_create
+          source: |-
+            from atoma_sdk import AtomaSDK
+            import os
+
+            with AtomaSDK(
+                bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
+            ) as atoma_sdk:
+
+                res = atoma_sdk.confidential_chat.create(ciphertext="<value>", client_dh_public_key="<value>", model_name="<value>", node_dh_public_key="<value>", nonce="<value>", plaintext_body_hash="<value>", salt="<value>", stack_small_id=486589)
+
+                # Handle response
+                print(res)
+  - target: $["paths"]["/v1/confidential/embeddings"]["post"]
+    update:
+      x-codeSamples:
+        - lang: python
+          label: confidential_embeddings_create
+          source: |-
+            from atoma_sdk import AtomaSDK
+            import os
+
+            with AtomaSDK(
+                bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
+            ) as atoma_sdk:
+
+                res = atoma_sdk.confidential_embeddings.create(ciphertext="<value>", client_dh_public_key="<value>", model_name="<value>", node_dh_public_key="<value>", nonce="<value>", plaintext_body_hash="<value>", salt="<value>", stack_small_id=486589)
+
+                # Handle response
+                print(res)
+  - target: $["paths"]["/v1/confidential/images/generations"]["post"]
+    update:
+      x-codeSamples:
+        - lang: python
+          label: confidential_image_generations_create
+          source: |-
+            from atoma_sdk import AtomaSDK
+            import os
+
+            with AtomaSDK(
+                bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
+            ) as atoma_sdk:
+
+                res = atoma_sdk.confidential_images.generate(ciphertext="<value>", client_dh_public_key="<value>", model_name="<value>", node_dh_public_key="<value>", nonce="<value>", plaintext_body_hash="<value>", salt="<value>", stack_small_id=740198)
+
+                # Handle response
+                print(res)
+  - target: $["paths"]["/v1/embeddings"]["post"]
+    update:
+      x-codeSamples:
+        - lang: python
+          label: embeddings_create
+          source: |-
+            from atoma_sdk import AtomaSDK
+            import os
+
+            with AtomaSDK(
+                bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
+            ) as atoma_sdk:
+
+                res = atoma_sdk.embeddings.create(input_="<value>", model="LeBaron")
+
+                # Handle response
+                print(res)
+  - target: $["paths"]["/v1/images/generations"]["post"]
+    update:
+      x-codeSamples:
+        - lang: python
+          label: image_generations_create
+          source: |-
+            from atoma_sdk import AtomaSDK
+            import os
+
+            with AtomaSDK(
+                bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
+            ) as atoma_sdk:
+
+                res = atoma_sdk.images.generate(model="Model X", prompt="<value>")
+
+                # Handle response
+                print(res)
+  - target: $["paths"]["/v1/models"]["get"]
+    update:
+      x-codeSamples:
+        - lang: python
+          label: models_list
+          source: |-
+            from atoma_sdk import AtomaSDK
+            import os
+
+            with AtomaSDK(
+                bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
+            ) as atoma_sdk:
+
+                res = atoma_sdk.models.models_list()
+
+                # Handle response
+                print(res)
+  - target: $["paths"]["/v1/nodes"]["post"]
+    update:
+      x-codeSamples:
+        - lang: python
+          label: nodes_create
+          source: |-
+            from atoma_sdk import AtomaSDK
+            import os
+
+            with AtomaSDK(
+                bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
+            ) as atoma_sdk:
+
+                res = atoma_sdk.nodes.nodes_create(data={
+                    "country": "Andorra",
+                    "node_small_id": 3665,
+                    "public_address": "<value>",
+                }, signature="<value>")
+
+                # Handle response
+                print(res)
+  - target: $["paths"]["/v1/nodes/models/{model}"]["get"]
+    update:
+      x-codeSamples:
+        - lang: python
+          label: nodes_models_retrieve
+          source: |-
+            from atoma_sdk import AtomaSDK
+            import os
+
+            with AtomaSDK(
+                bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
+            ) as atoma_sdk:
+
+                res = atoma_sdk.nodes.nodes_models_retrieve(model="Charger")
+
+                # Handle response
+                print(res)
