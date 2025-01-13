@@ -9,7 +9,8 @@ import base64
 import hashlib
 
 from atoma_sdk.models.confidentialcomputerequest import ConfidentialComputeRequest
-from atoma_sdk.models.confidentialcomputeresponse import ConfidentialComputeResponse       # random salt, base64 encoded
+from atoma_sdk.models.confidentialcomputeresponse import ConfidentialComputeResponse
+from atoma_sdk.sdk import AtomaSDK       # random salt, base64 encoded
 
 SALT_SIZE = 16
 """The salt size (16 bytes).
@@ -58,7 +59,7 @@ def calculate_hash(data: bytes) -> bytes:
         raise ValueError(f"Failed to calculate hash: {str(e)}") from e
     
 def encrypt_message(
-        sdk,
+        sdk: AtomaSDK,
         client_dh_private_key: X25519PrivateKey,
         request_body: BaseModel,
         model: str
@@ -71,7 +72,7 @@ def encrypt_message(
     
     # Get node's public key
     try:
-        res = sdk.confidential_node_public_key_selection.select_node_public_key(model_name=model)
+        res = sdk.nodes.nodes_create_lock(model=model)
         if not res or not res.public_key:
             raise ValueError("Failed to retrieve node public key")
         node_dh_public_key_encoded = res.public_key
