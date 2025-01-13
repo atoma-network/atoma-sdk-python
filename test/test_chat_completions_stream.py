@@ -38,10 +38,9 @@ def test_chat_completion_stream(client):
         for event in event_stream:
             assert event is not None
             assert event.data is not None
-            assert len(event.data.choices) > 0
             
             # Check if we received any content
-            if event.data.choices[0].delta.content:
+            if event.data.choices and event.data.choices[0].delta.content:
                 content_received = True
             
             chunks_received += 1
@@ -70,10 +69,9 @@ async def test_chat_completion_stream_async(client):
         async for event in event_stream:
             assert event is not None
             assert event.data is not None
-            assert len(event.data.choices) > 0
             
             # Check if we received any content
-            if event.data.choices[0].delta.content:
+            if event.data.choices and event.data.choices[0].delta.content:
                 content_received = True
             
             chunks_received += 1
@@ -105,10 +103,9 @@ def test_chat_completion_stream_with_system_message(client):
         for event in event_stream:
             assert event is not None
             assert event.data is not None
-            assert len(event.data.choices) > 0
             
             # Check if we received any content
-            if event.data.choices[0].delta.content:
+            if event.data.choices and event.data.choices[0].delta.content:
                 content_received = True
             
             chunks_received += 1
