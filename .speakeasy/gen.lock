@@ -29,6 +29,7 @@ features:
     retries: 3.0.2
     sdkHooks: 1.0.0
     serverEvents: 1.0.7
+    serverEventsSentinels: 0.1.0
     unions: 3.0.4
 generatedFiles:
   - .devcontainer/README.md
