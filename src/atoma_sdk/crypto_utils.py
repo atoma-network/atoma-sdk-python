@@ -6,12 +6,18 @@ from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from cryptography.hazmat.primitives import serialization
 import secrets
 import base64
+import hashlib
 
 from atoma_sdk.models.confidentialcomputerequest import ConfidentialComputeRequest
 from atoma_sdk.models.confidentialcomputeresponse import ConfidentialComputeResponse       # random salt, base64 encoded
 
 def derive_key(shared_secret: bytes, salt: bytes) -> bytes:
     try:
+        if not isinstance(shared_secret, bytes) or not shared_secret:
+            raise ValueError("shared_secret must be a non-empty bytes object")
+        if not isinstance(salt, bytes) or not salt:
+            raise ValueError("salt must be a non-empty bytes object")
+            
         hkdf = HKDF(
             algorithm=hashes.SHA256(),
             length=32,
@@ -24,9 +30,10 @@ def derive_key(shared_secret: bytes, salt: bytes) -> bytes:
 
 def calculate_hash(data: bytes) -> bytes:
     try:
-        digest = hashes.Hash(hashes.SHA256())
-        digest.update(data)
-        return digest.finalize()
+        # Using BLAKE2b with 32 bytes (256 bits) digest size
+        blake2b = hashlib.blake2b(digest_size=32)
+        blake2b.update(data)
+        return blake2b.digest()
     except Exception as e:
         raise ValueError(f"Failed to calculate hash: {str(e)}") from e
 def encrypt_message(sdk, client_dh_private_key: X25519PrivateKey, request_body: BaseModel, model: str) -> tuple[X25519PublicKey, bytes, ConfidentialComputeRequest]:
@@ -50,7 +57,7 @@ def encrypt_message(sdk, client_dh_private_key: X25519PrivateKey, request_body: 
     # Generate a random salt and create shared secret
     try:
         salt = secrets.token_bytes(24)
-        shared_secret = client_dh_private_key.exchange(node_dh_public_key_encoded)
+        shared_secret = client_dh_private_key.exchange(node_dh_public_key)
         encryption_key = derive_key(shared_secret, salt)
         cipher = AESGCM(encryption_key)
         nonce = secrets.token_bytes(12)
