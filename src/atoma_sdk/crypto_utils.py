@@ -10,7 +10,6 @@ import hashlib
 
 from atoma_sdk.models.confidentialcomputerequest import ConfidentialComputeRequest
 from atoma_sdk.models.confidentialcomputeresponse import ConfidentialComputeResponse
-from atoma_sdk.sdk import AtomaSDK       # random salt, base64 encoded
 
 SALT_SIZE = 16
 """The salt size (16 bytes).
@@ -59,7 +58,7 @@ def calculate_hash(data: bytes) -> bytes:
         raise ValueError(f"Failed to calculate hash: {str(e)}") from e
     
 def encrypt_message(
-        sdk: AtomaSDK,
+        sdk,
         client_dh_private_key: X25519PrivateKey,
         request_body: BaseModel,
         model: str
