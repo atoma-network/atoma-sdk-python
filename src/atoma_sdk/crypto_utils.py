@@ -58,7 +58,7 @@ def calculate_hash(data: bytes) -> bytes:
         raise ValueError(f"Failed to calculate hash: {str(e)}") from e
     
 def encrypt_message(
-        sdk: AtomaSDK,
+        sdk,
         client_dh_private_key: X25519PrivateKey,
         request_body: BaseModel,
         model: str

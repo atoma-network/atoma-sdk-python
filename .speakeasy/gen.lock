@@ -1,12 +1,12 @@
 lockVersion: 2.0.0
 id: abb58176-a92d-43ea-b418-227f4288eed7
 management:
-  docChecksum: ffd025ddb390be8e6e1f87e97da070e8
+  docChecksum: 325059753c8c4125e0d60b67d0532f31
   docVersion: 0.1.0
   speakeasyVersion: 1.463.1
   generationVersion: 2.486.6
-  releaseVersion: 0.2.0
-  configChecksum: c8e56728786af3b1edb38ec20e361443
+  releaseVersion: 0.1.0
+  configChecksum: 24d2e8fe799493f6216a1d468a6f924d
   repoURL: https://github.com/atoma-network/atoma-sdk-python.git
   installationURL: https://github.com/atoma-network/atoma-sdk-python.git
 features:
