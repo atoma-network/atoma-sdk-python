@@ -11,6 +11,26 @@ import hashlib
 from atoma_sdk.models.confidentialcomputerequest import ConfidentialComputeRequest
 from atoma_sdk.models.confidentialcomputeresponse import ConfidentialComputeResponse       # random salt, base64 encoded
 
+SALT_SIZE = 16
+"""The salt size (16 bytes).
+This value is compliant with the NIST SP 800-132 recommendation
+(see https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-132.pdf) and it
+agrees with the value used by the atoma-node infrastructure
+(see https://github.com/atoma-network/atoma-node/blob/main/atoma-utils/src/lib.rs#L38)
+"""
+
+NONCE_SIZE = 12
+"""The nonce size (12 bytes).
+This value is compliant with the NIST SP 800-132 recommendation
+(see https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-132.pdf) and it
+agrees with the value used by the atoma-node infrastructure
+(see https://github.com/atoma-network/atoma-node/blob/main/atoma-utils/src/lib.rs#L35)
+"""
+
+DEFAULT_WIDTH_SIZE = 1024
+
+DEFAULT_HEIGHT_SIZE = 1024
+
 def derive_key(shared_secret: bytes, salt: bytes) -> bytes:
     try:
         if not isinstance(shared_secret, bytes) or not shared_secret:
@@ -36,7 +56,13 @@ def calculate_hash(data: bytes) -> bytes:
         return blake2b.digest()
     except Exception as e:
         raise ValueError(f"Failed to calculate hash: {str(e)}") from e
-def encrypt_message(sdk, client_dh_private_key: X25519PrivateKey, request_body: BaseModel, model: str) -> tuple[X25519PublicKey, bytes, ConfidentialComputeRequest]:
+    
+def encrypt_message(
+        sdk,
+        client_dh_private_key: X25519PrivateKey,
+        request_body: BaseModel,
+        model: str
+) -> tuple[X25519PublicKey, bytes, ConfidentialComputeRequest]:
     # Generate our private key
     try:
         client_dh_public_key = client_dh_private_key.public_key()
@@ -56,11 +82,11 @@ def encrypt_message(sdk, client_dh_private_key: X25519PrivateKey, request_body: 
 
     # Generate a random salt and create shared secret
     try:
-        salt = secrets.token_bytes(24)
+        salt = secrets.token_bytes(SALT_SIZE)
         shared_secret = client_dh_private_key.exchange(node_dh_public_key)
         encryption_key = derive_key(shared_secret, salt)
         cipher = AESGCM(encryption_key)
-        nonce = secrets.token_bytes(12)
+        nonce = secrets.token_bytes(NONCE_SIZE)
     except Exception as e:
         raise ValueError(f"Failed to setup encryption: {str(e)}") from e
     
@@ -69,8 +95,8 @@ def encrypt_message(sdk, client_dh_private_key: X25519PrivateKey, request_body: 
     try:
         # For image generations compute units is number of pixels
         if hasattr(request_body, 'width') and hasattr(request_body, 'height'):
-            width = getattr(request_body, 'width', 1024)  # Default to 1024 if not specified
-            height = getattr(request_body, 'height', 1024)  # Default to 1024 if not specified
+            width = getattr(request_body, 'width', DEFAULT_WIDTH_SIZE)  # Default to 1024 if not specified
+            height = getattr(request_body, 'height', DEFAULT_HEIGHT_SIZE)  # Default to 1024 if not specified
             num_compute_units = width * height
 
         # For chat completions compute units is max_tokens
@@ -111,7 +137,12 @@ def encrypt_message(sdk, client_dh_private_key: X25519PrivateKey, request_body: 
     except Exception as e:
         raise ValueError(f"Failed to encrypt message: {str(e)}") from e
 
-def decrypt_message(client_dh_private_key: X25519PrivateKey, node_dh_public_key: X25519PublicKey, salt: bytes, encrypted_message: ConfidentialComputeResponse) -> bytes:
+def decrypt_message(
+        client_dh_private_key: X25519PrivateKey,
+        node_dh_public_key: X25519PublicKey,
+        salt: bytes,
+        encrypted_message: ConfidentialComputeResponse
+) -> bytes:
     try:
         # Decode base64 values
         ciphertext = base64.b64decode(encrypted_message.ciphertext)
