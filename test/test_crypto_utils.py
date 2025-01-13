@@ -1,10 +1,6 @@
 import base64
 import secrets
 import pytest
-
-# Ignore the warning about TestRequest constructor
-pytest.mark.filterwarnings("ignore::pytest.PytestCollectionWarning")
-
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey, X25519PublicKey
 from cryptography.hazmat.primitives import serialization
 from pydantic import BaseModel
