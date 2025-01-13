@@ -206,7 +206,7 @@ with AtomaSDK(
 ### [nodes](https://github.com/atoma-network/atoma-sdk-python/blob/master/docs/sdks/nodes/README.md)
 
 * [nodes_create](https://github.com/atoma-network/atoma-sdk-python/blob/master/docs/sdks/nodes/README.md#nodes_create) - Create node
-* [nodes_models_retrieve](https://github.com/atoma-network/atoma-sdk-python/blob/master/docs/sdks/nodes/README.md#nodes_models_retrieve) - Retrieve node for a given model
+* [nodes_create_lock](https://github.com/atoma-network/atoma-sdk-python/blob/master/docs/sdks/nodes/README.md#nodes_create_lock) - Create a node lock for confidential compute
 
 </details>
 <!-- End Available Resources and Operations [operations] -->

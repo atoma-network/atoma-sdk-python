@@ -8,7 +8,7 @@ Nodes Management
 ### Available Operations
 
 * [nodes_create](#nodes_create) - Create node
-* [nodes_models_retrieve](#nodes_models_retrieve) - Retrieve node for a given model
+* [nodes_create_lock](#nodes_create_lock) - Create a node lock for confidential compute
 
 ## nodes_create
 
@@ -70,7 +70,7 @@ with AtomaSDK(
 | --------------- | --------------- | --------------- |
 | models.APIError | 4XX, 5XX        | \*/\*           |
 
-## nodes_models_retrieve
+## nodes_create_lock
 
 This endpoint attempts to find a suitable node and retrieve its public key for encryption
 through a two-step process:
@@ -96,7 +96,7 @@ with AtomaSDK(
     bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
 ) as atoma_sdk:
 
-    res = atoma_sdk.nodes.nodes_models_retrieve(model="Charger")
+    res = atoma_sdk.nodes.nodes_create_lock(model="Focus")
 
     # Handle response
     print(res)
@@ -107,12 +107,12 @@ with AtomaSDK(
 
 | Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `model`                                                             | *str*                                                               | :heavy_check_mark:                                                  | The name of the model to retrieve                                   |
+| `model`                                                             | *str*                                                               | :heavy_check_mark:                                                  | The model to lock a node for                                        |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
 ### Response
 
-**[models.NodesModelsRetrieveResponse](../../models/nodesmodelsretrieveresponse.md)**
+**[models.NodesCreateLockResponse](../../models/nodescreatelockresponse.md)**
 
 ### Errors
 

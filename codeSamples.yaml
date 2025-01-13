@@ -189,11 +189,11 @@ actions:
 
                 # Handle response
                 print(res)
-  - target: $["paths"]["/v1/nodes/models/{model}"]["get"]
+  - target: $["paths"]["/v1/nodes/lock"]["post"]
     update:
       x-codeSamples:
         - lang: python
-          label: nodes_models_retrieve
+          label: nodes_create_lock
           source: |-
             from atoma_sdk import AtomaSDK
             import os
@@ -202,7 +202,7 @@ actions:
                 bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
             ) as atoma_sdk:
 
-                res = atoma_sdk.nodes.nodes_models_retrieve(model="Charger")
+                res = atoma_sdk.nodes.nodes_create_lock(model="Focus")
 
                 # Handle response
                 print(res)

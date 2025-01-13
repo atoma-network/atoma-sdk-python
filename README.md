@@ -206,7 +206,7 @@ with AtomaSDK(
 ### [nodes](docs/sdks/nodes/README.md)
 
 * [nodes_create](docs/sdks/nodes/README.md#nodes_create) - Create node
-* [nodes_models_retrieve](docs/sdks/nodes/README.md#nodes_models_retrieve) - Retrieve node for a given model
+* [nodes_create_lock](docs/sdks/nodes/README.md#nodes_create_lock) - Create a node lock for confidential compute
 
 </details>
 <!-- End Available Resources and Operations [operations] -->

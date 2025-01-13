@@ -3,11 +3,10 @@
 from __future__ import annotations
 from atoma_sdk.types import BaseModel, Nullable, OptionalNullable, UNSET, UNSET_SENTINEL
 from pydantic import model_serializer
-from typing import List
 from typing_extensions import NotRequired, TypedDict
 
 
-class NodesModelsRetrieveResponseTypedDict(TypedDict):
+class NodesCreateLockResponseTypedDict(TypedDict):
     r"""The response body for selecting a node's public key for encryption
     from a client. The client will use the provided public key to encrypt
     the request and send it back to the proxy. The proxy will then route this
@@ -16,7 +15,7 @@ class NodesModelsRetrieveResponseTypedDict(TypedDict):
 
     node_small_id: int
     r"""The node small id for the selected node"""
-    public_key: List[int]
+    public_key: str
     r"""The public key for the selected node, base64 encoded"""
     stack_small_id: int
     r"""The stack small id to which an available stack entry was acquired, for the selected node"""
@@ -24,7 +23,7 @@ class NodesModelsRetrieveResponseTypedDict(TypedDict):
     r"""Transaction digest for the transaction that acquires the stack entry, if any"""
 
 
-class NodesModelsRetrieveResponse(BaseModel):
+class NodesCreateLockResponse(BaseModel):
     r"""The response body for selecting a node's public key for encryption
     from a client. The client will use the provided public key to encrypt
     the request and send it back to the proxy. The proxy will then route this
@@ -34,7 +33,7 @@ class NodesModelsRetrieveResponse(BaseModel):
     node_small_id: int
     r"""The node small id for the selected node"""
 
-    public_key: List[int]
+    public_key: str
     r"""The public key for the selected node, base64 encoded"""
 
     stack_small_id: int

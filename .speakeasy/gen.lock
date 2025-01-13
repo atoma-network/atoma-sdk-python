@@ -1,12 +1,12 @@
 lockVersion: 2.0.0
 id: abb58176-a92d-43ea-b418-227f4288eed7
 management:
-  docChecksum: 8b43958c5807bd02b511ea1737673d76
+  docChecksum: ffd025ddb390be8e6e1f87e97da070e8
   docVersion: 0.1.0
   speakeasyVersion: 1.463.1
   generationVersion: 2.486.6
-  releaseVersion: 0.1.0
-  configChecksum: 24d2e8fe799493f6216a1d468a6f924d
+  releaseVersion: 0.2.0
+  configChecksum: c8e56728786af3b1edb38ec20e361443
   repoURL: https://github.com/atoma-network/atoma-sdk-python.git
   installationURL: https://github.com/atoma-network/atoma-sdk-python.git
 features:
@@ -18,7 +18,6 @@ features:
     devContainers: 3.0.0
     envVarSecurityUsage: 0.3.2
     flatRequests: 1.0.1
-    flattening: 3.1.0
     globalSecurity: 3.0.2
     globalSecurityCallbacks: 1.0.0
     globalSecurityFlattening: 1.0.0
@@ -64,10 +63,10 @@ generatedFiles:
   - docs/models/model.md
   - docs/models/modellist.md
   - docs/models/nodepublicaddressassignment.md
+  - docs/models/nodescreatelockrequest.md
+  - docs/models/nodescreatelockresponse.md
   - docs/models/nodescreaterequest.md
   - docs/models/nodescreateresponse.md
-  - docs/models/nodesmodelsretrieverequest.md
-  - docs/models/nodesmodelsretrieveresponse.md
   - docs/models/security.md
   - docs/models/usage.md
   - docs/models/utils/retryconfig.md
@@ -124,10 +123,10 @@ generatedFiles:
   - src/atoma_sdk/models/model.py
   - src/atoma_sdk/models/modellist.py
   - src/atoma_sdk/models/nodepublicaddressassignment.py
-  - src/atoma_sdk/models/nodes_models_retrieveop.py
+  - src/atoma_sdk/models/nodescreatelockrequest.py
+  - src/atoma_sdk/models/nodescreatelockresponse.py
   - src/atoma_sdk/models/nodescreaterequest.py
   - src/atoma_sdk/models/nodescreateresponse.py
-  - src/atoma_sdk/models/nodesmodelsretrieveresponse.py
   - src/atoma_sdk/models/security.py
   - src/atoma_sdk/models/usage.py
   - src/atoma_sdk/models_.py
@@ -267,4 +266,11 @@ examples:
       responses:
         "200":
           application/json: {"node_small_id": 695945, "public_key": [325052, 699180], "stack_small_id": 363417}
+  nodes_create_lock:
+    speakeasy-default-nodes-create-lock:
+      requestBody:
+        application/json: {"model": "Focus"}
+      responses:
+        "200":
+          application/json: {"node_small_id": 248208, "public_key": "<value>", "stack_small_id": 863000}
 generatedTests: {}

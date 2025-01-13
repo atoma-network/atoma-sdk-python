@@ -233,7 +233,7 @@ class Nodes(BaseSDK):
             http_res,
         )
 
-    def nodes_models_retrieve(
+    def nodes_create_lock(
         self,
         *,
         model: str,
@@ -241,8 +241,8 @@ class Nodes(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.NodesModelsRetrieveResponse:
-        r"""Retrieve node for a given model
+    ) -> models.NodesCreateLockResponse:
+        r"""Create a node lock for confidential compute
 
         This endpoint attempts to find a suitable node and retrieve its public key for encryption
         through a two-step process:
@@ -258,7 +258,7 @@ class Nodes(BaseSDK):
         - `INTERNAL_SERVER_ERROR` - Communication errors or missing node public keys
         - `SERVICE_UNAVAILABLE` - No nodes available for confidential compute
 
-        :param model: The name of the model to retrieve
+        :param model: The model to lock a node for
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -272,23 +272,26 @@ class Nodes(BaseSDK):
         if server_url is not None:
             base_url = server_url
 
-        request = models.NodesModelsRetrieveRequest(
+        request = models.NodesCreateLockRequest(
             model=model,
         )
 
         req = self._build_request(
-            method="GET",
-            path="/v1/nodes/models/{model}",
+            method="POST",
+            path="/v1/nodes/lock",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
-            request_body_required=False,
-            request_has_path_params=True,
+            request_body_required=True,
+            request_has_path_params=False,
             request_has_query_params=True,
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
             security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request, False, False, "json", models.NodesCreateLockRequest
+            ),
             timeout_ms=timeout_ms,
         )
 
@@ -302,7 +305,7 @@ class Nodes(BaseSDK):
 
         http_res = self.do_request(
             hook_ctx=HookContext(
-                operation_id="nodes_models_retrieve",
+                operation_id="nodes_create_lock",
                 oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
@@ -314,9 +317,7 @@ class Nodes(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return utils.unmarshal_json(
-                http_res.text, models.NodesModelsRetrieveResponse
-            )
+            return utils.unmarshal_json(http_res.text, models.NodesCreateLockResponse)
         if utils.match_response(http_res, ["4XX", "500", "503", "5XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise models.APIError(
@@ -332,7 +333,7 @@ class Nodes(BaseSDK):
             http_res,
         )
 
-    async def nodes_models_retrieve_async(
+    async def nodes_create_lock_async(
         self,
         *,
         model: str,
@@ -340,8 +341,8 @@ class Nodes(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.NodesModelsRetrieveResponse:
-        r"""Retrieve node for a given model
+    ) -> models.NodesCreateLockResponse:
+        r"""Create a node lock for confidential compute
 
         This endpoint attempts to find a suitable node and retrieve its public key for encryption
         through a two-step process:
@@ -357,7 +358,7 @@ class Nodes(BaseSDK):
         - `INTERNAL_SERVER_ERROR` - Communication errors or missing node public keys
         - `SERVICE_UNAVAILABLE` - No nodes available for confidential compute
 
-        :param model: The name of the model to retrieve
+        :param model: The model to lock a node for
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -371,23 +372,26 @@ class Nodes(BaseSDK):
         if server_url is not None:
             base_url = server_url
 
-        request = models.NodesModelsRetrieveRequest(
+        request = models.NodesCreateLockRequest(
             model=model,
         )
 
         req = self._build_request_async(
-            method="GET",
-            path="/v1/nodes/models/{model}",
+            method="POST",
+            path="/v1/nodes/lock",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
-            request_body_required=False,
-            request_has_path_params=True,
+            request_body_required=True,
+            request_has_path_params=False,
             request_has_query_params=True,
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
             security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request, False, False, "json", models.NodesCreateLockRequest
+            ),
             timeout_ms=timeout_ms,
         )
 
@@ -401,7 +405,7 @@ class Nodes(BaseSDK):
 
         http_res = await self.do_request_async(
             hook_ctx=HookContext(
-                operation_id="nodes_models_retrieve",
+                operation_id="nodes_create_lock",
                 oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
@@ -413,9 +417,7 @@ class Nodes(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return utils.unmarshal_json(
-                http_res.text, models.NodesModelsRetrieveResponse
-            )
+            return utils.unmarshal_json(http_res.text, models.NodesCreateLockResponse)
         if utils.match_response(http_res, ["4XX", "500", "503", "5XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise models.APIError(
