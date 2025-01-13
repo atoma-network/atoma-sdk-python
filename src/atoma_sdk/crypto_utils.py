@@ -58,7 +58,7 @@ def calculate_hash(data: bytes) -> bytes:
         raise ValueError(f"Failed to calculate hash: {str(e)}") from e
     
 def encrypt_message(
-        sdk,
+        sdk: AtomaSDK,
         client_dh_private_key: X25519PrivateKey,
         request_body: BaseModel,
         model: str
@@ -71,6 +71,7 @@ def encrypt_message(
     
     # Get node's public key
     try:
+        res = sdk.nodes.nodes_create_lock(model=model)
         res = sdk.nodes.nodes_create_lock(model=model)
         if not res or not res.public_key:
             raise ValueError("Failed to retrieve node public key")
