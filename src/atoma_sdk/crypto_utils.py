@@ -43,7 +43,6 @@ def derive_key(shared_secret: bytes, salt: bytes) -> bytes:
             algorithm=hashes.SHA256(),
             length=32,
             salt=salt,
-            info=b"encryption-key",
         )
         return hkdf.derive(shared_secret)
     except Exception as e:
