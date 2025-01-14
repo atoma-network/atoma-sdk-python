@@ -72,7 +72,6 @@ def encrypt_message(
     # Get node's public key
     try:
         res = sdk.nodes.nodes_create_lock(model=model)
-        res = sdk.nodes.nodes_create_lock(model=model)
         if not res or not res.public_key:
             raise ValueError("Failed to retrieve node public key")
         node_dh_public_key_encoded = res.public_key
