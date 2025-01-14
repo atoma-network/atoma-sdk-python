@@ -35,3 +35,7 @@ def test_chat_completion_basic(client):
     assert len(response.choices) > 0
     assert response.choices[0].message.content is not None
     assert response.choices[0].message.role == "assistant"
+
+
+if __name__ == "__main__":
+    test_chat_completion_basic(AtomaSDK(bearer_auth=BEARER_AUTH, server_url=CHAT_COMPLETIONS_URL))
