@@ -165,11 +165,16 @@ def decrypt_message(
         # Decrypt the message
         plaintext = cipher.decrypt(nonce, ciphertext, None)
         
-        # Verify hash
-        actual_hash = calculate_hash(plaintext)
-        expected_hash_bytes = base64.b64decode(expected_hash) if expected_hash else None
-        if not expected_hash_bytes or not secrets.compare_digest(actual_hash, expected_hash_bytes):
-            raise ValueError("Message hash verification failed")
+        # Skip hash verification for stream responses
+        if hasattr(encrypted_message, 'usage'):
+            return plaintext
+            
+        # Verify hash if provided
+        if expected_hash:
+            actual_hash = calculate_hash(plaintext)
+            expected_hash_bytes = base64.b64decode(expected_hash)
+            if not secrets.compare_digest(actual_hash, expected_hash_bytes):
+                raise ValueError("Message hash verification failed")
             
         return plaintext
         

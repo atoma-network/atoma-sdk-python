@@ -70,7 +70,3 @@ def test_chat_completion_stream(client):
     # Verify some chunks have content
     content_chunks = [c for c in chunks if c.choices[0].delta.content is not None]
     assert len(content_chunks) > 0
-
-if __name__ == "__main__":
-    #test_chat_completion_basic(AtomaSDK(bearer_auth=BEARER_AUTH, server_url=CHAT_COMPLETIONS_URL))
-    test_chat_completion_stream(AtomaSDK(bearer_auth=BEARER_AUTH, server_url=CHAT_COMPLETIONS_URL))

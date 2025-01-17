@@ -5,6 +5,7 @@ from atoma_sdk.types import OptionalNullable, UNSET
 from atoma_sdk.utils import get_security_from_env
 from typing import Any, Dict, List, Mapping, Optional, Union
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
+import json
 
 class ConfidentialChat(BaseSDK):
     r"""Atoma's API confidential chat completions v1 endpoint"""
@@ -541,14 +542,19 @@ class ConfidentialChat(BaseSDK):
             # Create a decryption wrapper function for each chunk
             def decrypt_chunk(raw_chunk):
                 try:
-                    encrypted_chunk = utils.unmarshal_json(raw_chunk, models.ConfidentialComputeResponse)
+                    encrypted_chunk = utils.unmarshal_json(raw_chunk, models.ConfidentialComputeStreamResponse)
                     decrypted_chunk = crypto_utils.decrypt_message(
                         client_dh_private_key=client_dh_private_key,
                         node_dh_public_key=node_dh_public_key,
                         salt=salt,
-                        encrypted_message=encrypted_chunk
+                        encrypted_message=encrypted_chunk.data
                     )
-                    return utils.unmarshal_json(decrypted_chunk.decode('utf-8'), models.ChatCompletionStreamResponse)
+                    # Return the ChatCompletionChunk directly
+                    decrypted_json = json.loads(decrypted_chunk.decode('utf-8'))
+                    # Skip chunks with empty choices
+                    if not decrypted_json.get('choices'):
+                        return None
+                    return models.ChatCompletionChunk(**decrypted_json)
                 except Exception as e:
                     raise models.APIError(f"Failed to decrypt stream chunk: {str(e)}", 500, str(e), None)
 
@@ -732,7 +738,7 @@ class ConfidentialChat(BaseSDK):
                         client_dh_private_key=client_dh_private_key,
                         node_dh_public_key=node_dh_public_key,
                         salt=salt,
-                        encrypted_message=encrypted_chunk
+                        encrypted_message=encrypted_chunk.data
                     )
                     return utils.unmarshal_json(decrypted_chunk.decode('utf-8'), models.ChatCompletionStreamResponse)
                 except Exception as e:
