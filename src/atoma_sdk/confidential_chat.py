@@ -165,9 +165,15 @@ class ConfidentialChat(BaseSDK):
             )
             # Decrypt the response
             try:
-                decrypted_response = crypto_utils.decrypt_message(client_dh_private_key=client_dh_private_key, node_dh_public_key=node_dh_public_key, salt=salt, encrypted_message=encrypted_response)
+                decrypted_response = crypto_utils.decrypt_message(
+                    client_dh_private_key=client_dh_private_key,
+                    node_dh_public_key=node_dh_public_key,
+                    salt=salt,
+                    encrypted_message=encrypted_response
+                )
                 return utils.unmarshal_json(
-                    decrypted_response.decode('utf-8'), models.ConfidentialComputeResponse
+                    decrypted_response.decode('utf-8'), 
+                    models.ChatCompletionResponse
                 )
             except Exception as e:
                 raise models.APIError(
@@ -348,9 +354,15 @@ class ConfidentialChat(BaseSDK):
             )
             # Decrypt the response
             try:
-                decrypted_response = crypto_utils.decrypt_message(client_dh_private_key=client_dh_private_key, node_dh_public_key=node_dh_public_key, salt=salt, encrypted_message=encrypted_response)
+                decrypted_response = crypto_utils.decrypt_message(
+                    client_dh_private_key=client_dh_private_key,
+                    node_dh_public_key=node_dh_public_key,
+                    salt=salt,
+                    encrypted_message=encrypted_response
+                )
                 return utils.unmarshal_json(
-                    decrypted_response.decode('utf-8'), models.ConfidentialComputeResponse
+                    decrypted_response.decode('utf-8'), 
+                    models.ChatCompletionResponse
                 )
             except Exception as e:
                 raise models.APIError(
