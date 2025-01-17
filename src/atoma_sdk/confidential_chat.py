@@ -549,12 +549,12 @@ class ConfidentialChat(BaseSDK):
                         salt=salt,
                         encrypted_message=encrypted_chunk.data
                     )
-                    # Return the ChatCompletionChunk directly
+                    # The decrypted JSON is a ChatCompletionChunk
                     decrypted_json = json.loads(decrypted_chunk.decode('utf-8'))
                     # Skip chunks with empty choices
                     if not decrypted_json.get('choices'):
                         return None
-                    return models.ChatCompletionChunk(**decrypted_json)
+                    return models.ChatCompletionChunk.model_validate(decrypted_json)
                 except Exception as e:
                     raise models.APIError(f"Failed to decrypt stream chunk: {str(e)}", 500, str(e), None)
 
