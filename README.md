@@ -178,6 +178,7 @@ with AtomaSDK(
 ### [confidential_chat](docs/sdks/confidentialchat/README.md)
 
 * [create](docs/sdks/confidentialchat/README.md#create) - Create confidential chat completion
+* [create_stream](docs/sdks/confidentialchat/README.md#create_stream)
 
 ### [confidential_embeddings](docs/sdks/confidentialembeddings/README.md)
 

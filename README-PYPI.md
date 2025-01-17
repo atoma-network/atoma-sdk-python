@@ -178,6 +178,7 @@ with AtomaSDK(
 ### [confidential_chat](https://github.com/atoma-network/atoma-sdk-python/blob/master/docs/sdks/confidentialchat/README.md)
 
 * [create](https://github.com/atoma-network/atoma-sdk-python/blob/master/docs/sdks/confidentialchat/README.md#create) - Create confidential chat completion
+* [create_stream](https://github.com/atoma-network/atoma-sdk-python/blob/master/docs/sdks/confidentialchat/README.md#create_stream)
 
 ### [confidential_embeddings](https://github.com/atoma-network/atoma-sdk-python/blob/master/docs/sdks/confidentialembeddings/README.md)
 

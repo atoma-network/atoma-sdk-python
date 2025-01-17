@@ -83,6 +83,25 @@ actions:
 
                 # Handle response
                 print(res)
+  - target: $["paths"]["/v1/confidential/chat/completions#stream"]["post"]
+    update:
+      x-codeSamples:
+        - lang: python
+          label: confidential_chat_completions_create_stream
+          source: |-
+            from atoma_sdk import AtomaSDK
+            import os
+
+            with AtomaSDK(
+                bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
+            ) as atoma_sdk:
+
+                res = atoma_sdk.confidential_chat.create_stream(ciphertext="<value>", client_dh_public_key="<value>", model_name="<value>", node_dh_public_key="<value>", nonce="<value>", plaintext_body_hash="<value>", salt="<value>", stack_small_id=180107)
+
+                with res as event_stream:
+                    for event in event_stream:
+                        # handle event
+                        print(event, flush=True)
   - target: $["paths"]["/v1/confidential/embeddings"]["post"]
     update:
       x-codeSamples:

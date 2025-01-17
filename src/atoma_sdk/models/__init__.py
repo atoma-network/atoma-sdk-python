@@ -29,6 +29,10 @@ from .confidentialcomputeresponse import (
     ConfidentialComputeResponse,
     ConfidentialComputeResponseTypedDict,
 )
+from .confidentialcomputestreamresponse import (
+    ConfidentialComputeStreamResponse,
+    ConfidentialComputeStreamResponseTypedDict,
+)
 from .createchatcompletionrequest import (
     CreateChatCompletionRequest,
     CreateChatCompletionRequestTypedDict,
@@ -93,6 +97,8 @@ __all__ = [
     "ConfidentialComputeRequestTypedDict",
     "ConfidentialComputeResponse",
     "ConfidentialComputeResponseTypedDict",
+    "ConfidentialComputeStreamResponse",
+    "ConfidentialComputeStreamResponseTypedDict",
     "CreateChatCompletionRequest",
     "CreateChatCompletionRequestTypedDict",
     "CreateChatCompletionStreamRequest",
