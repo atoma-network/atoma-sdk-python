@@ -166,7 +166,7 @@ def decrypt_message(
         # Decrypt the message
         plaintext = cipher.decrypt(nonce, ciphertext, None)
         
-        # Verify hash if provided and not a final stream chunk
+        # Verify hash
         if expected_hash:
             decoded_json = json.loads(plaintext)
             choices = decoded_json.get('choices', [])
