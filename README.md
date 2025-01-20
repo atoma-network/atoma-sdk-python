@@ -11,8 +11,6 @@
     <a href="https://www.speakeasy.com/?utm_source=atoma-sdk&utm_campaign=python"><img src="https://custom-icon-badges.demolab.com/badge/-Built%20By%20Speakeasy-212015?style=for-the-badge&logoColor=FBE331&logo=speakeasy&labelColor=545454" /></a>
 </div>
 
-<br /><br />
-
 Developer-friendly & type-safe Python SDK specifically catered to leverage _atoma-sdk_ API.
 
 <!-- Start Summary [summary] -->
