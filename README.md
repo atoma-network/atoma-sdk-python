@@ -1,8 +1,8 @@
-# atoma-sdk
-
-Developer-friendly & type-safe Python SDK specifically catered to leverage _atoma-sdk_ API.
+# Atoma's Python SDK
 
 <img src="https://github.com/atoma-network/atoma-node/blob/main/atoma-assets/atoma-banner.png" alt="Logo"/>
+
+Developer-friendly & type-safe Python SDK specifically catered to leverage _atoma-sdk_ API.
 
 [![Discord](https://img.shields.io/discord/1172593757586214964?label=Discord&logo=discord&logoColor=white)]
 [![Twitter](https://img.shields.io/twitter/follow/Atoma_Network?style=social)](https://x.com/Atoma_Network)
