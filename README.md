@@ -2,8 +2,6 @@
 
 <img src="https://github.com/atoma-network/atoma-node/blob/main/atoma-assets/atoma-banner.png" alt="Logo"/>
 
-Developer-friendly & type-safe Python SDK specifically catered to leverage _atoma-sdk_ API.
-
 [![Discord](https://img.shields.io/discord/1172593757586214964?label=Discord&logo=discord&logoColor=white)]
 [![Twitter](https://img.shields.io/twitter/follow/Atoma_Network?style=social)](https://x.com/Atoma_Network)
 [![Documentation](https://img.shields.io/badge/docs-mintify-blue?logo=mintify)](https://docs.atoma.network)
@@ -14,6 +12,8 @@ Developer-friendly & type-safe Python SDK specifically catered to leverage _atom
 </div>
 
 <br /><br />
+
+Developer-friendly & type-safe Python SDK specifically catered to leverage _atoma-sdk_ API.
 
 <!-- Start Summary [summary] -->
 ## Summary
