@@ -1,6 +1,14 @@
-# atoma-sdk
+# Atoma's Python SDK
 
 Developer-friendly & type-safe Python SDK specifically catered to leverage _atoma-sdk_ API.
+
+
+<img src="https://github.com/atoma-network/atoma-node/blob/main/atoma-assets/atoma-banner.png" alt="Logo"/>
+
+[![Discord](https://img.shields.io/discord/1172593757586214964?label=Discord&logo=discord&logoColor=white)]
+[![Twitter](https://img.shields.io/twitter/follow/Atoma_Network?style=social)](https://x.com/Atoma_Network)
+[![Documentation](https://img.shields.io/badge/docs-mintify-blue?logo=mintify)](https://docs.atoma.network)
+[![License](https://img.shields.io/github/license/atoma-network/atoma-node)](LICENSE)
 
 <div align="left">
     <a href="https://www.speakeasy.com/?utm_source=atoma-sdk&utm_campaign=python"><img src="https://custom-icon-badges.demolab.com/badge/-Built%20By%20Speakeasy-212015?style=for-the-badge&logoColor=FBE331&logo=speakeasy&labelColor=545454" /></a>
@@ -10,9 +18,6 @@ Developer-friendly & type-safe Python SDK specifically catered to leverage _atom
 </div>
 
 <br /><br />
-
-> [!IMPORTANT]
-> This SDK is not yet ready for production use. To complete setup please follow the steps outlined in your [workspace](https://app.speakeasy.com/org/atoma-francis/atoma-proxy). Delete this section before > publishing to a package manager.
 
 <!-- Start Summary [summary] -->
 ## Summary
@@ -43,10 +48,6 @@ Developer-friendly & type-safe Python SDK specifically catered to leverage _atom
 
 <!-- Start SDK Installation [installation] -->
 ## SDK Installation
-
-> [!TIP]
-> To finish publishing your SDK to PyPI you must [run your first generation action](https://www.speakeasy.com/docs/github-setup#step-by-step-guide).
-
 
 The SDK can be installed with either *pip* or *poetry* package managers.
 
