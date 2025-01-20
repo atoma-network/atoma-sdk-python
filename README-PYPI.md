@@ -2,7 +2,6 @@
 
 Developer-friendly & type-safe Python SDK specifically catered to leverage _atoma-sdk_ API.
 
-
 <img src="https://github.com/atoma-network/atoma-node/blob/main/atoma-assets/atoma-banner.png" alt="Logo"/>
 
 [![Discord](https://img.shields.io/discord/1172593757586214964?label=Discord&logo=discord&logoColor=white)]
