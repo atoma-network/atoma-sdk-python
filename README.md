@@ -8,7 +8,6 @@ Developer-friendly & type-safe Python SDK specifically catered to leverage _atom
 [![Twitter](https://img.shields.io/twitter/follow/Atoma_Network?style=social)](https://x.com/Atoma_Network)
 [![Documentation](https://img.shields.io/badge/docs-mintify-blue?logo=mintify)](https://docs.atoma.network)
 [![License](https://img.shields.io/github/license/atoma-network/atoma-node)](LICENSE)
-[![PyPI](https://img.shields.io/pypi/v/atoma-sdk)](https://pypi.org/project/atoma-sdk/)
 
 <div align="left">
     <a href="https://www.speakeasy.com/?utm_source=atoma-sdk&utm_campaign=python"><img src="https://custom-icon-badges.demolab.com/badge/-Built%20By%20Speakeasy-212015?style=for-the-badge&logoColor=FBE331&logo=speakeasy&labelColor=545454" /></a>
