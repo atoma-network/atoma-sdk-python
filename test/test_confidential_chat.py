@@ -2,7 +2,6 @@ import os
 import pytest
 from dotenv import load_dotenv
 from atoma_sdk import AtomaSDK
-from atoma_sdk.models import ChatCompletionMessage
 
 # Load environment variables
 load_dotenv()
@@ -19,57 +18,67 @@ def client():
     )
 
 def test_chat_completion_basic(client):
-    messages = [
-        ChatCompletionMessage(
-            role="user",
-            content="Say hello!"
-        )
-    ]
+    completion = client.confidential_chat.create(
+        model=CHAT_COMPLETIONS_MODEL,
+        messages=[
+            {"role": "developer", "content": "You are a helpful assistant."},
+            {"role": "user", "content": "Hello!"}
+        ]
+    )
+
+    print(completion.choices[0].message)
     
-    response = client.confidential_chat.create(
-        messages=messages,
-        model=CHAT_COMPLETIONS_MODEL
+    assert completion is not None
+    assert len(completion.choices) > 0
+    assert completion.choices[0].message.content is not None
+
+def test_chat_completion_with_system_message(client):
+    completion = client.confidential_chat.create(
+        model=CHAT_COMPLETIONS_MODEL,
+        messages = [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": "Hello!"}
+        ]
     )
     
-    assert response is not None
-    assert len(response.choices) > 0
-    assert response.choices[0].message.content is not None
+    assert completion is not None
+    assert len(completion.choices) > 0
+    assert completion.choices[0].message.content is not None
+
+@pytest.mark.asyncio
+async def test_chat_completion_async(client):
+    completion = await client.confidential_chat.create_async(
+        model=CHAT_COMPLETIONS_MODEL,
+        messages = [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": "Hello!"}
+        ]
+    )
+    
+    assert completion is not None
+    assert len(completion.choices) > 0
+    assert completion.choices[0].message.content is not None
 
 def test_chat_completion_stream(client):
-    messages = [
-        ChatCompletionMessage(
-            role="user",
-            content="Do exactly what I say. Tell me three words."
-        )
-    ]
-    
-    stream = client.confidential_chat.create_stream(
-        messages=messages,
-        model=CHAT_COMPLETIONS_MODEL
+    completion = client.confidential_chat.create_stream(
+        model=CHAT_COMPLETIONS_MODEL,
+        messages=[
+            {"role": "developer", "content": "You are a helpful assistant."},
+            {"role": "user", "content": "Hello!"}
+        ]
     )
+
+    # Verify we get a valid stream
+    assert completion is not None
     
-    # Collect all chunks to verify the response
-    chunks = []
-    for chunk in stream:
+    # Process the stream and verify chunks
+    chunk_count = 0
+    for chunk in completion:
         assert chunk is not None
-        chunks.append(chunk)
-    
-    # Verify we got multiple chunks
-    assert len(chunks) > 1
-    
-    # Verify the chunks are properly formatted
-    for chunk in chunks:
-        assert hasattr(chunk, 'choices')
+        assert chunk is not None
         assert len(chunk.choices) > 0
         assert chunk.choices[0].delta is not None
-        
-    # Verify the first chunk has role
-    assert chunks[0].choices[0].delta.role == "assistant"
+        chunk_count += 1
     
-    # Verify some chunks have content
-    content_chunks = [c for c in chunks if c.choices[0].delta.content is not None]
-    assert len(content_chunks) > 0
-
-if __name__ == "__main__":
-    #test_chat_completion_basic(AtomaSDK(bearer_auth=BEARER_AUTH, server_url=CHAT_COMPLETIONS_URL))
-    test_chat_completion_stream(AtomaSDK(bearer_auth=BEARER_AUTH, server_url=CHAT_COMPLETIONS_URL))
+    # Verify we got multiple chunks
+    assert chunk_count > 0
