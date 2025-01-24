@@ -7,7 +7,6 @@ from cryptography.hazmat.primitives import serialization
 import secrets
 import base64
 import hashlib
-import json
 
 from atoma_sdk.models.confidentialcomputerequest import ConfidentialComputeRequest
 from atoma_sdk.models.confidentialcomputeresponse import ConfidentialComputeResponse
@@ -304,15 +303,10 @@ def decrypt_message(
         
         # Verify hash
         if expected_hash:
-            decoded_json = json.loads(plaintext)
-            choices = decoded_json.get('choices', [])
             actual_hash_bytes = calculate_hash(plaintext)
             expected_hash_bytes = base64.b64decode(expected_hash)
 
             if not secrets.compare_digest(actual_hash_bytes, expected_hash_bytes):
-                print(f"plaintext: {plaintext}\n")
-                print(f"expected_hash: {expected_hash}\n")
-                print(f"actual_hash: {actual_hash_bytes}\n")
                 raise ValueError("Message hash verification failed")
 
         return plaintext

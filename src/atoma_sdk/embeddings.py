@@ -39,7 +39,7 @@ class Embeddings(BaseSDK):
 
         :param input:
         :param model: ID of the model to use.
-        :param dimensions: The number of dimensions the resulting output embeddings should have. Only supported in text-embedding-3 models.
+        :param dimensions: The number of dimensions the resulting output embeddings should have.
         :param encoding_format: The format to return the embeddings in. Can be \"float\" or \"base64\". Defaults to \"float\"
         :param user: A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
         :param retries: Override the default retry configuration for this method
@@ -148,7 +148,7 @@ class Embeddings(BaseSDK):
 
         :param input:
         :param model: ID of the model to use.
-        :param dimensions: The number of dimensions the resulting output embeddings should have. Only supported in text-embedding-3 models.
+        :param dimensions: The number of dimensions the resulting output embeddings should have.
         :param encoding_format: The format to return the embeddings in. Can be \"float\" or \"base64\". Defaults to \"float\"
         :param user: A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
         :param retries: Override the default retry configuration for this method

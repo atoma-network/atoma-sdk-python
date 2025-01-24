@@ -14,14 +14,13 @@
 <!-- Start Summary [summary] -->
 ## Summary
 
-Developer-friendly & type-safe Python SDK specifically catered to leverage _atoma-sdk_ API.
 
 <!-- End Summary [summary] -->
 
 <!-- Start Table of Contents [toc] -->
 ## Table of Contents
 <!-- $toc-max-depth=2 -->
-* [atoma-sdk](#atoma-sdk)
+* [Atoma's Python SDK](#atomas-python-sdk)
   * [SDK Installation](#sdk-installation)
   * [IDE Support](#ide-support)
   * [SDK Example Usage](#sdk-example-usage)
@@ -41,6 +40,10 @@ Developer-friendly & type-safe Python SDK specifically catered to leverage _atom
 
 <!-- Start SDK Installation [installation] -->
 ## SDK Installation
+
+> [!TIP]
+> To finish publishing your SDK to PyPI you must [run your first generation action](https://www.speakeasy.com/docs/github-setup#step-by-step-guide).
+
 
 The SDK can be installed with either *pip* or *poetry* package managers.
 
@@ -87,10 +90,12 @@ with AtomaSDK(
 
     res = atoma_sdk.chat.create(messages=[
         {
-            "content": "<value>",
-            "role": "<value>",
+            "content": "Hello! How can you help me today?",
+            "role": "user",
         },
-    ], model="LeBaron")
+    ], model="meta-llama/Llama-3.3-70B-Instruct", frequency_penalty=0, max_tokens=2048, n=1, presence_penalty=0, seed=123, stop=[
+        "json([\"stop\", \"halt\"])",
+    ], temperature=0.7, top_p=1, user="user-1234")
 
     # Handle response
     print(res)
@@ -112,10 +117,12 @@ async def main():
 
         res = await atoma_sdk.chat.create_async(messages=[
             {
-                "content": "<value>",
-                "role": "<value>",
+                "content": "Hello! How can you help me today?",
+                "role": "user",
             },
-        ], model="LeBaron")
+        ], model="meta-llama/Llama-3.3-70B-Instruct", frequency_penalty=0, max_tokens=2048, n=1, presence_penalty=0, seed=123, stop=[
+            "json([\"stop\", \"halt\"])",
+        ], temperature=0.7, top_p=1, user="user-1234")
 
         # Handle response
         print(res)
@@ -146,10 +153,12 @@ with AtomaSDK(
 
     res = atoma_sdk.chat.create(messages=[
         {
-            "content": "<value>",
-            "role": "<value>",
+            "content": "Hello! How can you help me today?",
+            "role": "user",
         },
-    ], model="LeBaron")
+    ], model="meta-llama/Llama-3.3-70B-Instruct", frequency_penalty=0, max_tokens=2048, n=1, presence_penalty=0, seed=123, stop=[
+        "json([\"stop\", \"halt\"])",
+    ], temperature=0.7, top_p=1, user="user-1234")
 
     # Handle response
     print(res)
@@ -228,10 +237,13 @@ with AtomaSDK(
 
     res = atoma_sdk.chat.create_stream(messages=[
         {
-            "content": "<value>",
-            "role": "<value>",
+            "content": "Hello! How can you help me today?",
+            "role": "user",
+            "name": "john_doe",
         },
-    ], model="Impala")
+    ], model="meta-llama/Llama-3.3-70B-Instruct", frequency_penalty=0, max_tokens=2048, n=1, presence_penalty=0, seed=123, stop=[
+        "json([\"stop\", \"halt\"])",
+    ], temperature=0.7, top_p=1, user="user-1234")
 
     with res as event_stream:
         for event in event_stream:
@@ -262,10 +274,12 @@ with AtomaSDK(
 
     res = atoma_sdk.chat.create(messages=[
         {
-            "content": "<value>",
-            "role": "<value>",
+            "content": "Hello! How can you help me today?",
+            "role": "user",
         },
-    ], model="LeBaron",
+    ], model="meta-llama/Llama-3.3-70B-Instruct", frequency_penalty=0, max_tokens=2048, n=1, presence_penalty=0, seed=123, stop=[
+        "json([\"stop\", \"halt\"])",
+    ], temperature=0.7, top_p=1, user="user-1234",
         RetryConfig("backoff", BackoffStrategy(1, 50, 1.1, 100), False))
 
     # Handle response
@@ -286,10 +300,12 @@ with AtomaSDK(
 
     res = atoma_sdk.chat.create(messages=[
         {
-            "content": "<value>",
-            "role": "<value>",
+            "content": "Hello! How can you help me today?",
+            "role": "user",
         },
-    ], model="LeBaron")
+    ], model="meta-llama/Llama-3.3-70B-Instruct", frequency_penalty=0, max_tokens=2048, n=1, presence_penalty=0, seed=123, stop=[
+        "json([\"stop\", \"halt\"])",
+    ], temperature=0.7, top_p=1, user="user-1234")
 
     # Handle response
     print(res)
@@ -331,10 +347,12 @@ with AtomaSDK(
 
         res = atoma_sdk.chat.create(messages=[
             {
-                "content": "<value>",
-                "role": "<value>",
+                "content": "Hello! How can you help me today?",
+                "role": "user",
             },
-        ], model="LeBaron")
+        ], model="meta-llama/Llama-3.3-70B-Instruct", frequency_penalty=0, max_tokens=2048, n=1, presence_penalty=0, seed=123, stop=[
+            "json([\"stop\", \"halt\"])",
+        ], temperature=0.7, top_p=1, user="user-1234")
 
         # Handle response
         print(res)
@@ -362,10 +380,12 @@ with AtomaSDK(
 
     res = atoma_sdk.chat.create(messages=[
         {
-            "content": "<value>",
-            "role": "<value>",
+            "content": "Hello! How can you help me today?",
+            "role": "user",
         },
-    ], model="LeBaron")
+    ], model="meta-llama/Llama-3.3-70B-Instruct", frequency_penalty=0, max_tokens=2048, n=1, presence_penalty=0, seed=123, stop=[
+        "json([\"stop\", \"halt\"])",
+    ], temperature=0.7, top_p=1, user="user-1234")
 
     # Handle response
     print(res)
