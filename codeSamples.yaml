@@ -33,15 +33,15 @@ actions:
                 bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
             ) as atoma_sdk:
 
-                res = atoma_sdk.chat.create(messages=[
-                    {
-                        "content": "<value>",
-                        "role": "<value>",
-                    },
-                ], model="LeBaron")
+                completion = atoma_sdk.chat.create(
+                  model="meta-llama/Llama-3.3-70B-Instruct",
+                  messages=[
+                    {"role": "developer", "content": "You are a helpful assistant."},
+                    {"role": "user", "content": "Hello!"}
+                  ]
+                )
 
-                # Handle response
-                print(res)
+                print(completion.choices[0].message)
   - target: $["paths"]["/v1/chat/completions#stream"]["post"]
     update:
       x-codeSamples:
@@ -55,17 +55,16 @@ actions:
                 bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
             ) as atoma_sdk:
 
-                res = atoma_sdk.chat.create_stream(messages=[
-                    {
-                        "content": "<value>",
-                        "role": "<value>",
-                    },
-                ], model="Impala")
+                completion = atoma_sdk.chat.create_stream(
+                  model="meta-llama/Llama-3.3-70B-Instruct",
+                  messages=[
+                    {"role": "developer", "content": "You are a helpful assistant."},
+                    {"role": "user", "content": "Hello!"}
+                  ]
+                )
 
-                with res as event_stream:
-                    for event in event_stream:
-                        # handle event
-                        print(event, flush=True)
+                for chunk in completion:
+                  print(chunk.choices[0].delta)
   - target: $["paths"]["/v1/confidential/chat/completions"]["post"]
     update:
       x-codeSamples:
@@ -79,10 +78,15 @@ actions:
                 bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
             ) as atoma_sdk:
 
-                res = atoma_sdk.confidential_chat.create(ciphertext="<value>", client_dh_public_key="<value>", model_name="<value>", node_dh_public_key="<value>", nonce="<value>", plaintext_body_hash="<value>", salt="<value>", stack_small_id=486589)
+                completion = atoma_sdk.confidential_chat.create(
+                  model="meta-llama/Llama-3.3-70B-Instruct",
+                  messages=[
+                    {"role": "developer", "content": "You are a helpful assistant."},
+                    {"role": "user", "content": "Hello!"}
+                  ]
+                )
 
-                # Handle response
-                print(res)
+                print(completion.choices[0].message)
   - target: $["paths"]["/v1/confidential/chat/completions#stream"]["post"]
     update:
       x-codeSamples:
@@ -96,12 +100,16 @@ actions:
                 bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
             ) as atoma_sdk:
 
-                res = atoma_sdk.confidential_chat.create_stream(ciphertext="<value>", client_dh_public_key="<value>", model_name="<value>", node_dh_public_key="<value>", nonce="<value>", plaintext_body_hash="<value>", salt="<value>", stack_small_id=180107)
+                completion = atoma_sdk.confidential_chat.create_stream(
+                  model="meta-llama/Llama-3.3-70B-Instruct",
+                  messages=[
+                    {"role": "developer", "content": "You are a helpful assistant."},
+                    {"role": "user", "content": "Hello!"}
+                  ]
+                )
 
-                with res as event_stream:
-                    for event in event_stream:
-                        # handle event
-                        print(event, flush=True)
+                for chunk in completion:
+                  print(chunk.choices[0].delta)
   - target: $["paths"]["/v1/confidential/embeddings"]["post"]
     update:
       x-codeSamples:
@@ -115,9 +123,12 @@ actions:
                 bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
             ) as atoma_sdk:
 
-                res = atoma_sdk.confidential_embeddings.create(ciphertext="<value>", client_dh_public_key="<value>", model_name="<value>", node_dh_public_key="<value>", nonce="<value>", plaintext_body_hash="<value>", salt="<value>", stack_small_id=486589)
+                res = atoma_sdk.confidential_embeddings.create(
+                  input_="The quick brown fox jumped over the lazy dog",
+                  model="intfloat/multilingual-e5-large-instruct",
+                  encoding_format="float"
+                )
 
-                # Handle response
                 print(res)
   - target: $["paths"]["/v1/confidential/images/generations"]["post"]
     update:
@@ -132,9 +143,15 @@ actions:
                 bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
             ) as atoma_sdk:
 
-                res = atoma_sdk.confidential_images.generate(ciphertext="<value>", client_dh_public_key="<value>", model_name="<value>", node_dh_public_key="<value>", nonce="<value>", plaintext_body_hash="<value>", salt="<value>", stack_small_id=740198)
+                res = atoma_sdk.confidential_images.generate(
+                  model="black-forest-labs/FLUX.1-schnell",
+                  prompt="A cute baby sea otter floating on its back",
+                  n=1,
+                  quality="hd",
+                  response_format="url",
+                  size="1024x1024"
+                )
 
-                # Handle response
                 print(res)
   - target: $["paths"]["/v1/embeddings"]["post"]
     update:
@@ -149,9 +166,12 @@ actions:
                 bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
             ) as atoma_sdk:
 
-                res = atoma_sdk.embeddings.create(input_="<value>", model="LeBaron")
+                res = atoma_sdk.embeddings.create(
+                  input_="The quick brown fox jumped over the lazy dog",
+                  model="intfloat/multilingual-e5-large-instruct",
+                  encoding_format="float"
+                )
 
-                # Handle response
                 print(res)
   - target: $["paths"]["/v1/images/generations"]["post"]
     update:
@@ -166,9 +186,15 @@ actions:
                 bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
             ) as atoma_sdk:
 
-                res = atoma_sdk.images.generate(model="Model X", prompt="<value>")
+                res = atoma_sdk.images.generate(
+                  model="black-forest-labs/FLUX.1-schnell",
+                  prompt="A cute baby sea otter floating on its back",
+                  n=1,
+                  quality="hd",
+                  response_format="url",
+                  size="1024x1024"
+                )
 
-                # Handle response
                 print(res)
   - target: $["paths"]["/v1/models"]["get"]
     update:
