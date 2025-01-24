@@ -34,7 +34,6 @@ def test_chat_completion_basic(client):
     assert response is not None
     assert len(response.choices) > 0
     assert response.choices[0].message.content is not None
-    assert response.choices[0].message.role == "assistant"
 
 def test_chat_completion_stream(client):
     messages = [

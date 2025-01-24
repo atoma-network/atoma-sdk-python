@@ -64,7 +64,7 @@ actions:
                 )
 
                 for chunk in completion:
-                  print(chunk.choices[0].delta)
+                  print(chunk.data.choices[0].delta)
   - target: $["paths"]["/v1/confidential/chat/completions"]["post"]
     update:
       x-codeSamples:
@@ -109,7 +109,7 @@ actions:
                 )
 
                 for chunk in completion:
-                  print(chunk.choices[0].delta)
+                  print(chunk.data.choices[0].delta)
   - target: $["paths"]["/v1/confidential/embeddings"]["post"]
     update:
       x-codeSamples:
