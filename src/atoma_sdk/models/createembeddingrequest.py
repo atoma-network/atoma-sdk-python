@@ -14,9 +14,7 @@ class CreateEmbeddingRequestTypedDict(TypedDict):
     model: str
     r"""ID of the model to use."""
     dimensions: NotRequired[Nullable[int]]
-    r"""The number of dimensions the resulting output embeddings should have.
-    Only supported in text-embedding-3 models.
-    """
+    r"""The number of dimensions the resulting output embeddings should have."""
     encoding_format: NotRequired[Nullable[str]]
     r"""The format to return the embeddings in. Can be \"float\" or \"base64\".
     Defaults to \"float\" 
@@ -34,9 +32,7 @@ class CreateEmbeddingRequest(BaseModel):
     r"""ID of the model to use."""
 
     dimensions: OptionalNullable[int] = UNSET
-    r"""The number of dimensions the resulting output embeddings should have.
-    Only supported in text-embedding-3 models.
-    """
+    r"""The number of dimensions the resulting output embeddings should have."""
 
     encoding_format: OptionalNullable[str] = UNSET
     r"""The format to return the embeddings in. Can be \"float\" or \"base64\".

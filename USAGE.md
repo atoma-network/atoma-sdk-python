@@ -10,10 +10,12 @@ with AtomaSDK(
 
     res = atoma_sdk.chat.create(messages=[
         {
-            "content": "<value>",
-            "role": "<value>",
+            "content": "Hello! How can you help me today?",
+            "role": "user",
         },
-    ], model="LeBaron")
+    ], model="meta-llama/Llama-3.3-70B-Instruct", frequency_penalty=0, max_tokens=2048, n=1, presence_penalty=0, seed=123, stop=[
+        "json([\"stop\", \"halt\"])",
+    ], temperature=0.7, top_p=1, user="user-1234")
 
     # Handle response
     print(res)
@@ -35,10 +37,12 @@ async def main():
 
         res = await atoma_sdk.chat.create_async(messages=[
             {
-                "content": "<value>",
-                "role": "<value>",
+                "content": "Hello! How can you help me today?",
+                "role": "user",
             },
-        ], model="LeBaron")
+        ], model="meta-llama/Llama-3.3-70B-Instruct", frequency_penalty=0, max_tokens=2048, n=1, presence_penalty=0, seed=123, stop=[
+            "json([\"stop\", \"halt\"])",
+        ], temperature=0.7, top_p=1, user="user-1234")
 
         # Handle response
         print(res)

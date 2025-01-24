@@ -1,7 +1,7 @@
 lockVersion: 2.0.0
 id: abb58176-a92d-43ea-b418-227f4288eed7
 management:
-  docChecksum: 57e7f8f620f9d7870ff67fb9340421aa
+  docChecksum: 3c9aba47fd12560f82f7cbdf82bbf7d1
   docVersion: 0.1.0
   speakeasyVersion: 1.463.1
   generationVersion: 2.486.6
@@ -199,24 +199,24 @@ examples:
   chat_completions_create:
     speakeasy-default-chat-completions-create:
       requestBody:
-        application/json: {"messages": [{"content": "<value>", "role": "<value>"}], "model": "LeBaron"}
+        application/json: {"messages": [{"content": "Hello! How can you help me today?", "role": "user"}], "model": "meta-llama/Llama-3.3-70B-Instruct"}
       responses:
         "200":
-          application/json: {"choices": [{"index": 134365, "message": {"content": "<value>", "role": "<value>"}}], "created": 69025, "id": "<id>", "model": "PT Cruiser"}
+          application/json: {"choices": [{"index": 0, "message": {"content": "Hello! How can you help me today?", "role": "user"}}], "created": 1677652288, "id": "chatcmpl-123", "model": "meta-llama/Llama-3.3-70B-Instruct"}
   embeddings_create:
     speakeasy-default-embeddings-create:
       requestBody:
-        application/json: {"input": "<value>", "model": "LeBaron"}
+        application/json: {"input": "The quick brown fox jumped over the lazy dog", "model": "intfloat/multilingual-e5-large-instruct"}
       responses:
         "200":
-          application/json: {"data": [{"embedding": [], "index": 69025, "object": "<value>"}], "model": "PT Cruiser", "object": "<value>", "usage": {"prompt_tokens": 951062, "total_tokens": 86}}
+          application/json: {"data": [{"embedding": ["[0.0023064255, -0.009327292]"], "index": 0, "object": "embedding"}], "model": "intfloat/multilingual-e5-large-instruct", "object": "list", "usage": {"prompt_tokens": 8, "total_tokens": 8}}
   image_generations_create:
     speakeasy-default-image-generations-create:
       requestBody:
-        application/json: {"model": "Model X", "n": 447445, "prompt": "<value>"}
+        application/json: {"model": "black-forest-labs/FLUX.1-schnell", "n": 1, "prompt": "A cute baby sea otter floating on its back"}
       responses:
         "200":
-          application/json: {"created": 331048, "data": [{"revised_prompt": "<value>", "url": "https://enlightened-coliseum.com"}]}
+          application/json: {"created": 1677649420, "data": [{"revised_prompt": "A stunning image of a baby sea otter floating on its back in crystal clear blue water, with gentle ripples surrounding it. The otter's fur appears soft and well-detailed, and its expression is peaceful and content.", "url": "https://oaidalleapiprodscus.blob.core.windows.net/private/image.png"}]}
   confidential_chat_completions_create:
     speakeasy-default-confidential-chat-completions-create:
       requestBody:
@@ -241,7 +241,7 @@ examples:
   chat_completions_create_stream:
     speakeasy-default-chat-completions-create-stream:
       requestBody:
-        application/json: {"messages": [], "model": "Impala"}
+        application/json: {"messages": [], "model": "meta-llama/Llama-3.3-70B-Instruct"}
   select_node_public_key:
     speakeasy-default-select-node-public-key:
       requestBody:

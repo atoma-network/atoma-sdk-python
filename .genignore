@@ -2,3 +2,6 @@
 src/atoma_sdk/confidential_chat.py
 src/atoma_sdk/confidential_embeddings.py
 src/atoma_sdk/confidential_images.py
+
+# code samples
+codeSamples.yaml
