@@ -10,6 +10,10 @@ class NodesCreateLockRequestTypedDict(TypedDict):
 
     model: str
     r"""The model to lock a node for"""
+    max_num_tokens: Optional[int]
+    r"""The maximum number of tokens to lock a node for"""
+    timeout: Optional[int]
+    r"""The timeout for the node lock in milliseconds"""
 
 
 class NodesCreateLockRequest(BaseModel):
@@ -17,3 +21,9 @@ class NodesCreateLockRequest(BaseModel):
 
     model: str
     r"""The model to lock a node for"""
+
+    max_num_tokens: OptionalNullable[int] = UNSET
+    r"""The maximum number of tokens to lock a node for"""
+
+    timeout: OptionalNullable[int] = UNSET
+    r"""The timeout for the node lock in milliseconds"""
