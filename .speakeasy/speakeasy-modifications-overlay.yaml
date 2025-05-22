@@ -1,0 +1,169 @@
+overlay: 1.0.0
+x-speakeasy-jsonpath: rfc9535
+info:
+  title: Speakeasy Modifications
+  version: 0.0.2
+  x-speakeasy-metadata:
+    after: ""
+    before: ""
+    type: speakeasy-modifications
+actions:
+  - target: $["paths"]["/v1/models"]["get"]
+    update:
+      x-speakeasy-name-override: list
+    x-speakeasy-metadata:
+      after: sdk.models.list()
+      before: sdk.Models.models_list()
+      created_at: 1747945289558
+      reviewed_at: 1747945687916
+      type: method-name
+  - target: $["paths"]["/v1/nodes/lock"]["post"]
+    update:
+      x-speakeasy-name-override: createLock
+    x-speakeasy-metadata:
+      after: sdk.nodes.createLock()
+      before: sdk.Nodes.nodes_create_lock()
+      created_at: 1747945289558
+      reviewed_at: 1747945687916
+      type: method-name
+  - target: $["paths"]["/v1/chat/completions"]["post"]
+    update:
+      x-speakeasy-name-override: create
+    x-speakeasy-metadata:
+      after: sdk.chat.create()
+      before: sdk.Chat.chat_completions_create()
+      created_at: 1747945289558
+      reviewed_at: 1747945687916
+      type: method-name
+  - target: $["paths"]["/v1/confidential/chat/completions#stream"]["post"]
+    update:
+      x-speakeasy-group: confidentialChat
+      x-speakeasy-name-override: stream
+    x-speakeasy-metadata:
+      after: sdk.confidentialChat.stream()
+      before: sdk.Confidential Chat.confidential_chat_completions_create_stream()
+      created_at: 1747945289558
+      reviewed_at: 1747945687916
+      type: method-name
+  - target: $["paths"]["/v1/confidential/images/generations"]["post"]
+    update:
+      x-speakeasy-group: confidentialImages
+      x-speakeasy-name-override: generate
+    x-speakeasy-metadata:
+      after: sdk.confidentialImages.generate()
+      before: sdk.Confidential Images.confidential_image_generations_create()
+      created_at: 1747945289558
+      reviewed_at: 1747945687916
+      type: method-name
+  - target: $["paths"]["/v1/embeddings"]["post"]
+    update:
+      x-speakeasy-name-override: create
+    x-speakeasy-metadata:
+      after: sdk.embeddings.create()
+      before: sdk.Embeddings.embeddings_create()
+      created_at: 1747945289558
+      reviewed_at: 1747945687916
+      type: method-name
+  - target: $["paths"]["/v1/completions#stream"]["post"]
+    update:
+      x-speakeasy-name-override: stream
+    x-speakeasy-metadata:
+      after: sdk.completions.stream()
+      before: sdk.Completions.completions_create_stream()
+      created_at: 1747945289558
+      reviewed_at: 1747945687916
+      type: method-name
+  - target: $["paths"]["/v1/confidential/embeddings"]["post"]
+    update:
+      x-speakeasy-group: confidentialEmbeddings
+      x-speakeasy-name-override: create
+    x-speakeasy-metadata:
+      after: sdk.confidentialEmbeddings.create()
+      before: sdk.Confidential Embeddings.confidential_embeddings_create()
+      created_at: 1747945289558
+      reviewed_at: 1747945687916
+      type: method-name
+  - target: $["paths"]["/v1/completions"]["post"]
+    update:
+      x-speakeasy-name-override: create
+    x-speakeasy-metadata:
+      after: sdk.completions.create()
+      before: sdk.Completions.completions_create()
+      created_at: 1747945289558
+      reviewed_at: 1747945687916
+      type: method-name
+  - target: $["paths"]["/health"]["get"]
+    update:
+      x-speakeasy-name-override: check
+    x-speakeasy-metadata:
+      after: sdk.health.check()
+      before: sdk.Health.health()
+      created_at: 1747945289559
+      reviewed_at: 1747945687916
+      type: method-name
+  - target: $["paths"]["/v1/open_router/models"]["get"]
+    update:
+      x-speakeasy-name-override: getAll
+    x-speakeasy-metadata:
+      after: sdk.models.getAll()
+      before: sdk.Models.open_router_models_list()
+      created_at: 1747945289559
+      reviewed_at: 1747945687916
+      type: method-name
+  - target: $["paths"]["/v1/confidential/completions#stream"]["post"]
+    update:
+      x-speakeasy-group: confidentialCompletions
+      x-speakeasy-name-override: stream
+    x-speakeasy-metadata:
+      after: sdk.confidentialCompletions.stream()
+      before: sdk.Confidential Completions.confidential_completions_create_stream()
+      created_at: 1747945289559
+      reviewed_at: 1747945687916
+      type: method-name
+  - target: $["paths"]["/v1/confidential/completions"]["post"]
+    update:
+      x-speakeasy-group: confidentialCompletions
+      x-speakeasy-name-override: create
+    x-speakeasy-metadata:
+      after: sdk.confidentialCompletions.create()
+      before: sdk.Confidential Completions.confidential_completions_create()
+      created_at: 1747945289559
+      reviewed_at: 1747945687916
+      type: method-name
+  - target: $["paths"]["/v1/images/generations"]["post"]
+    update:
+      x-speakeasy-name-override: generate
+    x-speakeasy-metadata:
+      after: sdk.images.generate()
+      before: sdk.Images.image_generations_create()
+      created_at: 1747945289559
+      reviewed_at: 1747945687916
+      type: method-name
+  - target: $["paths"]["/v1/nodes"]["post"]
+    update:
+      x-speakeasy-name-override: create
+    x-speakeasy-metadata:
+      after: sdk.nodes.create()
+      before: sdk.Nodes.nodes_create()
+      created_at: 1747945289559
+      reviewed_at: 1747945687916
+      type: method-name
+  - target: $["paths"]["/v1/confidential/chat/completions"]["post"]
+    update:
+      x-speakeasy-group: confidentialChat
+      x-speakeasy-name-override: create
+    x-speakeasy-metadata:
+      after: sdk.confidentialChat.create()
+      before: sdk.Confidential Chat.confidential_chat_completions_create()
+      created_at: 1747945289559
+      reviewed_at: 1747945687916
+      type: method-name
+  - target: $["paths"]["/v1/chat/completions#stream"]["post"]
+    update:
+      x-speakeasy-name-override: stream
+    x-speakeasy-metadata:
+      after: sdk.chat.stream()
+      before: sdk.Chat.chat_completions_create_stream()
+      created_at: 1747945289559
+      reviewed_at: 1747945687916
+      type: method-name

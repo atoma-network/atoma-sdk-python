@@ -11,4 +11,4 @@ python -m pip install --upgrade pip
 pip install -e .
 
 # Generate starter usage sample with speakeasy
-speakeasy generate usage -s ../atoma-proxy/atoma-proxy/docs/openapi.yml -l python -o samples/root.py
+speakeasy generate usage -s openapi.yml -l python -o samples/root.py

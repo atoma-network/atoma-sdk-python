@@ -3,8 +3,6 @@
 
 ## Overview
 
-Atoma's API confidential embeddings v1 endpoint
-
 ### Available Operations
 
 * [create](#create) - Create confidential embeddings
@@ -29,11 +27,12 @@ the selected node.
 from atoma_sdk import AtomaSDK
 import os
 
+
 with AtomaSDK(
     bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
-) as atoma_sdk:
+) as as_client:
 
-    res = atoma_sdk.confidential_embeddings.create(ciphertext="<value>", client_dh_public_key="<value>", model_name="<value>", node_dh_public_key="<value>", nonce="<value>", plaintext_body_hash="<value>", salt="<value>", stack_small_id=486589)
+    res = as_client.confidential_embeddings.create(ciphertext="<value>", client_dh_public_key="<value>", model_name="<value>", node_dh_public_key="<value>", nonce="<value>", plaintext_body_hash="<value>", salt="<value>", stack_small_id=486589)
 
     # Handle response
     print(res)

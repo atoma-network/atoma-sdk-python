@@ -3,12 +3,10 @@
 
 ## Overview
 
-Atoma's API confidential chat completions v1 endpoint
-
 ### Available Operations
 
-* [create](#create) - Create confidential chat completion
-* [create_stream](#create_stream)
+* [create](#create) - Create confidential chat completions
+* [stream](#stream)
 
 ## create
 
@@ -47,11 +45,12 @@ Returns `AtomaProxyError::InternalError` if:
 from atoma_sdk import AtomaSDK
 import os
 
+
 with AtomaSDK(
     bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
-) as atoma_sdk:
+) as as_client:
 
-    res = atoma_sdk.confidential_chat.create(ciphertext="<value>", client_dh_public_key="<value>", model_name="<value>", node_dh_public_key="<value>", nonce="<value>", plaintext_body_hash="<value>", salt="<value>", stack_small_id=486589)
+    res = as_client.confidential_chat.create(ciphertext="<value>", client_dh_public_key="<value>", model_name="<value>", node_dh_public_key="<value>", nonce="<value>", plaintext_body_hash="<value>", salt="<value>", stack_small_id=486589)
 
     # Handle response
     print(res)
@@ -84,7 +83,7 @@ with AtomaSDK(
 | --------------- | --------------- | --------------- |
 | models.APIError | 4XX, 5XX        | \*/\*           |
 
-## create_stream
+## stream
 
 ### Example Usage
 
@@ -92,11 +91,12 @@ with AtomaSDK(
 from atoma_sdk import AtomaSDK
 import os
 
+
 with AtomaSDK(
     bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
-) as atoma_sdk:
+) as as_client:
 
-    res = atoma_sdk.confidential_chat.create_stream(ciphertext="<value>", client_dh_public_key="<value>", model_name="<value>", node_dh_public_key="<value>", nonce="<value>", plaintext_body_hash="<value>", salt="<value>", stack_small_id=180107)
+    res = as_client.confidential_chat.stream(ciphertext="<value>", client_dh_public_key="<value>", model_name="<value>", node_dh_public_key="<value>", nonce="<value>", plaintext_body_hash="<value>", salt="<value>", stack_small_id=180107)
 
     with res as event_stream:
         for event in event_stream:
@@ -123,7 +123,7 @@ with AtomaSDK(
 
 ### Response
 
-**[Union[eventstreaming.EventStream[models.ConfidentialComputeStreamResponse], eventstreaming.EventStreamAsync[models.ConfidentialComputeStreamResponse]]](../../models/.md)**
+**[Union[eventstreaming.EventStream[models.ConfidentialChatCompletionsCreateStreamResponseBody], eventstreaming.EventStreamAsync[models.ConfidentialChatCompletionsCreateStreamResponseBody]]](../../models/.md)**
 
 ### Errors
 

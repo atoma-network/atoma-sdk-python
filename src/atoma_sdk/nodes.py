@@ -11,7 +11,7 @@ from typing import Mapping, Optional, Union
 class Nodes(BaseSDK):
     r"""Nodes Management"""
 
-    def nodes_create(
+    def create(
         self,
         *,
         data: Union[
@@ -59,6 +59,8 @@ class Nodes(BaseSDK):
 
         if server_url is not None:
             base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
 
         request = models.NodesCreateRequest(
             data=utils.get_pydantic_model(data, models.NodePublicAddressAssignment),
@@ -94,6 +96,7 @@ class Nodes(BaseSDK):
 
         http_res = self.do_request(
             hook_ctx=HookContext(
+                base_url=base_url or "",
                 operation_id="nodes_create",
                 oauth2_scopes=[],
                 security_source=get_security_from_env(
@@ -107,7 +110,12 @@ class Nodes(BaseSDK):
 
         if utils.match_response(http_res, "200", "application/json"):
             return utils.unmarshal_json(http_res.text, models.NodesCreateResponse)
-        if utils.match_response(http_res, ["4XX", "500", "5XX"], "*"):
+        if utils.match_response(http_res, "4XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise models.APIError(
+                "API error occurred", http_res.status_code, http_res_text, http_res
+            )
+        if utils.match_response(http_res, ["500", "5XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise models.APIError(
                 "API error occurred", http_res.status_code, http_res_text, http_res
@@ -122,7 +130,7 @@ class Nodes(BaseSDK):
             http_res,
         )
 
-    async def nodes_create_async(
+    async def create_async(
         self,
         *,
         data: Union[
@@ -170,6 +178,8 @@ class Nodes(BaseSDK):
 
         if server_url is not None:
             base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
 
         request = models.NodesCreateRequest(
             data=utils.get_pydantic_model(data, models.NodePublicAddressAssignment),
@@ -205,6 +215,7 @@ class Nodes(BaseSDK):
 
         http_res = await self.do_request_async(
             hook_ctx=HookContext(
+                base_url=base_url or "",
                 operation_id="nodes_create",
                 oauth2_scopes=[],
                 security_source=get_security_from_env(
@@ -218,7 +229,12 @@ class Nodes(BaseSDK):
 
         if utils.match_response(http_res, "200", "application/json"):
             return utils.unmarshal_json(http_res.text, models.NodesCreateResponse)
-        if utils.match_response(http_res, ["4XX", "500", "5XX"], "*"):
+        if utils.match_response(http_res, "4XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise models.APIError(
+                "API error occurred", http_res.status_code, http_res_text, http_res
+            )
+        if utils.match_response(http_res, ["500", "5XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise models.APIError(
                 "API error occurred", http_res.status_code, http_res_text, http_res
@@ -233,10 +249,12 @@ class Nodes(BaseSDK):
             http_res,
         )
 
-    def nodes_create_lock(
+    def create_lock(
         self,
         *,
         model: str,
+        max_num_tokens: OptionalNullable[int] = UNSET,
+        timeout: OptionalNullable[int] = UNSET,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -259,6 +277,8 @@ class Nodes(BaseSDK):
         - `SERVICE_UNAVAILABLE` - No nodes available for confidential compute
 
         :param model: The model to lock a node for
+        :param max_num_tokens: The number of tokens to be processed for confidential compute (including input and output tokens)
+        :param timeout: An optional timeout period for the locked compute units, in seconds
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -271,9 +291,13 @@ class Nodes(BaseSDK):
 
         if server_url is not None:
             base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
 
         request = models.NodesCreateLockRequest(
+            max_num_tokens=max_num_tokens,
             model=model,
+            timeout=timeout,
         )
 
         req = self._build_request(
@@ -305,6 +329,7 @@ class Nodes(BaseSDK):
 
         http_res = self.do_request(
             hook_ctx=HookContext(
+                base_url=base_url or "",
                 operation_id="nodes_create_lock",
                 oauth2_scopes=[],
                 security_source=get_security_from_env(
@@ -318,7 +343,12 @@ class Nodes(BaseSDK):
 
         if utils.match_response(http_res, "200", "application/json"):
             return utils.unmarshal_json(http_res.text, models.NodesCreateLockResponse)
-        if utils.match_response(http_res, ["4XX", "500", "503", "5XX"], "*"):
+        if utils.match_response(http_res, "4XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise models.APIError(
+                "API error occurred", http_res.status_code, http_res_text, http_res
+            )
+        if utils.match_response(http_res, ["500", "503", "5XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise models.APIError(
                 "API error occurred", http_res.status_code, http_res_text, http_res
@@ -333,10 +363,12 @@ class Nodes(BaseSDK):
             http_res,
         )
 
-    async def nodes_create_lock_async(
+    async def create_lock_async(
         self,
         *,
         model: str,
+        max_num_tokens: OptionalNullable[int] = UNSET,
+        timeout: OptionalNullable[int] = UNSET,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -359,6 +391,8 @@ class Nodes(BaseSDK):
         - `SERVICE_UNAVAILABLE` - No nodes available for confidential compute
 
         :param model: The model to lock a node for
+        :param max_num_tokens: The number of tokens to be processed for confidential compute (including input and output tokens)
+        :param timeout: An optional timeout period for the locked compute units, in seconds
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -371,9 +405,13 @@ class Nodes(BaseSDK):
 
         if server_url is not None:
             base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
 
         request = models.NodesCreateLockRequest(
+            max_num_tokens=max_num_tokens,
             model=model,
+            timeout=timeout,
         )
 
         req = self._build_request_async(
@@ -405,6 +443,7 @@ class Nodes(BaseSDK):
 
         http_res = await self.do_request_async(
             hook_ctx=HookContext(
+                base_url=base_url or "",
                 operation_id="nodes_create_lock",
                 oauth2_scopes=[],
                 security_source=get_security_from_env(
@@ -418,7 +457,12 @@ class Nodes(BaseSDK):
 
         if utils.match_response(http_res, "200", "application/json"):
             return utils.unmarshal_json(http_res.text, models.NodesCreateLockResponse)
-        if utils.match_response(http_res, ["4XX", "500", "503", "5XX"], "*"):
+        if utils.match_response(http_res, "4XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise models.APIError(
+                "API error occurred", http_res.status_code, http_res_text, http_res
+            )
+        if utils.match_response(http_res, ["500", "503", "5XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise models.APIError(
                 "API error occurred", http_res.status_code, http_res_text, http_res

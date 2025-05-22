@@ -5,21 +5,48 @@ from .chatcompletionchunkdelta import (
     ChatCompletionChunkDelta,
     ChatCompletionChunkDeltaTypedDict,
 )
+from .chatcompletionlogprobs import (
+    ChatCompletionLogProbs,
+    ChatCompletionLogProbsTypedDict,
+)
+from .stopreason_union import StopReasonUnion, StopReasonUnionTypedDict
 from atoma_sdk.types import BaseModel, Nullable, OptionalNullable, UNSET, UNSET_SENTINEL
 from pydantic import model_serializer
 from typing_extensions import NotRequired, TypedDict
 
 
 class ChatCompletionChunkChoiceTypedDict(TypedDict):
+    r"""Represents the chat completion chunk choice.
+
+    This is used to represent the chat completion chunk choice in the chat completion request.
+    """
+
     delta: ChatCompletionChunkDeltaTypedDict
+    r"""Represents the chat completion chunk delta.
+
+    This is used to represent the chat completion chunk delta in the chat completion request.
+    It can be either a chat completion chunk delta message or a chat completion chunk delta choice.
+    """
     index: int
     r"""The index of this choice in the list of choices."""
     finish_reason: NotRequired[Nullable[str]]
     r"""The reason the chat completion was finished, if applicable."""
+    logprobs: NotRequired[Nullable[ChatCompletionLogProbsTypedDict]]
+    stop_reason: NotRequired[Nullable[StopReasonUnionTypedDict]]
 
 
 class ChatCompletionChunkChoice(BaseModel):
+    r"""Represents the chat completion chunk choice.
+
+    This is used to represent the chat completion chunk choice in the chat completion request.
+    """
+
     delta: ChatCompletionChunkDelta
+    r"""Represents the chat completion chunk delta.
+
+    This is used to represent the chat completion chunk delta in the chat completion request.
+    It can be either a chat completion chunk delta message or a chat completion chunk delta choice.
+    """
 
     index: int
     r"""The index of this choice in the list of choices."""
@@ -27,17 +54,21 @@ class ChatCompletionChunkChoice(BaseModel):
     finish_reason: OptionalNullable[str] = UNSET
     r"""The reason the chat completion was finished, if applicable."""
 
+    logprobs: OptionalNullable[ChatCompletionLogProbs] = UNSET
+
+    stop_reason: OptionalNullable[StopReasonUnion] = UNSET
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = ["finish_reason"]
-        nullable_fields = ["finish_reason"]
+        optional_fields = ["finish_reason", "logprobs", "stop_reason"]
+        nullable_fields = ["finish_reason", "logprobs", "stop_reason"]
         null_default_fields = []
 
         serialized = handler(self)
 
         m = {}
 
-        for n, f in self.model_fields.items():
+        for n, f in type(self).model_fields.items():
             k = f.alias or n
             val = serialized.get(k)
             serialized.pop(k, None)

@@ -1,9 +1,9 @@
-speakeasyVersion: 1.463.1
+speakeasyVersion: 1.537.0
 sources:
     atoma-proxy:
         sourceNamespace: atoma-proxy
-        sourceRevisionDigest: sha256:f3b03c8cacb3e995a9afeecbcca78d71578557634753b5e7c641844db139fd38
-        sourceBlobDigest: sha256:dd7be15bf05429b4ce5e8144d8f4115b25fb9bc486ee59f50707bd64bc4fe8d6
+        sourceRevisionDigest: sha256:09166c2a18f3e7eb901d75b3990bef27412346ace0e057b38163698dc7173e23
+        sourceBlobDigest: sha256:1902884efe72d77531e0774de1386ac94a6cdaa1e55e4276320cd9e378089a95
         tags:
             - latest
             - 0.1.0
@@ -11,8 +11,10 @@ targets:
     atoma-sdk:
         source: atoma-proxy
         sourceNamespace: atoma-proxy
-        sourceRevisionDigest: sha256:f3b03c8cacb3e995a9afeecbcca78d71578557634753b5e7c641844db139fd38
-        sourceBlobDigest: sha256:dd7be15bf05429b4ce5e8144d8f4115b25fb9bc486ee59f50707bd64bc4fe8d6
+        sourceRevisionDigest: sha256:09166c2a18f3e7eb901d75b3990bef27412346ace0e057b38163698dc7173e23
+        sourceBlobDigest: sha256:1902884efe72d77531e0774de1386ac94a6cdaa1e55e4276320cd9e378089a95
+        codeSamplesNamespace: atoma-proxy-python-code-samples
+        codeSamplesRevisionDigest: sha256:2fb80d5922e47b2f44233c7f7539d4db03587c5c43790b15a02ebbbbcd06ed71
 workflow:
     workflowVersion: 1.0.0
     speakeasyVersion: latest
@@ -20,14 +22,17 @@ workflow:
         atoma-proxy:
             inputs:
                 - location: ../atoma-proxy/atoma-proxy/docs/openapi.yml
+            overlays:
+                - location: .speakeasy/speakeasy-modifications-overlay.yaml
             registry:
-                location: registry.speakeasyapi.dev/atoma-francis/atoma-proxy/atoma-proxy
+                location: registry.speakeasyapi.dev/atoma/test/atoma-proxy
     targets:
         atoma-sdk:
             target: python
             source: atoma-proxy
             codeSamples:
-                output: codeSamples.yaml
                 registry:
-                    location: registry.speakeasyapi.dev/atoma-francis/atoma-proxy/atoma-proxy-python-code-samples
+                    location: registry.speakeasyapi.dev/atoma/test/atoma-proxy-python-code-samples
+                labelOverride:
+                    fixedValue: Python (SDK)
                 blocking: false

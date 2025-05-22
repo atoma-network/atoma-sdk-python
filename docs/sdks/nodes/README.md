@@ -7,10 +7,10 @@ Nodes Management
 
 ### Available Operations
 
-* [nodes_create](#nodes_create) - Create node
-* [nodes_create_lock](#nodes_create_lock) - Create a node lock for confidential compute
+* [create](#create) - Create node
+* [create_lock](#create_lock) - Create a node lock for confidential compute
 
-## nodes_create
+## create
 
 This endpoint allows nodes to register or update their public address in the system.
 When a node comes online or changes its address, it can use this endpoint to ensure
@@ -37,11 +37,12 @@ Returns various `AtomaProxyError` variants:
 from atoma_sdk import AtomaSDK
 import os
 
+
 with AtomaSDK(
     bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
-) as atoma_sdk:
+) as as_client:
 
-    res = atoma_sdk.nodes.nodes_create(data={
+    res = as_client.nodes.create(data={
         "country": "Andorra",
         "node_small_id": 3665,
         "public_address": "<value>",
@@ -70,7 +71,7 @@ with AtomaSDK(
 | --------------- | --------------- | --------------- |
 | models.APIError | 4XX, 5XX        | \*/\*           |
 
-## nodes_create_lock
+## create_lock
 
 This endpoint attempts to find a suitable node and retrieve its public key for encryption
 through a two-step process:
@@ -92,11 +93,12 @@ requests need to be encrypted before being processed by nodes.
 from atoma_sdk import AtomaSDK
 import os
 
+
 with AtomaSDK(
     bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
-) as atoma_sdk:
+) as as_client:
 
-    res = atoma_sdk.nodes.nodes_create_lock(model="Focus")
+    res = as_client.nodes.create_lock(model="Focus")
 
     # Handle response
     print(res)
@@ -105,10 +107,12 @@ with AtomaSDK(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `model`                                                             | *str*                                                               | :heavy_check_mark:                                                  | The model to lock a node for                                        |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                                         | Type                                                                                              | Required                                                                                          | Description                                                                                       |
+| ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `model`                                                                                           | *str*                                                                                             | :heavy_check_mark:                                                                                | The model to lock a node for                                                                      |
+| `max_num_tokens`                                                                                  | *OptionalNullable[int]*                                                                           | :heavy_minus_sign:                                                                                | The number of tokens to be processed for confidential compute<br/>(including input and output tokens) |
+| `timeout`                                                                                         | *OptionalNullable[int]*                                                                           | :heavy_minus_sign:                                                                                | An optional timeout period for the locked compute units, in seconds                               |
+| `retries`                                                                                         | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                  | :heavy_minus_sign:                                                                                | Configuration to override the default retry behavior of the client.                               |
 
 ### Response
 

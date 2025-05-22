@@ -4,14 +4,17 @@ sources:
     atoma-proxy:
         inputs:
             - location: ../atoma-proxy/atoma-proxy/docs/openapi.yml
+        overlays:
+            - location: .speakeasy/speakeasy-modifications-overlay.yaml
         registry:
-            location: registry.speakeasyapi.dev/atoma-francis/atoma-proxy/atoma-proxy
+            location: registry.speakeasyapi.dev/atoma/test/atoma-proxy
 targets:
     atoma-sdk:
         target: python
         source: atoma-proxy
         codeSamples:
-            output: codeSamples.yaml
             registry:
-                location: registry.speakeasyapi.dev/atoma-francis/atoma-proxy/atoma-proxy-python-code-samples
+                location: registry.speakeasyapi.dev/atoma/test/atoma-proxy-python-code-samples
+            labelOverride:
+                fixedValue: Python (SDK)
             blocking: false

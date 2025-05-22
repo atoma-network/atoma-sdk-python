@@ -5,13 +5,20 @@ from .chatcompletionchunkchoice import (
     ChatCompletionChunkChoice,
     ChatCompletionChunkChoiceTypedDict,
 )
-from .usage import Usage, UsageTypedDict
-from atoma_sdk.types import BaseModel
+from .completionusage import CompletionUsage, CompletionUsageTypedDict
+from atoma_sdk.types import BaseModel, Nullable, OptionalNullable, UNSET, UNSET_SENTINEL
+from pydantic import model_serializer
 from typing import List
-from typing_extensions import TypedDict
+from typing_extensions import NotRequired, TypedDict
 
 
 class ChatCompletionChunkTypedDict(TypedDict):
+    r"""Represents the chat completion chunk.
+
+    This is used to represent the chat completion chunk in the chat completion request.
+    It can be either a chat completion chunk or a chat completion chunk choice.
+    """
+
     choices: List[ChatCompletionChunkChoiceTypedDict]
     r"""A list of chat completion chunk choices."""
     created: int
@@ -20,17 +27,18 @@ class ChatCompletionChunkTypedDict(TypedDict):
     r"""A unique identifier for the chat completion chunk."""
     model: str
     r"""The model used for the chat completion."""
-    id: str
-    r"""The unique identifier for the chat completion."""
-    system_fingerprint: str | None = None
-    r"""The system fingerprint for the chat completion."""
-    usage: UsageTypedDict | None = None
-    r"""The usage information for the chat completion."""
-    service_tier: str | None = None
-    r"""The service tier for the chat completion."""
+    object: str
+    r"""The object of the chat completion chunk (which is always `chat.completion.chunk`)"""
+    usage: NotRequired[Nullable[CompletionUsageTypedDict]]
 
 
 class ChatCompletionChunk(BaseModel):
+    r"""Represents the chat completion chunk.
+
+    This is used to represent the chat completion chunk in the chat completion request.
+    It can be either a chat completion chunk or a chat completion chunk choice.
+    """
+
     choices: List[ChatCompletionChunkChoice]
     r"""A list of chat completion chunk choices."""
 
@@ -43,12 +51,37 @@ class ChatCompletionChunk(BaseModel):
     model: str
     r"""The model used for the chat completion."""
 
-    system_fingerprint: str | None = None
-    r"""The system fingerprint for the chat completion."""
+    object: str
+    r"""The object of the chat completion chunk (which is always `chat.completion.chunk`)"""
 
-    usage: Usage | None = None
-    r"""The usage information for the chat completion."""
+    usage: OptionalNullable[CompletionUsage] = UNSET
 
-    service_tier: str | None = None
-    r"""The service tier for the chat completion."""
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = ["usage"]
+        nullable_fields = ["usage"]
+        null_default_fields = []
 
+        serialized = handler(self)
+
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+            serialized.pop(k, None)
+
+            optional_nullable = k in optional_fields and k in nullable_fields
+            is_set = (
+                self.__pydantic_fields_set__.intersection({n})
+                or k in null_default_fields
+            )  # pylint: disable=no-member
+
+            if val is not None and val != UNSET_SENTINEL:
+                m[k] = val
+            elif val != UNSET_SENTINEL and (
+                not k in optional_fields or (optional_nullable and is_set)
+            ):
+                m[k] = val
+
+        return m
