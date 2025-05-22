@@ -10,6 +10,12 @@ from typing_extensions import NotRequired, TypedDict
 
 
 class ChatCompletionResponseTypedDict(TypedDict):
+    r"""Represents the chat completion response.
+
+    This is used to represent the chat completion response in the chat completion request.
+    It can be either a chat completion or a chat completion stream.
+    """
+
     choices: List[ChatCompletionChoiceTypedDict]
     r"""A list of chat completion choices."""
     created: int
@@ -18,17 +24,22 @@ class ChatCompletionResponseTypedDict(TypedDict):
     r"""A unique identifier for the chat completion."""
     model: str
     r"""The model used for the chat completion."""
+    object: str
+    r"""The object of the chat completion."""
+    service_tier: NotRequired[Nullable[str]]
+    r"""The service tier of the chat completion."""
     system_fingerprint: NotRequired[Nullable[str]]
     r"""The system fingerprint for the completion, if applicable."""
     usage: NotRequired[Nullable[CompletionUsageTypedDict]]
-    r"""The usage information for the chat completion."""
-    service_tier: NotRequired[Nullable[str]]
-    r"""The service tier for the chat completion."""
-    object: NotRequired[Nullable[str]]
-    r"""The object type for the chat completion."""
 
 
 class ChatCompletionResponse(BaseModel):
+    r"""Represents the chat completion response.
+
+    This is used to represent the chat completion response in the chat completion request.
+    It can be either a chat completion or a chat completion stream.
+    """
+
     choices: List[ChatCompletionChoice]
     r"""A list of chat completion choices."""
 
@@ -41,29 +52,28 @@ class ChatCompletionResponse(BaseModel):
     model: str
     r"""The model used for the chat completion."""
 
+    object: str
+    r"""The object of the chat completion."""
+
+    service_tier: OptionalNullable[str] = UNSET
+    r"""The service tier of the chat completion."""
+
     system_fingerprint: OptionalNullable[str] = UNSET
     r"""The system fingerprint for the completion, if applicable."""
 
     usage: OptionalNullable[CompletionUsage] = UNSET
-    r"""The usage information for the chat completion."""
-
-    service_tier: OptionalNullable[str] = UNSET
-    r"""The service tier for the chat completion."""
-
-    object: OptionalNullable[str] = UNSET
-    r"""The object type for the chat completion."""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = ["system_fingerprint", "usage"]
-        nullable_fields = ["system_fingerprint", "usage"]
+        optional_fields = ["service_tier", "system_fingerprint", "usage"]
+        nullable_fields = ["service_tier", "system_fingerprint", "usage"]
         null_default_fields = []
 
         serialized = handler(self)
 
         m = {}
 
-        for n, f in self.model_fields.items():
+        for n, f in type(self).model_fields.items():
             k = f.alias or n
             val = serialized.get(k)
             serialized.pop(k, None)

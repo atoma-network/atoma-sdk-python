@@ -31,6 +31,7 @@
   * [Error Handling](#error-handling)
   * [Server Selection](#server-selection)
   * [Custom HTTP Client](#custom-http-client)
+  * [Resource Management](#resource-management)
   * [Debugging](#debugging)
 * [Development](#development)
   * [Maturity](#maturity)
@@ -45,6 +46,11 @@
 > To finish publishing your SDK to PyPI you must [run your first generation action](https://www.speakeasy.com/docs/github-setup#step-by-step-guide).
 
 
+> [!NOTE]
+> **Python version upgrade policy**
+>
+> Once a Python version reaches its [official end of life date](https://devguide.python.org/versions/), a 3-month grace period is provided for users to upgrade. Following this grace period, the minimum python version supported in the SDK will be updated.
+
 The SDK can be installed with either *pip* or *poetry* package managers.
 
 ### PIP
@@ -52,7 +58,7 @@ The SDK can be installed with either *pip* or *poetry* package managers.
 *PIP* is the default package installer for Python, enabling easy installation and management of packages from PyPI via the command line.
 
 ```bash
-pip install atoma-sdk==0.1.1
+pip install git+https://github.com/atoma-network/atoma-sdk-python.git
 ```
 
 ### Poetry
@@ -60,8 +66,39 @@ pip install atoma-sdk==0.1.1
 *Poetry* is a modern tool that simplifies dependency management and package publishing by using a single `pyproject.toml` file to handle project metadata and dependencies.
 
 ```bash
-poetry add atoma-sdk==0.1.1
+poetry add git+https://github.com/atoma-network/atoma-sdk-python.git
 ```
+
+### Shell and script usage with `uv`
+
+You can use this SDK in a Python shell with [uv](https://docs.astral.sh/uv/) and the `uvx` command that comes with it like so:
+
+```shell
+uvx --from atoma-sdk python
+```
+
+It's also possible to write a standalone Python script without needing to set up a whole project like so:
+
+```python
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.9"
+# dependencies = [
+#     "atoma-sdk",
+# ]
+# ///
+
+from atoma_sdk import AtomaSDK
+
+sdk = AtomaSDK(
+  # SDK arguments
+)
+
+# Rest of script here...
+```
+
+Once that is saved to a file, you can run it with `uv run script.py` where
+`script.py` can be replaced with the actual file name.
 <!-- End SDK Installation [installation] -->
 
 <!-- Start IDE Support [idesupport] -->
@@ -84,18 +121,20 @@ Generally, the SDK will work well with most IDEs out of the box. However, when u
 from atoma_sdk import AtomaSDK
 import os
 
+
 with AtomaSDK(
     bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
-) as atoma_sdk:
+) as as_client:
 
-    res = atoma_sdk.chat.create(messages=[
-        {
-            "content": "Hello! How can you help me today?",
-            "role": "user",
-        },
-    ], model="meta-llama/Llama-3.3-70B-Instruct", frequency_penalty=0, max_tokens=2048, n=1, presence_penalty=0, seed=123, stop=[
+    res = as_client.completions.create(model="meta-llama/Llama-3.3-70B-Instruct", prompt=[
+        "<value>",
+        "<value>",
+    ], frequency_penalty=0, logit_bias={
+        "1234567890": 0.5,
+        "1234567891": -0.5,
+    }, logprobs=1, n=1, presence_penalty=0, seed=123, stop=[
         "json([\"stop\", \"halt\"])",
-    ], temperature=0.7, top_p=1, user="user-1234")
+    ], stream=False, suffix="json(\"\n\")", temperature=0.7, top_p=1, user="user-1234")
 
     # Handle response
     print(res)
@@ -111,18 +150,20 @@ from atoma_sdk import AtomaSDK
 import os
 
 async def main():
+
     async with AtomaSDK(
         bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
-    ) as atoma_sdk:
+    ) as as_client:
 
-        res = await atoma_sdk.chat.create_async(messages=[
-            {
-                "content": "Hello! How can you help me today?",
-                "role": "user",
-            },
-        ], model="meta-llama/Llama-3.3-70B-Instruct", frequency_penalty=0, max_tokens=2048, n=1, presence_penalty=0, seed=123, stop=[
+        res = await as_client.completions.create_async(model="meta-llama/Llama-3.3-70B-Instruct", prompt=[
+            "<value>",
+            "<value>",
+        ], frequency_penalty=0, logit_bias={
+            "1234567890": 0.5,
+            "1234567891": -0.5,
+        }, logprobs=1, n=1, presence_penalty=0, seed=123, stop=[
             "json([\"stop\", \"halt\"])",
-        ], temperature=0.7, top_p=1, user="user-1234")
+        ], stream=False, suffix="json(\"\n\")", temperature=0.7, top_p=1, user="user-1234")
 
         # Handle response
         print(res)
@@ -147,18 +188,20 @@ To authenticate with the API the `bearer_auth` parameter must be set when initia
 from atoma_sdk import AtomaSDK
 import os
 
+
 with AtomaSDK(
     bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
-) as atoma_sdk:
+) as as_client:
 
-    res = atoma_sdk.chat.create(messages=[
-        {
-            "content": "Hello! How can you help me today?",
-            "role": "user",
-        },
-    ], model="meta-llama/Llama-3.3-70B-Instruct", frequency_penalty=0, max_tokens=2048, n=1, presence_penalty=0, seed=123, stop=[
+    res = as_client.completions.create(model="meta-llama/Llama-3.3-70B-Instruct", prompt=[
+        "<value>",
+        "<value>",
+    ], frequency_penalty=0, logit_bias={
+        "1234567890": 0.5,
+        "1234567891": -0.5,
+    }, logprobs=1, n=1, presence_penalty=0, seed=123, stop=[
         "json([\"stop\", \"halt\"])",
-    ], temperature=0.7, top_p=1, user="user-1234")
+    ], stream=False, suffix="json(\"\n\")", temperature=0.7, top_p=1, user="user-1234")
 
     # Handle response
     print(res)
@@ -175,13 +218,23 @@ with AtomaSDK(
 
 ### [chat](docs/sdks/chat/README.md)
 
-* [create](docs/sdks/chat/README.md#create) - Create chat completion
-* [create_stream](docs/sdks/chat/README.md#create_stream)
+* [create](docs/sdks/chat/README.md#create) - Create chat completions
+* [stream](docs/sdks/chat/README.md#stream)
+
+### [completions](docs/sdks/completions/README.md)
+
+* [create](docs/sdks/completions/README.md#create) - Create completions
+* [stream](docs/sdks/completions/README.md#stream)
 
 ### [confidential_chat](docs/sdks/confidentialchat/README.md)
 
-* [create](docs/sdks/confidentialchat/README.md#create) - Create confidential chat completion
-* [create_stream](docs/sdks/confidentialchat/README.md#create_stream)
+* [create](docs/sdks/confidentialchat/README.md#create) - Create confidential chat completions
+* [stream](docs/sdks/confidentialchat/README.md#stream)
+
+### [confidential_completions](docs/sdks/confidentialcompletions/README.md)
+
+* [create](docs/sdks/confidentialcompletions/README.md#create) - Create confidential completions
+* [stream](docs/sdks/confidentialcompletions/README.md#stream)
 
 ### [confidential_embeddings](docs/sdks/confidentialembeddings/README.md)
 
@@ -197,7 +250,7 @@ with AtomaSDK(
 
 ### [health](docs/sdks/health/README.md)
 
-* [health](docs/sdks/health/README.md#health) - Health
+* [check](docs/sdks/health/README.md#check) - Health
 
 ### [images](docs/sdks/images/README.md)
 
@@ -205,12 +258,13 @@ with AtomaSDK(
 
 ### [models](docs/sdks/models/README.md)
 
-* [models_list](docs/sdks/models/README.md#models_list) - List models
+* [list](docs/sdks/models/README.md#list) - List models
+* [get_all](docs/sdks/models/README.md#get_all) - OpenRouter models listing endpoint
 
 ### [nodes](docs/sdks/nodes/README.md)
 
-* [nodes_create](docs/sdks/nodes/README.md#nodes_create) - Create node
-* [nodes_create_lock](docs/sdks/nodes/README.md#nodes_create_lock) - Create a node lock for confidential compute
+* [create](docs/sdks/nodes/README.md#create) - Create node
+* [create_lock](docs/sdks/nodes/README.md#create_lock) - Create a node lock for confidential compute
 
 </details>
 <!-- End Available Resources and Operations [operations] -->
@@ -231,19 +285,17 @@ underlying connection when the context is exited.
 from atoma_sdk import AtomaSDK
 import os
 
+
 with AtomaSDK(
     bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
-) as atoma_sdk:
+) as as_client:
 
-    res = atoma_sdk.chat.create_stream(messages=[
-        {
-            "content": "Hello! How can you help me today?",
-            "role": "user",
-            "name": "john_doe",
-        },
-    ], model="meta-llama/Llama-3.3-70B-Instruct", frequency_penalty=0, max_tokens=2048, n=1, presence_penalty=0, seed=123, stop=[
+    res = as_client.completions.stream(model="meta-llama/Llama-3.3-70B-Instruct", prompt="<value>", frequency_penalty=0, logit_bias={
+        "1234567890": 0.5,
+        "1234567891": -0.5,
+    }, logprobs=1, n=1, presence_penalty=0, seed=123, stop=[
         "json([\"stop\", \"halt\"])",
-    ], temperature=0.7, top_p=1, user="user-1234")
+    ], suffix="json(\"\n\")", temperature=0.7, top_p=1, user="user-1234")
 
     with res as event_stream:
         for event in event_stream:
@@ -268,18 +320,20 @@ from atoma_sdk import AtomaSDK
 from atoma_sdk.utils import BackoffStrategy, RetryConfig
 import os
 
+
 with AtomaSDK(
     bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
-) as atoma_sdk:
+) as as_client:
 
-    res = atoma_sdk.chat.create(messages=[
-        {
-            "content": "Hello! How can you help me today?",
-            "role": "user",
-        },
-    ], model="meta-llama/Llama-3.3-70B-Instruct", frequency_penalty=0, max_tokens=2048, n=1, presence_penalty=0, seed=123, stop=[
+    res = as_client.completions.create(model="meta-llama/Llama-3.3-70B-Instruct", prompt=[
+        "<value>",
+        "<value>",
+    ], frequency_penalty=0, logit_bias={
+        "1234567890": 0.5,
+        "1234567891": -0.5,
+    }, logprobs=1, n=1, presence_penalty=0, seed=123, stop=[
         "json([\"stop\", \"halt\"])",
-    ], temperature=0.7, top_p=1, user="user-1234",
+    ], stream=False, suffix="json(\"\n\")", temperature=0.7, top_p=1, user="user-1234",
         RetryConfig("backoff", BackoffStrategy(1, 50, 1.1, 100), False))
 
     # Handle response
@@ -293,19 +347,21 @@ from atoma_sdk import AtomaSDK
 from atoma_sdk.utils import BackoffStrategy, RetryConfig
 import os
 
+
 with AtomaSDK(
     retry_config=RetryConfig("backoff", BackoffStrategy(1, 50, 1.1, 100), False),
     bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
-) as atoma_sdk:
+) as as_client:
 
-    res = atoma_sdk.chat.create(messages=[
-        {
-            "content": "Hello! How can you help me today?",
-            "role": "user",
-        },
-    ], model="meta-llama/Llama-3.3-70B-Instruct", frequency_penalty=0, max_tokens=2048, n=1, presence_penalty=0, seed=123, stop=[
+    res = as_client.completions.create(model="meta-llama/Llama-3.3-70B-Instruct", prompt=[
+        "<value>",
+        "<value>",
+    ], frequency_penalty=0, logit_bias={
+        "1234567890": 0.5,
+        "1234567891": -0.5,
+    }, logprobs=1, n=1, presence_penalty=0, seed=123, stop=[
         "json([\"stop\", \"halt\"])",
-    ], temperature=0.7, top_p=1, user="user-1234")
+    ], stream=False, suffix="json(\"\n\")", temperature=0.7, top_p=1, user="user-1234")
 
     # Handle response
     print(res)
@@ -339,20 +395,22 @@ When custom error responses are specified for an operation, the SDK may also rai
 from atoma_sdk import AtomaSDK, models
 import os
 
+
 with AtomaSDK(
     bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
-) as atoma_sdk:
+) as as_client:
     res = None
     try:
 
-        res = atoma_sdk.chat.create(messages=[
-            {
-                "content": "Hello! How can you help me today?",
-                "role": "user",
-            },
-        ], model="meta-llama/Llama-3.3-70B-Instruct", frequency_penalty=0, max_tokens=2048, n=1, presence_penalty=0, seed=123, stop=[
+        res = as_client.completions.create(model="meta-llama/Llama-3.3-70B-Instruct", prompt=[
+            "<value>",
+            "<value>",
+        ], frequency_penalty=0, logit_bias={
+            "1234567890": 0.5,
+            "1234567891": -0.5,
+        }, logprobs=1, n=1, presence_penalty=0, seed=123, stop=[
             "json([\"stop\", \"halt\"])",
-        ], temperature=0.7, top_p=1, user="user-1234")
+        ], stream=False, suffix="json(\"\n\")", temperature=0.7, top_p=1, user="user-1234")
 
         # Handle response
         print(res)
@@ -368,24 +426,26 @@ with AtomaSDK(
 
 ### Override Server URL Per-Client
 
-The default server can also be overridden globally by passing a URL to the `server_url: str` optional parameter when initializing the SDK client instance. For example:
+The default server can be overridden globally by passing a URL to the `server_url: str` optional parameter when initializing the SDK client instance. For example:
 ```python
 from atoma_sdk import AtomaSDK
 import os
 
+
 with AtomaSDK(
     server_url="https://api.atoma.network",
     bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
-) as atoma_sdk:
+) as as_client:
 
-    res = atoma_sdk.chat.create(messages=[
-        {
-            "content": "Hello! How can you help me today?",
-            "role": "user",
-        },
-    ], model="meta-llama/Llama-3.3-70B-Instruct", frequency_penalty=0, max_tokens=2048, n=1, presence_penalty=0, seed=123, stop=[
+    res = as_client.completions.create(model="meta-llama/Llama-3.3-70B-Instruct", prompt=[
+        "<value>",
+        "<value>",
+    ], frequency_penalty=0, logit_bias={
+        "1234567890": 0.5,
+        "1234567891": -0.5,
+    }, logprobs=1, n=1, presence_penalty=0, seed=123, stop=[
         "json([\"stop\", \"halt\"])",
-    ], temperature=0.7, top_p=1, user="user-1234")
+    ], stream=False, suffix="json(\"\n\")", temperature=0.7, top_p=1, user="user-1234")
 
     # Handle response
     print(res)
@@ -473,6 +533,34 @@ class CustomClient(AsyncHttpClient):
 s = AtomaSDK(async_client=CustomClient(httpx.AsyncClient()))
 ```
 <!-- End Custom HTTP Client [http-client] -->
+
+<!-- Start Resource Management [resource-management] -->
+## Resource Management
+
+The `AtomaSDK` class implements the context manager protocol and registers a finalizer function to close the underlying sync and async HTTPX clients it uses under the hood. This will close HTTP connections, release memory and free up other resources held by the SDK. In short-lived Python programs and notebooks that make a few SDK method calls, resource management may not be a concern. However, in longer-lived programs, it is beneficial to create a single SDK instance via a [context manager][context-manager] and reuse it across the application.
+
+[context-manager]: https://docs.python.org/3/reference/datamodel.html#context-managers
+
+```python
+from atoma_sdk import AtomaSDK
+import os
+def main():
+
+    with AtomaSDK(
+        bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
+    ) as as_client:
+        # Rest of application here...
+
+
+# Or when using async:
+async def amain():
+
+    async with AtomaSDK(
+        bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
+    ) as as_client:
+        # Rest of application here...
+```
+<!-- End Resource Management [resource-management] -->
 
 <!-- Start Debugging [debug] -->
 ## Debugging

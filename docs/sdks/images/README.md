@@ -25,11 +25,12 @@ validated by middleware before reaching this handler.
 from atoma_sdk import AtomaSDK
 import os
 
+
 with AtomaSDK(
     bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
-) as atoma_sdk:
+) as as_client:
 
-    res = atoma_sdk.images.generate(model="black-forest-labs/FLUX.1-schnell", prompt="A cute baby sea otter floating on its back", n=1, quality="hd", response_format="url", size="1024x1024", style="vivid", user="user-1234")
+    res = as_client.images.generate(model="black-forest-labs/FLUX.1-schnell", prompt="A cute baby sea otter floating on its back", n=1, quality="hd", response_format="url", size="1024x1024", style="vivid", user="user-1234")
 
     # Handle response
     print(res)

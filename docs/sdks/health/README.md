@@ -7,9 +7,9 @@ Health check
 
 ### Available Operations
 
-* [health](#health) - Health
+* [check](#check) - Health
 
-## health
+## check
 
 Health
 
@@ -19,11 +19,12 @@ Health
 from atoma_sdk import AtomaSDK
 import os
 
+
 with AtomaSDK(
     bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
-) as atoma_sdk:
+) as as_client:
 
-    res = atoma_sdk.health.health()
+    res = as_client.health.check()
 
     # Handle response
     print(res)

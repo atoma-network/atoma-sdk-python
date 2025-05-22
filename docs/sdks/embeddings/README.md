@@ -28,11 +28,12 @@ the selected node.
 from atoma_sdk import AtomaSDK
 import os
 
+
 with AtomaSDK(
     bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
-) as atoma_sdk:
+) as as_client:
 
-    res = atoma_sdk.embeddings.create(input_="The quick brown fox jumped over the lazy dog", model="intfloat/multilingual-e5-large-instruct", encoding_format="float", user="user-1234")
+    res = as_client.embeddings.create(input_="The quick brown fox jumped over the lazy dog", model="intfloat/multilingual-e5-large-instruct", encoding_format="float", user="user-1234")
 
     # Handle response
     print(res)

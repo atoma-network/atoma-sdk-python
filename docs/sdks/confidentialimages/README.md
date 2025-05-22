@@ -3,8 +3,6 @@
 
 ## Overview
 
-Atoma's API confidential images v1 endpoint
-
 ### Available Operations
 
 * [generate](#generate) - Create confidential image
@@ -22,11 +20,12 @@ for full private AI compute.
 from atoma_sdk import AtomaSDK
 import os
 
+
 with AtomaSDK(
     bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
-) as atoma_sdk:
+) as as_client:
 
-    res = atoma_sdk.confidential_images.generate(ciphertext="<value>", client_dh_public_key="<value>", model_name="<value>", node_dh_public_key="<value>", nonce="<value>", plaintext_body_hash="<value>", salt="<value>", stack_small_id=740198)
+    res = as_client.confidential_images.generate(ciphertext="<value>", client_dh_public_key="<value>", model_name="<value>", node_dh_public_key="<value>", nonce="<value>", plaintext_body_hash="<value>", salt="<value>", stack_small_id=740198)
 
     # Handle response
     print(res)

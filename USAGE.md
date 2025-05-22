@@ -4,18 +4,20 @@
 from atoma_sdk import AtomaSDK
 import os
 
+
 with AtomaSDK(
     bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
-) as atoma_sdk:
+) as as_client:
 
-    res = atoma_sdk.chat.create(messages=[
-        {
-            "content": "Hello! How can you help me today?",
-            "role": "user",
-        },
-    ], model="meta-llama/Llama-3.3-70B-Instruct", frequency_penalty=0, max_tokens=2048, n=1, presence_penalty=0, seed=123, stop=[
+    res = as_client.completions.create(model="meta-llama/Llama-3.3-70B-Instruct", prompt=[
+        "<value>",
+        "<value>",
+    ], frequency_penalty=0, logit_bias={
+        "1234567890": 0.5,
+        "1234567891": -0.5,
+    }, logprobs=1, n=1, presence_penalty=0, seed=123, stop=[
         "json([\"stop\", \"halt\"])",
-    ], temperature=0.7, top_p=1, user="user-1234")
+    ], stream=False, suffix="json(\"\n\")", temperature=0.7, top_p=1, user="user-1234")
 
     # Handle response
     print(res)
@@ -31,18 +33,20 @@ from atoma_sdk import AtomaSDK
 import os
 
 async def main():
+
     async with AtomaSDK(
         bearer_auth=os.getenv("ATOMASDK_BEARER_AUTH", ""),
-    ) as atoma_sdk:
+    ) as as_client:
 
-        res = await atoma_sdk.chat.create_async(messages=[
-            {
-                "content": "Hello! How can you help me today?",
-                "role": "user",
-            },
-        ], model="meta-llama/Llama-3.3-70B-Instruct", frequency_penalty=0, max_tokens=2048, n=1, presence_penalty=0, seed=123, stop=[
+        res = await as_client.completions.create_async(model="meta-llama/Llama-3.3-70B-Instruct", prompt=[
+            "<value>",
+            "<value>",
+        ], frequency_penalty=0, logit_bias={
+            "1234567890": 0.5,
+            "1234567891": -0.5,
+        }, logprobs=1, n=1, presence_penalty=0, seed=123, stop=[
             "json([\"stop\", \"halt\"])",
-        ], temperature=0.7, top_p=1, user="user-1234")
+        ], stream=False, suffix="json(\"\n\")", temperature=0.7, top_p=1, user="user-1234")
 
         # Handle response
         print(res)

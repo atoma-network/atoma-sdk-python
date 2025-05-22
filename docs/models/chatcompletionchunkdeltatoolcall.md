@@ -1,0 +1,16 @@
+# ChatCompletionChunkDeltaToolCall
+
+Represents the chat completion chunk delta tool call.
+
+This is used to represent the chat completion chunk delta tool call in the chat completion request.
+It can be either a chat completion chunk delta tool call or a chat completion chunk delta tool call function.
+
+
+## Fields
+
+| Field                                                                                                                      | Type                                                                                                                       | Required                                                                                                                   | Description                                                                                                                |
+| -------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `function`                                                                                                                 | [OptionalNullable[models.ChatCompletionChunkDeltaToolCallFunction]](../models/chatcompletionchunkdeltatoolcallfunction.md) | :heavy_minus_sign:                                                                                                         | N/A                                                                                                                        |
+| `id`                                                                                                                       | *str*                                                                                                                      | :heavy_check_mark:                                                                                                         | The ID of the tool call.                                                                                                   |
+| `index`                                                                                                                    | *int*                                                                                                                      | :heavy_check_mark:                                                                                                         | The index of the tool call.                                                                                                |
+| `type`                                                                                                                     | *str*                                                                                                                      | :heavy_check_mark:                                                                                                         | The type of the tool call.                                                                                                 |
